@@ -1,15 +1,19 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ inputs, config, pkgs, ... }: let
+{
+  inputs,
+  config,
+  pkgs,
+  ...
+}: let
   pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      #<home-manager/nixos> # Not using home-manager as module
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    #<home-manager/nixos> # Not using home-manager as module
+  ];
 
   hardware.opengl = {
     enable = true;
@@ -19,7 +23,7 @@ in {
     ## amdvlk: an open-source Vulkan driver from AMD, usually performs worse
     #extraPackages = [ pkgs.amdvlk ];
     #extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
-    
+
     # Mesa from hyprland's unstable pkgs
     package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
     package = pkgs-unstable.mesa.drivers;
@@ -32,9 +36,9 @@ in {
     dates = "weekly";
     options = "--delete-older-than 1w";
   };
-  
+
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = ["nix-command" "flakes"];
     substituters = ["https://hyprland.cachix.org"];
     trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     trusted-users = [
@@ -43,11 +47,10 @@ in {
     ];
   };
 
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-   # Limit the number of generations to keep
+  # Limit the number of generations to keep
   boot.loader.systemd-boot.configurationLimit = 10;
 
   # Setup keyfile
@@ -68,7 +71,7 @@ in {
 
   # Enable networking
   networking.networkmanager.enable = true;
-  networking.nameservers = [ "192.168.3.100" ];
+  networking.nameservers = ["192.168.3.100"];
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -93,7 +96,7 @@ in {
     layout = "br";
     variant = "";
   };
-  # needed for store VS Code auth token 
+  # needed for store VS Code auth token
   services.gnome.gnome-keyring.enable = true;
 
   # Configure console keymap
@@ -103,7 +106,7 @@ in {
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henriquelay";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = ["networkmanager" "wheel"];
     shell = pkgs.fish;
     packages = with pkgs; [home-manager];
   };
@@ -121,7 +124,7 @@ in {
   ];
 
   # Enable automatic login for the user.
-  services.getty.autologinUser = "henriquelay";
+  # services.getty.autologinUser = "henriquelay";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -129,9 +132,9 @@ in {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   helix
-   wget
-   fish
+    helix
+    wget
+    fish
   ];
 
   environment.variables = {EDITOR = "hx";};
@@ -142,7 +145,7 @@ in {
       enable = true;
       #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     };
-    
+
     gamemode.enable = true;
     steam = {
       enable = true;
@@ -161,7 +164,7 @@ in {
     mplus-outline-fonts.githubRelease
     dina-font
     proggyfonts
-    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 
   # Remove sound.enable or set it to false if you had it set previously, as sound.enable is only meant for ALSA-based configurations
@@ -203,5 +206,4 @@ in {
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
-
 }

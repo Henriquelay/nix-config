@@ -236,7 +236,7 @@
   services.gpg-agent = {
     enable = true;
     enableFishIntegration = true;
-    defaultCacheTtl = null;
+    defaultCacheTtl = 10080; # 1 week
     enableSshSupport = true;
     pinentryPackage = pkgs.pinentry-tty;
     extraConfig = ''
