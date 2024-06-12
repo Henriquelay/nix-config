@@ -110,6 +110,9 @@
       br = "branch";
       co = "checkout";
     };
+    extraConfig = {
+      init.defaultBranch = "main";
+    };
   };
 
   programs.fish = {
