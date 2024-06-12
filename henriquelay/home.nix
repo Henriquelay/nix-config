@@ -18,13 +18,12 @@
   home.stateVersion = "23.05"; # Please read the comment before changing.
   nixpkgs.config.allowUnfree = true;
 
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
-
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
@@ -41,9 +40,9 @@
     libnotify
     sway-launcher-desktop
     nil
+    alejandra
     pavucontrol
     telegram-desktop
-    kdePackages.qt6ct
     python312
     hyprcursor
     playerctl
@@ -53,6 +52,7 @@
     poppler
     (nerdfonts.override {fonts = ["Hack"];})
     quarto
+    typst
     gvfs # For trash support and other stuff like that
     xdg-utils
     grc
@@ -97,109 +97,140 @@
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
   };
 
-  programs.git = {
-    enable = true;
-    userName = "Henriquelay";
-    userEmail = "37563861+Henriquelay@users.noreply.github.com";
-    signing = {
-      key = "B3903EAC57AD1331995CD96202843DDA217C9D81";
-      signByDefault = true;
-    };
-    aliases = {
-      sw = "switch";
-      br = "branch";
-      co = "checkout";
-    };
-    extraConfig = {
-      init.defaultBranch = "main";
-    };
-  };
-
-  programs.fish = {
-    enable = true;
-    loginShellInit = ''
-      set fish_greeting # Disable greeting
-      if [ (tty) = "/dev/tty1" ]
-        exec Hyprland
-      end
-    '';
-
-    shellAliases = {
-      cat = "bat";
-    };
-
-    plugins = with pkgs.fishPlugins; [
-      {
-        name = "tide";
-        src = tide.src;
-      }
-      {
-        name = "sponge";
-        src = sponge.src;
-      }
-      {
-        name = "grc";
-        src = grc.src;
-      }
-      {
-        name = "done";
-        src = done.src;
-      }
-    ];
-  };
-
-  programs.kitty = {
-    enable = true;
-    shellIntegration.enableFishIntegration = true;
-    theme = "Rosé Pine";
-  };
-
-  programs.helix = {
-    enable = true;
-    languages.language = [
-      {
-        name = "nix";
-        auto-format = true;
-        formatter.command = "${pkgs.alejandra}/bin/alejandra";
-      }
-    ];
-    settings = {
-      editor.cursor-shape.insert = "bar";
-    };
-  };
-
-  programs.yazi = {
-    enable = true;
-    enableFishIntegration = true;
-    settings = {
-      manager = {
-        show_hidden = true;
-        sort_by = "modified";
-        sort_dir_first = true;
-        sort_reverse = true;
+  programs = {
+    git = {
+      enable = true;
+      userName = "Henriquelay";
+      userEmail = "37563861+Henriquelay@users.noreply.github.com";
+      signing = {
+        key = "B3903EAC57AD1331995CD96202843DDA217C9D81";
+        signByDefault = true;
+      };
+      aliases = {
+        sw = "switch";
+        br = "branch";
+        co = "checkout";
+      };
+      extraConfig = {
+        init.defaultBranch = "main";
       };
     };
-  };
 
-  programs.bat.enable = true;
-  programs.ripgrep.enable = true;
-  programs.jq.enable = true;
-  programs.fd.enable = true;
-  programs.zathura.enable = true;
-  programs.poetry.enable = true;
-  programs.bottom.enable = true;
-  programs.librewolf = {
-    enable = true;
-    settings = {
-      "webgl.disabled" = false;
-      "identity.fxaccounts.enabled" = true;
+    fish = {
+      enable = true;
+      loginShellInit = ''
+        set fish_greeting # Disable greeting
+        if [ (tty) = "/dev/tty1" ]
+          exec Hyprland
+        end
+      '';
+
+      shellAliases = {
+        cat = "bat";
+      };
+
+      plugins = with pkgs.fishPlugins; [
+        {
+          name = "tide";
+          src = tide.src;
+        }
+        {
+          name = "sponge";
+          src = sponge.src;
+        }
+        {
+          name = "grc";
+          src = grc.src;
+        }
+        {
+          name = "done";
+          src = done.src;
+        }
+      ];
     };
-  };
 
-  programs.gpg = {
-    enable = true;
-    mutableTrust = true;
-    mutableKeys = true;
+    kitty = {
+      enable = true;
+      shellIntegration.enableFishIntegration = true;
+      theme = "Rosé Pine";
+    };
+
+    helix = {
+      enable = true;
+      languages.language = [
+        {
+          name = "nix";
+          auto-format = true;
+          formatter.command = "${pkgs.alejandra}/bin/alejandra";
+        }
+      ];
+      settings = {
+        editor.cursor-shape.insert = "bar";
+      };
+    };
+
+    yazi = {
+      enable = true;
+      enableFishIntegration = true;
+      settings = {
+        manager = {
+          show_hidden = true;
+          sort_by = "modified";
+          sort_dir_first = true;
+          sort_reverse = true;
+        };
+      };
+    };
+
+    bat.enable = true;
+    ripgrep.enable = true;
+    jq.enable = true;
+    fd.enable = true;
+    zathura.enable = true;
+    poetry.enable = true;
+    bottom.enable = true;
+    librewolf = {
+      enable = true;
+      settings = {
+        "webgl.disabled" = false;
+        "identity.fxaccounts.enabled" = true;
+      };
+    };
+
+    gpg = {
+      enable = true;
+      mutableTrust = true;
+      mutableKeys = true;
+    };
+
+    pyenv = {
+      enable = true;
+      enableFishIntegration = true;
+    };
+
+    fzf = {
+      enable = true;
+      enableFishIntegration = true;
+    };
+
+    zoxide = {
+      enable = true;
+      enableFishIntegration = true;
+      options = [
+        "--cmd"
+        "cd"
+      ];
+    };
+
+    vscode = {
+      enable = true;
+    };
+
+    #eza = {
+    #  enable = true;
+    #  enableFishIntegration = true;
+    #  icons = true;
+    #};
   };
 
   services.gpg-agent = {
@@ -213,86 +244,7 @@
     '';
   };
 
-  services.dunst = {
-    enable = true;
-    iconTheme = {
-      package = pkgs.rose-pine-icon-theme;
-      name = "rose-pine-icons";
-    };
-    settings = {
-      global = {
-        width = 400;
-        offset = "5x5";
-
-        progress_bar_min_width = 380;
-        progress_bar_max_width = 380;
-        progress_bar_corner_radius = 2;
-
-        padding = 10;
-        horizontal_padding = 10;
-        frame_width = 1;
-        gap_size = 3;
-        font = "Monospace 14";
-
-        enable_recursive_icon_lookup = true;
-        corner_radius = 2;
-
-        background = "#26233a";
-        foreground = "#e0def4";
-      };
-      urgency_low = {
-        background = "#26273d";
-        highlight = "#31748f";
-        frame_color = "#31748f";
-        default_icon = "dialog-information";
-        format = "<b><span foreground='#31748f'>%s</span></b>\n%b";
-      };
-      urgency_normal = {
-        background = "#362e3c";
-        highlight = "#f6c177";
-        frame_color = "#f6c177";
-        default_icon = "dialog-warning";
-        format = "<b><span foreground='#f6c177'>%s</span></b>\n%b";
-      };
-      urgency_critical = {
-        background = "#35263d";
-        highlight = "#eb6f92";
-        frame_color = "#eb6f92";
-        default_icon = "dialog-error";
-        format = "<b><span foreground='#eb6f92'>%s</span></b>\n%b";
-      };
-    };
-  };
-
-  programs.pyenv = {
-    enable = true;
-    enableFishIntegration = true;
-  };
-
-  programs.fzf = {
-    enable = true;
-    enableFishIntegration = true;
-  };
-
-  #programs.eza = {
-  #  enable = true;
-  #  enableFishIntegration = true;
-  #  icons = true;
-  #};
-
-  programs.zoxide = {
-    enable = true;
-    enableFishIntegration = true;
-    options = [
-      "--cmd"
-      "cd"
-    ];
-  };
-
-  programs.vscode = {
-    enable = true;
-  };
-
+  ## WM and visuals
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -402,6 +354,57 @@
     };
   };
 
+  services.dunst = {
+    enable = true;
+    iconTheme = {
+      package = pkgs.rose-pine-icon-theme;
+      name = "rose-pine-icons";
+    };
+    settings = {
+      global = {
+        width = 400;
+        offset = "5x5";
+
+        progress_bar_min_width = 380;
+        progress_bar_max_width = 380;
+        progress_bar_corner_radius = 2;
+
+        padding = 10;
+        horizontal_padding = 10;
+        frame_width = 1;
+        gap_size = 3;
+        font = "Monospace 14";
+
+        enable_recursive_icon_lookup = true;
+        corner_radius = 2;
+
+        background = "#26233a";
+        foreground = "#e0def4";
+      };
+      urgency_low = {
+        background = "#26273d";
+        highlight = "#31748f";
+        frame_color = "#31748f";
+        default_icon = "dialog-information";
+        format = "<b><span foreground='#31748f'>%s</span></b>\n%b";
+      };
+      urgency_normal = {
+        background = "#362e3c";
+        highlight = "#f6c177";
+        frame_color = "#f6c177";
+        default_icon = "dialog-warning";
+        format = "<b><span foreground='#f6c177'>%s</span></b>\n%b";
+      };
+      urgency_critical = {
+        background = "#35263d";
+        highlight = "#eb6f92";
+        frame_color = "#eb6f92";
+        default_icon = "dialog-error";
+        format = "<b><span foreground='#eb6f92'>%s</span></b>\n%b";
+      };
+    };
+  };
+
   home.pointerCursor = {
     gtk.enable = true;
     # x11.enable = true;
@@ -428,13 +431,9 @@
     };
   };
 
+  # TODO mimetypes and portal
   #xdg.portal = {
   #  enable = true;
   #  extraPortals = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
   #};
-
-  # TODO mimetypes
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
 }

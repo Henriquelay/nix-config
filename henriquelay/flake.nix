@@ -7,10 +7,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    alejandra = {
-      url = "github:kamadorueda/alejandra/3.0.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nur = {
       url = "github:nix-community/NUR";
     };
@@ -20,7 +16,6 @@
     self,
     nixpkgs,
     home-manager,
-    alejandra,
     nur,
     ...
   }: let
@@ -33,6 +28,7 @@
 
       modules = [
         {nixpkgs.overlays = [nur.overlay];}
+
         (
           {pkgs, ...}: let
             nur-no-pkgs = import nur {
@@ -41,7 +37,6 @@
             };
           in {
             home.packages = [
-              alejandra.defaultPackage.${system}
               nur-no-pkgs.repos.nltch.spotify-adblock
             ];
           }
