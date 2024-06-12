@@ -132,7 +132,6 @@ in {
    helix
    wget
    fish
-   pinentry-tty
   ];
 
   environment.variables = {EDITOR = "hx";};
