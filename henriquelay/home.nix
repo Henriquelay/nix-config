@@ -59,6 +59,7 @@
     #nur.repos.nltch.spotify-adblock # on flake
     grimblast
     webcord
+    blueman
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
