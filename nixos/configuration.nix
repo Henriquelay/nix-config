@@ -15,6 +15,9 @@ in {
     #<home-manager/nixos> # Not using home-manager as module
   ];
 
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.powerOnBoot = false; # powers up the default Bluetooth controller
+
   hardware.opengl = {
     enable = true;
     ## radv: an open-source Vulkan driver from freedesktop
