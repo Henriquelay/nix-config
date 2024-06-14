@@ -327,6 +327,8 @@
         disable_splash_rendering = true;
       };
 
+      animation = "workspaces,0";
+
       general = {
         gaps_in = 0;
         gaps_out = 0;
