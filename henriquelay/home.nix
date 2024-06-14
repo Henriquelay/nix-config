@@ -263,6 +263,7 @@
       # ... but not on X. This is specially apparent with games.
       # unscale XWayland
       xwayland.force_zero_scaling = true;
+      xwayland.enable = true;
 
       ## Style
       # name: Rosé Pine
@@ -408,13 +409,13 @@
     };
   };
 
-  home.pointerCursor = {
-    gtk.enable = true;
-    # x11.enable = true;
-    package = pkgs.rose-pine-cursor;
-    name = "rose-pine-dawn-cursor";
-    size = 18;
-  };
+  #home.pointerCursor = {
+  #  gtk.enable = true;
+  #  # x11.enable = true;
+  #  package = pkgs.rose-pine-cursor;
+  #  name = "rose-pine-dawn-cursor";
+  #  size = 18;
+  #};
 
   gtk = {
     enable = true;
