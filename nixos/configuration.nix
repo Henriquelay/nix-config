@@ -112,7 +112,7 @@ in {
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henriquelay";
-    extraGroups = ["networkmanager" "wheel"];
+    extraGroups = ["networkmanager" "wheel" "libvirtd"];
     shell = pkgs.fish;
     packages = with pkgs; [home-manager];
   };
