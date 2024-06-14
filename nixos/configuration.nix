@@ -32,6 +32,9 @@ in {
     package = pkgs-unstable.mesa.drivers;
   };
 
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
   # Reducing disk usage
   nix.optimise.automatic = true;
   nix.gc = {
