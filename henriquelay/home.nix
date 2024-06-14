@@ -322,8 +322,10 @@
       "$highlightMed" = "0xff403d52";
       "$highlightHigh" = "0xff524f67";
       ##
-      disable_hyprland_logo = true;
-      disable_splash_rendering = true;
+      misc = {
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+      };
 
       general = {
         gaps_in = 0;
