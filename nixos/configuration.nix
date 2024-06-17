@@ -59,14 +59,7 @@ in {
   # Limit the number of generations to keep
   boot.loader.systemd-boot.configurationLimit = 10;
 
-  # Setup keyfile
-  boot.initrd.secrets = {
-    "/crypto_keyfile.bin" = null;
-  };
-
-  # Enable swap on luks
-  boot.initrd.luks.devices."luks-d45b5a83-69a6-43e8-91c9-6ba7d7360105".device = "/dev/disk/by-uuid/d45b5a83-69a6-43e8-91c9-6ba7d7360105";
-  boot.initrd.luks.devices."luks-d45b5a83-69a6-43e8-91c9-6ba7d7360105".keyFile = "/crypto_keyfile.bin";
+  boot.initrd.luks.devices."luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
 
   networking.hostName = "acad-router"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
