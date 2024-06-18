@@ -46,9 +46,6 @@
     python312
     hyprcursor
     playerctl
-    xfce.thunar
-    xfce.thunar-volman
-    xfce.thunar-archive-plugin
     poppler
     (nerdfonts.override {fonts = ["Hack"];})
     quarto
@@ -479,8 +476,9 @@
   };
 
   # TODO mimetypes and portal
-  #xdg.portal = {
-  #  enable = true;
-  #  extraPortals = pkgs.xdg-desktop-portal-wayland;
-  #};
+  xdg.portal = {
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+    ];
+  };
 }

@@ -40,7 +40,7 @@
   fileSystems."/vault" = {
     device = "/dev/disk/by-uuid/85ef5bf5-e468-4727-912d-440e09c7b2fa";
     fsType = "ext4";
-    options = ["rw"];
+    options = ["defaults" "nofail" "users" "rw" "exec"];
   };
 
   boot.initrd.luks.devices."luks-192aa104-aa43-4da2-9423-c08704d987aa".device = "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";

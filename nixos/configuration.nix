@@ -20,16 +20,23 @@ in {
 
   hardware.opengl = {
     enable = true;
-    ## radv: an open-source Vulkan driver from freedesktop
+    # radv: an open-source Vulkan driver from freedesktop (MESA)
     driSupport = true;
     driSupport32Bit = true;
-    ## amdvlk: an open-source Vulkan driver from AMD, usually performs worse
-    #extraPackages = [ pkgs.amdvlk ];
-    #extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
 
     # Mesa from hyprland's unstable pkgs
-    package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
-    package = pkgs-unstable.mesa.drivers;
+    #package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
+    #package = pkgs-unstable.mesa.drivers;
+
+    #extraPackages = with pkgs; [
+    #  # amdvlk: an open-source Vulkan driver from AMD, usually performs worse than RADV
+    #  amdvlk
+    #  rocm-opencl-icd # OpenCL
+    #  rocm-opencl-runtime # OpenCL
+    #];
+    #extraPackages32 = with pkgs; [
+    #  driversi686Linux.amdvlk
+    #];
   };
 
   virtualisation.libvirtd.enable = true;
@@ -105,7 +112,7 @@ in {
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henriquelay";
-    extraGroups = ["networkmanager" "wheel" "libvirtd"];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode"];
     shell = pkgs.fish;
     packages = with pkgs; [home-manager];
   };
@@ -136,7 +143,11 @@ in {
     fish
   ];
 
-  environment.variables = {EDITOR = "hx";};
+  environment.variables = {
+    EDITOR = "hx";
+    # Force use of RADV Vulkan implementation
+    AMD_VULKAN_ICD = "RADV";
+  };
 
   programs = {
     fish.enable = true;
