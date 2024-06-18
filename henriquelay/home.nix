@@ -227,11 +227,11 @@
       enable = true;
     };
 
-    #eza = {
-    #  enable = true;
-    #  enableFishIntegration = true;
-    #  icons = true;
-    #};
+    eza = {
+      enable = true;
+      enableFishIntegration = true;
+      icons = true;
+    };
 
     hyprlock = {
       enable = true;

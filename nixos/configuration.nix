@@ -40,6 +40,7 @@ in {
   };
 
   virtualisation.libvirtd.enable = true;
+  virtualisation.docker.enable = true;
   programs.virt-manager.enable = true;
 
   # Reducing disk usage
@@ -112,7 +113,7 @@ in {
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henriquelay";
-    extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode"];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode" "docker"];
     shell = pkgs.fish;
     packages = with pkgs; [home-manager];
   };
@@ -144,6 +145,7 @@ in {
   ];
 
   environment.variables = {
+    NIX_BUILD_CORES = 12;
     EDITOR = "hx";
     # Force use of RADV Vulkan implementation
     AMD_VULKAN_ICD = "RADV";
@@ -215,5 +217,5 @@ in {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 }
