@@ -78,7 +78,10 @@ in {
 
   # Enable networking
   networking.networkmanager.enable = true;
-  networking.nameservers = ["192.168.3.100"];
+  networking.nameservers = [
+    #"192.168.3.100"
+    "9.9.9.9"
+  ];
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";

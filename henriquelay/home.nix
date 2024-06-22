@@ -57,7 +57,6 @@
     grimblast
     webcord
     blueman
-    mangohud
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -150,6 +149,14 @@
       ];
     };
 
+    mangohud = {
+      enable = true;
+      enableSessionWide = true;
+      settings = {
+        preset = 3;
+      };
+    };
+
     kitty = {
       enable = true;
       shellIntegration.enableFishIntegration = true;
@@ -225,6 +232,7 @@
 
     vscode = {
       enable = true;
+      package = pkgs.vscode.fhs;
     };
 
     eza = {
@@ -242,9 +250,9 @@
     gpg-agent = {
       enable = true;
       enableFishIntegration = true;
-      defaultCacheTtl = 10080; # 1 week
+      defaultCacheTtl = 604800; # 1 week
       enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-tty;
+      pinentryPackage = pkgs.pinentry-gtk2;
       extraConfig = ''
         debug-pinentry
       '';
@@ -406,18 +414,18 @@
     };
     settings = {
       global = {
-        width = 400;
+        width = "(300, 800)";
         offset = "5x5";
 
         progress_bar_min_width = 380;
-        progress_bar_max_width = 380;
+        progress_bar_max_width = 680;
         progress_bar_corner_radius = 2;
 
         padding = 10;
         horizontal_padding = 10;
         frame_width = 1;
         gap_size = 3;
-        font = "Monospace 14";
+        font = "Hack 14";
 
         enable_recursive_icon_lookup = true;
         corner_radius = 2;
