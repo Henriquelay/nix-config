@@ -57,6 +57,11 @@
     grimblast
     webcord
     blueman
+    qbittorrent
+    jackett
+    heroic # Games launcher
+    gogdl # GOG downloading module for heroic
+    wineWowPackages.waylandFull
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -91,9 +96,9 @@
     #WLR_NO_HARDWARE_CURSORS = "1";
     # Hint electron apps to use Wayland
     NIXOS_OZONE_WL = "1";
-
     # Disable window decorator on QT applications
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+    TERMINAL = "kitty";
   };
 
   programs = {
@@ -270,7 +275,7 @@
           {
             timeout = 300; # in seconds.
             on-timeout = "notify-send 'Screen off in 30s'"; # command to run when timeout has passed.
-            on-resume = "notify-send 'Welcome back!'"; # command to run when activity is detected after timeout has fired.
+            on-resume = "notify-send 'Screen off canceled''"; # command to run when activity is detected after timeout has fired.
           }
           {
             timeout = 330; # 5.5min
@@ -278,7 +283,7 @@
             on-resume = "hyprctl dispatch dpms on"; # screen on when activity is detected after timeout has fired.
           }
           {
-            timeout = 330; # 5.5min
+            timeout = 60; # 10min
             on-timeout = "loginctl lock-session";
           }
           {
@@ -312,21 +317,21 @@
       # author: jishnurajendran
       # upstream: https://github.com/jishnurajendran/hyprland-rosepine/blob/main/rose-pine.conf
       # All natural pine, faux fur and a bit of soho vibes for the classy minimalist
-      "$base" = "0xff191724";
-      "$surface" = "0xff1f1d2e";
-      "$overlay" = "0xff26233a";
-      "$muted" = "0xff6e6a86";
-      "$subtle" = "0xff908caa";
-      "$text" = "0xffe0def4";
-      "$love" = "0xffeb6f92";
-      "$gold" = "0xfff6c177";
-      "$rose" = "0xffebbcba";
-      "$pine" = "0xff31748f";
-      "$foam" = "0xff9ccfd8";
-      "$iris" = "0xffc4a7e7";
-      "$highlightLow" = "0xff21202e";
-      "$highlightMed" = "0xff403d52";
-      "$highlightHigh" = "0xff524f67";
+      "$base" = "rgb(191724)";
+      "$surface" = "rgb(1f1d2e)";
+      "$overlay" = "rgb(26233a)";
+      "$muted" = "rgb(6e6a86)";
+      "$subtle" = "rgb(908caa)";
+      "$text" = "rgb(e0def4)";
+      "$love" = "rgb(eb6f92)";
+      "$gold" = "rgb(f6c177)";
+      "$rose" = "rgb(ebbcba)";
+      "$pine" = "rgb(31748f)";
+      "$foam" = "rgb(9ccfd8)";
+      "$iris" = "rgb(c4a7e7)";
+      "$highlightLow" = "rgb(21202e)";
+      "$highlightMed" = "rgb(403d52)";
+      "$highlightHigh" = "rgb(524f67)";
       ##
       misc = {
         disable_hyprland_logo = true;
@@ -340,12 +345,34 @@
         gaps_out = 0;
         resize_on_border = true;
         extend_border_grab_area = 10;
+        "col.active_border" = "$rose";
+        "col.inactive_border" = "$pine";
       };
       dwindle = {
         force_split = 2;
         no_gaps_when_only = 1;
       };
       "env" = ["HYPRCURSOR_SIZE,24" "HYPRCURSOR_THEME,hypr-rose-pine-dawn-cursor"];
+
+      "windowrulev2" = [
+        # Terminal Launcher rules
+        "float, class:^(launcher)$"
+        "pin, class:^(launcher)$"
+        "stayfocused, class:^(launcher)$"
+        "bordersize 10, class:^(launcher)$"
+        "dimaround, class:^(launcher)$"
+        "rounding 5, class:^(launcher)$"
+        "bordercolor $gold, class:^(launcher)$"
+        # Fixes
+        "stayfocused, class:^(pinentry-) # fix pinentry losing focus"
+      ];
+
+      # Autostart
+      exec-once = [
+        "[workspace 1 silent] telegram-desktop -- %u"
+        "[workspace 1 silent] spotify %U"
+        "[workspace 6 silent] qbittorrent"
+      ];
 
       ## Binds
       "$mod" = "SUPER";

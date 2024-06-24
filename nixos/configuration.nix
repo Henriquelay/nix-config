@@ -167,6 +167,8 @@ in {
       remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
       dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     };
+
+    appimage.binfmt = true;
   };
 
   fonts.packages = with pkgs; [
