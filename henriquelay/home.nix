@@ -43,7 +43,6 @@
     alejandra
     pavucontrol
     telegram-desktop
-    python312
     hyprcursor
     playerctl
     poppler
@@ -62,6 +61,10 @@
     heroic # Games launcher
     gogdl # GOG downloading module for heroic
     wineWowPackages.waylandFull
+    python312
+    ruff-lsp
+    pyright
+    obsidian
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -100,6 +103,10 @@
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     TERMINAL = "kitty";
   };
+
+  home.sessionPath = [
+    "$HOME/.cargo/bin"
+  ];
 
   programs = {
     git = {
@@ -170,15 +177,33 @@
 
     helix = {
       enable = true;
-      languages.language = [
-        {
-          name = "nix";
-          auto-format = true;
-          formatter.command = "${pkgs.alejandra}/bin/alejandra";
-        }
-      ];
+      languages = {
+        language = [
+          {
+            name = "nix";
+            auto-format = true;
+            formatter.command = "${pkgs.alejandra}/bin/alejandra";
+          }
+          {
+            name = "python";
+            language-servers = ["ruff" "pyright"];
+            auto-format = true;
+          }
+        ];
+
+        language-server.ruff = {
+          command = "ruff-lsp";
+        };
+      };
       settings = {
-        editor.cursor-shape.insert = "bar";
+        theme = "rose_pine";
+        editor = {
+          color-modes = true;
+          popup-border = "all";
+          line-number = "relative";
+          bufferline = "multiple";
+          cursor-shape.insert = "bar";
+        };
       };
     };
 
@@ -249,6 +274,15 @@
     hyprlock = {
       enable = true;
     };
+
+    obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-backgroundremoval
+        obs-pipewire-audio-capture
+      ];
+    };
   };
 
   services = {
@@ -273,17 +307,17 @@
         };
         listener = [
           {
-            timeout = 300; # in seconds.
+            timeout = 900; # in seconds. 15m
             on-timeout = "notify-send 'Screen off in 30s'"; # command to run when timeout has passed.
             on-resume = "notify-send 'Screen off canceled''"; # command to run when activity is detected after timeout has fired.
           }
           {
-            timeout = 330; # 5.5min
+            timeout = 930; # 15:30min
             on-timeout = "hyprctl dispatch dpms off"; # screen off when timeout has passed
             on-resume = "hyprctl dispatch dpms on"; # screen on when activity is detected after timeout has fired.
           }
           {
-            timeout = 60; # 10min
+            timeout = 1200; # 20min
             on-timeout = "loginctl lock-session";
           }
           {
