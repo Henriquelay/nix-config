@@ -37,28 +37,32 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
 
+    # Desktop/WM stuff
     libnotify
     sway-launcher-desktop
     pavucontrol
-    telegram-desktop
     hyprcursor
     playerctl
-    poppler
-    (nerdfonts.override {fonts = ["Hack"];})
+    grimblast
+    wineWowPackages.waylandFull
+
+    # General programs
+    telegram-desktop
     gvfs # For trash support and other stuff like that
     xdg-utils
+    poppler
+    (nerdfonts.override {fonts = ["Hack"];})
     grc
     #nur.repos.nltch.spotify-adblock # on flake
-    grimblast
     webcord
     blueman
     qbittorrent
     jackett
     heroic # Games launcher
     gogdl # GOG downloading module for heroic
-    wineWowPackages.waylandFull
     obsidian
-    # Langs and lang servers
+
+    # Langs and lang servers. Dev stuff
     python312
     ruff-lsp
     pyright
@@ -68,6 +72,9 @@
     typstyle
     nil
     alejandra
+    rust-analyzer
+    rustfmt
+    clippy
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

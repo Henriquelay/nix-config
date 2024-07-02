@@ -41,7 +41,6 @@ in {
 
   virtualisation.libvirtd.enable = true;
   virtualisation.docker.enable = true;
-  programs.virt-manager.enable = true;
 
   # Reducing disk usage
   nix.optimise.automatic = true;
@@ -62,26 +61,31 @@ in {
   };
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  # Limit the number of generations to keep
-  boot.loader.systemd-boot.configurationLimit = 10;
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+      # Limit the number of generations to keep
+      systemd-boot.configurationLimit = 10;
+    };
 
-  boot.initrd.luks.devices."luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
-
-  networking.hostName = "acad-router"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    initrd.luks.devices."luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
+  };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
-  networking.nameservers = [
-    #"192.168.3.100"
-    "9.9.9.9"
-  ];
+  networking = {
+    hostName = "acad-router";
+    nameservers = [
+      "192.168.3.100"
+      #"9.9.9.9"
+    ];
+    #wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    #networkmanager.enable = true;
+  };
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -160,6 +164,7 @@ in {
       enable = true;
       #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     };
+    virt-manager.enable = true;
 
     gamemode.enable = true;
     steam = {
@@ -185,7 +190,6 @@ in {
   ];
 
   # Remove sound.enable or set it to false if you had it set previously, as sound.enable is only meant for ALSA-based configurations
-
   # rtkit is optional but recommended
   security.rtkit.enable = true;
   services.pipewire = {
