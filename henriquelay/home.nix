@@ -39,16 +39,12 @@
 
     libnotify
     sway-launcher-desktop
-    nil
-    alejandra
     pavucontrol
     telegram-desktop
     hyprcursor
     playerctl
     poppler
     (nerdfonts.override {fonts = ["Hack"];})
-    quarto
-    typst
     gvfs # For trash support and other stuff like that
     xdg-utils
     grc
@@ -61,10 +57,17 @@
     heroic # Games launcher
     gogdl # GOG downloading module for heroic
     wineWowPackages.waylandFull
+    obsidian
+    # Langs and lang servers
     python312
     ruff-lsp
     pyright
-    obsidian
+    quarto
+    typst
+    tinymist
+    typstyle
+    nil
+    alejandra
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -94,7 +97,6 @@
   #  /etc/profiles/per-user/henriquelay/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    EDITOR = "hx";
     # If cursors are invisible
     #WLR_NO_HARDWARE_CURSORS = "1";
     # Hint electron apps to use Wayland
@@ -177,22 +179,30 @@
 
     helix = {
       enable = true;
+      defaultEditor = true;
       languages = {
         language = [
           {
             name = "nix";
-            auto-format = true;
             formatter.command = "${pkgs.alejandra}/bin/alejandra";
+            auto-format = true;
           }
           {
             name = "python";
             language-servers = ["ruff" "pyright"];
             auto-format = true;
           }
+          {
+            name = "typst";
+            language-servers = ["tinymist" "typst-lsp"];
+            formatter.command = "${pkgs.typstyle}/bin/typstyle";
+            auto-format = true;
+          }
         ];
 
-        language-server.ruff = {
-          command = "ruff-lsp";
+        language-server = {
+          ruff.command = "ruff-lsp";
+          tinymist.command = "tinymist";
         };
       };
       settings = {
@@ -203,6 +213,7 @@
           line-number = "relative";
           bufferline = "multiple";
           cursor-shape.insert = "bar";
+          auto-format = true;
         };
       };
     };
@@ -296,6 +307,8 @@
         debug-pinentry
       '';
     };
+
+    syncthing.enable = true;
 
     hypridle = {
       enable = true;
@@ -546,8 +559,11 @@
 
   # TODO mimetypes and portal
   xdg.portal = {
+    enable = true;
+    configPackages = [pkgs.xdg-desktop-portal-hyprland];
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
     ];
   };
 }
