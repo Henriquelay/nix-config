@@ -61,6 +61,7 @@
     heroic # Games launcher
     gogdl # GOG downloading module for heroic
     obsidian
+    feh
 
     # Langs and lang servers. Dev stuff
     python312
@@ -561,6 +562,15 @@
     font = {
       name = "Sans";
       size = 11;
+    };
+  };
+
+  xdg.desktopEntries = {
+    virt-manager = {
+      name = "Virtual Machine Manager (GDK_BACKEND=x11)";
+      exec = "env GDK_BACKEND=x11 virt-manager";
+      terminal = false;
+      categories = ["Utility" "Emulator"];
     };
   };
 

@@ -85,6 +85,10 @@ in {
     ];
     #wireless.enable = true;  # Enables wireless support via wpa_supplicant.
     #networkmanager.enable = true;
+    hosts = {
+      "192.68.3.100" = ["netbook"];
+    };
+    stevenblack.enable = true;
   };
 
   # Set your time zone.
