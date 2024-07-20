@@ -18,29 +18,10 @@ in {
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = false; # powers up the default Bluetooth controller
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    # radv: an open-source Vulkan driver from freedesktop (MESA)
-    driSupport = true;
-    driSupport32Bit = true;
-
-    # Mesa from hyprland's unstable pkgs
-    #package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
-    #package = pkgs-unstable.mesa.drivers;
-
-    #extraPackages = with pkgs; [
-    #  # amdvlk: an open-source Vulkan driver from AMD, usually performs worse than RADV
-    #  amdvlk
-    #  rocm-opencl-icd # OpenCL
-    #  rocm-opencl-runtime # OpenCL
-    #];
-    #extraPackages32 = with pkgs; [
-    #  driversi686Linux.amdvlk
-    #];
+    enable32Bit = true;
   };
-
-  virtualisation.libvirtd.enable = true;
-  virtualisation.docker.enable = true;
 
   # Reducing disk usage
   nix.optimise.automatic = true;
@@ -72,6 +53,9 @@ in {
     initrd.luks.devices."luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
   };
 
+  virtualisation.libvirtd.enable = true;
+  virtualisation.docker.enable = true;
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -86,7 +70,7 @@ in {
     #wireless.enable = true;  # Enables wireless support via wpa_supplicant.
     #networkmanager.enable = true;
     hosts = {
-      "192.68.3.100" = ["netbook"];
+      "192.168.3.100" = ["netbook"];
     };
     stevenblack.enable = true;
   };
@@ -97,16 +81,18 @@ in {
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "pt_BR.UTF-8";
-    LC_IDENTIFICATION = "pt_BR.UTF-8";
-    LC_MEASUREMENT = "pt_BR.UTF-8";
-    LC_MONETARY = "pt_BR.UTF-8";
-    LC_NAME = "pt_BR.UTF-8";
-    LC_NUMERIC = "pt_BR.UTF-8";
-    LC_PAPER = "pt_BR.UTF-8";
-    LC_TELEPHONE = "pt_BR.UTF-8";
-    LC_TIME = "pt_BR.UTF-8";
+  i18n.extraLocaleSettings = let
+    locale = "pt_BR.UTF-8";
+  in {
+    LC_ADDRESS = locale;
+    LC_IDENTIFICATION = locale;
+    LC_MEASUREMENT = locale;
+    LC_MONETARY = locale;
+    LC_NAME = locale;
+    LC_NUMERIC = locale;
+    LC_PAPER = locale;
+    LC_TELEPHONE = locale;
+    LC_TIME = locale;
   };
 
   # Configure keymap in X11
@@ -128,6 +114,8 @@ in {
     shell = pkgs.fish;
     packages = with pkgs; [home-manager];
   };
+
+  security.pam.services.hyprlock = {};
 
   security.sudo.extraRules = [
     {
@@ -203,6 +191,12 @@ in {
     pulse.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
+  };
+
+  stylix = {
+    enable = true;
+    polarity = "dark";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
   };
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -10,6 +10,7 @@
     nur = {
       url = "github:nix-community/NUR";
     };
+    stylix.url = "github:danth/stylix";
   };
 
   outputs = {
@@ -17,6 +18,7 @@
     nixpkgs,
     home-manager,
     nur,
+    stylix,
     ...
   }: let
     system = "x86_64-linux";
@@ -41,6 +43,9 @@
             ];
           }
         )
+
+        stylix.homeManagerModules.stylix
+
         ./home.nix
       ];
     };

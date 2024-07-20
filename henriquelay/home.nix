@@ -45,6 +45,7 @@
     playerctl
     grimblast
     wineWowPackages.waylandFull
+    pcmanfm
 
     # General programs
     telegram-desktop
@@ -76,6 +77,8 @@
     rust-analyzer
     rustfmt
     clippy
+    nix-your-shell
+    marksman # markdown lsp
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -115,8 +118,22 @@
   };
 
   home.sessionPath = [
-    "$HOME/.cargo/bin"
+    "$HOME/.cargo/bin" # For some stuff interactively installed with `cargo install`
   ];
+  stylix = {
+    enable = true;
+    polarity = "dark";
+    image = ./blackpx.jpg; # required for enabling hyprland, I guess
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
+    cursor.package = pkgs.rose-pine-cursor;
+    cursor.name = "BreezeX-RosePine-Linux";
+    targets = {
+      vscode.enable = false;
+      fish.enable = false;
+      kitty.enable = false;
+      helix.enable = false;
+    };
+  };
 
   programs = {
     git = {
@@ -146,6 +163,24 @@
           exec Hyprland
         end
       '';
+      shellInit = ''
+        if command -q nix-your-shell
+          nix-your-shell fish | source
+        end
+      '';
+      functions = {
+        yy = {
+          # To cd into the directory yazi exits on
+          body = ''
+            set tmp (mktemp -t "yazi-cwd.XXXXXX")
+            yazi $argv --cwd-file="$tmp"
+            if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+            	cd -- "$cwd"
+            end
+            rm -f -- "$tmp"
+          '';
+        };
+      };
 
       shellAliases = {
         cat = "bat";
@@ -176,6 +211,9 @@
       enableSessionWide = true;
       settings = {
         preset = 3;
+        # TODO can't change with stylix enabled
+        # background_alpha = 0.5;
+        # alpha = 0.9;
       };
     };
 
@@ -237,241 +275,24 @@
           sort_reverse = true;
         };
       };
-      theme = {
-        # From https://github.com/Msouza91/rose-pine.yazi
-        manager = {
-          cwd = {
-            fg = "#9ccfd8";
-          };
-          hovered = {
-            fg = "#e0def4";
-            bg = "#26233a";
-          };
-          preview_hovered = {
-            underline = true;
-          };
-          find_keyword = {
-            fg = "#f6c177";
-            italic = true;
-          };
-          find_position = {
-            fg = "#eb6f92";
-            bg = "reset";
-            italic = true;
-          };
-          marker_selected = {
-            fg = "#9ccfd8";
-            bg = "#9ccfd8";
-          };
-          marker_copied = {
-            fg = "#f6c177";
-            bg = "#f6c177";
-          };
-          marker_cut = {
-            fg = "#B4637A";
-            bg = "#B4637A";
-          };
-          tab_active = {
-            fg = "#e0def4";
-            bg = "#191724";
-          };
-          tab_inactive = {
-            fg = "#e0def4";
-            bg = "#2A273F";
-          };
-          tab_width = 1;
-          border_symbol = "│";
-          border_style = {
-            fg = "#524f67";
-          };
-          syntect_theme = "~/.config/yazi/rose-pine.tmTheme";
-        };
-        status = {
-          separator_open = "";
-          separator_close = "";
-          separator_style = {
-            fg = "#2A273F";
-            bg = "#2A273F";
-          };
-          mode_normal = {
-            fg = "#191724";
-            bg = "#ebbcba";
-            bold = true;
-          };
-          mode_select = {
-            fg = "#e0def4";
-            bg = "#9ccfd8";
-            bold = true;
-          };
-          mode_unset = {
-            fg = "#e0def4";
-            bg = "#b4637a";
-            bold = true;
-          };
-          progress_label = {
-            fg = "#e0def4";
-            bold = true;
-          };
-          progress_normal = {
-            fg = "#191724";
-            bg = "#2A273F";
-          };
-          progress_error = {
-            fg = "#B4637A";
-            bg = "#2A273F";
-          };
-          permissions_t = {
-            fg = "#31748f";
-          };
-          permissions_r = {
-            fg = "#f6c177";
-          };
-          permissions_w = {
-            fg = "#B4637A";
-          };
-          permissions_x = {
-            fg = "#9ccfd8";
-          };
-          permissions_s = {
-            fg = "#524f67";
-          };
-        };
-        input = {
-          border = {
-            fg = "#524f67";
-          };
-          title = {
-          };
-          value = {
-          };
-          selected = {
-            reversed = true;
-          };
-        };
-        select = {
-          border = {
-            fg = "#524f67";
-          };
-          active = {
-            fg = "#eb6f92";
-          };
-          inactive = {
-          };
-        };
-        tasks = {
-          border = {
-            fg = "#524f67";
-          };
-          title = {
-          };
-          hovered = {
-            underline = true;
-          };
-        };
-        which = {
-          mask = {
-            bg = "#313244";
-          };
-          cand = {
-            fg = "#9ccfd8";
-          };
-          rest = {
-            fg = "#9399b2";
-          };
-          desc = {
-            fg = "#eb6f92";
-          };
-          separator = "  ";
-          separator_style = {
-            fg = "#585b70";
-          };
-        };
-        help = {
-          on = {
-            fg = "#eb6f92";
-          };
-          exec = {
-            fg = "#9ccfd8";
-          };
-          desc = {
-            fg = "#9399b2";
-          };
-          hovered = {
-            bg = "#585b70";
-            bold = true;
-          };
-          footer = {
-            fg = "#2A273F";
-            bg = "#e0def4";
-          };
-        };
-        filetype = {
-          rules = [
-            {
-              mime = "image/*";
-              fg = "#9ccfd8";
-            }
-            {
-              mime = "video/*";
-              fg = "#f6c177";
-            }
-            {
-              mime = "audio/*";
-              fg = "#f6c177";
-            }
-            {
-              mime = "application/zip";
-              fg = "#eb6f92";
-            }
-            {
-              mime = "application/gzip";
-              fg = "#eb6f92";
-            }
-            {
-              mime = "application/x-tar";
-              fg = "#eb6f92";
-            }
-            {
-              mime = "application/x-bzip";
-              fg = "#eb6f92";
-            }
-            {
-              mime = "application/x-bzip2";
-              fg = "#eb6f92";
-            }
-            {
-              mime = "application/x-7z-compressed";
-              fg = "#eb6f92";
-            }
-            {
-              mime = "application/x-rar";
-              fg = "#eb6f92";
-            }
-            {
-              name = "*";
-              fg = "#e0def4";
-            }
-            {
-              name = "*/";
-              fg = "#524f67";
-            }
-          ];
-        };
-      };
     };
 
     bat.enable = true;
     ripgrep.enable = true;
     jq.enable = true;
     fd.enable = true;
-    zathura.enable = true;
-    poetry.enable = true;
+    zathura = {
+      enable = true;
+      extraConfig = ''set selection-clipboard clipboard'';
+    };
+    #poetry.enable = true; # use https://github.com/nix-community/poetry2nix instead
     bottom.enable = true;
     librewolf = {
       enable = true;
       settings = {
         "webgl.disabled" = false;
         "identity.fxaccounts.enabled" = true;
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
       };
     };
 
@@ -513,6 +334,32 @@
 
     hyprlock = {
       enable = true;
+      settings = {
+        general = {
+          grace = 300;
+          hide_cursor = true;
+        };
+        background = {
+          path = "screenshot";
+          blur_passes = 3;
+          blur_size = 8;
+        };
+        input-field = [
+          {
+            size = "200, 50";
+            position = "0, -80";
+            monitor = "";
+            dots_center = true;
+            fade_on_empty = false;
+            font_color = "rgb(202, 211, 245)";
+            inner_color = "rgb(91, 96, 120)";
+            outer_color = "rgb(24, 25, 38)";
+            outline_thickness = 5;
+            placeholder_text = "Password...";
+            shadow_passes = 2;
+          }
+        ];
+      };
     };
 
     obs-studio = {
@@ -539,6 +386,8 @@
 
     syncthing.enable = true;
 
+    nextcloud-client.enable = true;
+
     hypridle = {
       enable = true;
       settings = {
@@ -559,11 +408,7 @@
             on-resume = "hyprctl dispatch dpms on"; # screen on when activity is detected after timeout has fired.
           }
           {
-            timeout = 1200; # 20min
-            on-timeout = "loginctl lock-session";
-          }
-          {
-            timeout = 1800; # 30min
+            timeout = 3600; # 1h
             on-timeout = "systemctl suspend"; # suspend pc
           }
         ];
@@ -588,27 +433,6 @@
       # unscale XWayland
       xwayland.force_zero_scaling = true;
 
-      ## Style
-      # name: Rosé Pine
-      # author: jishnurajendran
-      # upstream: https://github.com/jishnurajendran/hyprland-rosepine/blob/main/rose-pine.conf
-      # All natural pine, faux fur and a bit of soho vibes for the classy minimalist
-      "$base" = "rgb(191724)";
-      "$surface" = "rgb(1f1d2e)";
-      "$overlay" = "rgb(26233a)";
-      "$muted" = "rgb(6e6a86)";
-      "$subtle" = "rgb(908caa)";
-      "$text" = "rgb(e0def4)";
-      "$love" = "rgb(eb6f92)";
-      "$gold" = "rgb(f6c177)";
-      "$rose" = "rgb(ebbcba)";
-      "$pine" = "rgb(31748f)";
-      "$foam" = "rgb(9ccfd8)";
-      "$iris" = "rgb(c4a7e7)";
-      "$highlightLow" = "rgb(21202e)";
-      "$highlightMed" = "rgb(403d52)";
-      "$highlightHigh" = "rgb(524f67)";
-      ##
       misc = {
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
@@ -621,14 +445,12 @@
         gaps_out = 0;
         resize_on_border = true;
         extend_border_grab_area = 10;
-        "col.active_border" = "$rose";
-        "col.inactive_border" = "$pine";
       };
       dwindle = {
         force_split = 2;
         no_gaps_when_only = 1;
       };
-      "env" = ["HYPRCURSOR_SIZE,24" "HYPRCURSOR_THEME,hypr-rose-pine-dawn-cursor"];
+      # "env" = ["HYPRCURSOR_SIZE,24" "HYPRCURSOR_THEME,hypr-rose-pine-dawn-cursor"];
 
       "windowrulev2" = [
         # Terminal Launcher rules
@@ -638,7 +460,9 @@
         "bordersize 10, class:^(launcher)$"
         "dimaround, class:^(launcher)$"
         "rounding 5, class:^(launcher)$"
-        "bordercolor $gold, class:^(launcher)$"
+        "bordercolor ${config.lib.stylix.colors.base01}, class:^(launcher)$"
+        "opacity 0.7, class:^(launcher)$"
+        "xray 1, class:^(launcher)$"
         # Fixes
         "stayfocused, class:^(pinentry-) # fix pinentry losing focus"
       ];
@@ -678,6 +502,10 @@
           "$mod, Down, movefocus, d"
           "$mod, Left, movefocus, l"
           "$mod, Right, movefocus, r"
+          "$mod, K, movefocus, u"
+          "$mod, J, movefocus, d"
+          "$mod, H, movefocus, l"
+          "$mod, L, movefocus, r"
           "$mod&SHIFT, Up, movewindow, u"
           "$mod&SHIFT, Down, movewindow, d"
           "$mod&SHIFT, Left, movewindow, l"
@@ -687,6 +515,7 @@
           "$mod&CTRL&SHIFT, I, exec, $term hx ~/nix-config/nixos/configuration.nix"
           "$mod, mouse_down, workspace, e-1"
           "$mod, mouse_up, workspace, e+1"
+          "ALT, TAB, workspace, previous_per_monitor"
           "$mod, F, fullscreen, 0"
           ", Print, exec, grimblast copy area"
         ]
@@ -728,34 +557,10 @@
         horizontal_padding = 10;
         frame_width = 1;
         gap_size = 3;
-        font = "Hack 14";
+        # font = "Hack 14";
 
         enable_recursive_icon_lookup = true;
         corner_radius = 2;
-
-        background = "#26233a";
-        foreground = "#e0def4";
-      };
-      urgency_low = {
-        background = "#26273d";
-        highlight = "#31748f";
-        frame_color = "#31748f";
-        default_icon = "dialog-information";
-        format = "<b><span foreground='#31748f'>%s</span></b>\n%b";
-      };
-      urgency_normal = {
-        background = "#362e3c";
-        highlight = "#f6c177";
-        frame_color = "#f6c177";
-        default_icon = "dialog-warning";
-        format = "<b><span foreground='#f6c177'>%s</span></b>\n%b";
-      };
-      urgency_critical = {
-        background = "#35263d";
-        highlight = "#eb6f92";
-        frame_color = "#eb6f92";
-        default_icon = "dialog-error";
-        format = "<b><span foreground='#eb6f92'>%s</span></b>\n%b";
       };
     };
   };
@@ -770,20 +575,15 @@
 
   gtk = {
     enable = true;
-    theme = {
-      package = pkgs.rose-pine-gtk-theme;
-      name = "rose-pine-gtk";
-    };
-
     iconTheme = {
       package = pkgs.rose-pine-icon-theme;
       name = "rose-pine-icons";
     };
+  };
 
-    font = {
-      name = "Sans";
-      size = 11;
-    };
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {"x-scheme-handler/tg" = "org.telegram.desktop.desktop";};
   };
 
   xdg.desktopEntries = {
