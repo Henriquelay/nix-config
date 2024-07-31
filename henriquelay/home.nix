@@ -1,5 +1,6 @@
 {
   config,
+  # inputs,
   pkgs,
   ...
 }: {
@@ -15,7 +16,7 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "23.05"; # Please read the comment before changing.
+  home.stateVersion = "24.05"; # Please read the comment before changing.
   nixpkgs.config.allowUnfree = true;
 
   # Let Home Manager install and manage itself.
@@ -54,7 +55,6 @@
     poppler
     (nerdfonts.override {fonts = ["Hack"];})
     grc
-    #nur.repos.nltch.spotify-adblock # on flake
     webcord
     blueman
     qbittorrent
@@ -63,6 +63,7 @@
     gogdl # GOG downloading module for heroic
     obsidian
     feh
+    nur.repos.nltch.spotify-adblock
 
     # Langs and lang servers. Dev stuff
     python312
@@ -109,7 +110,7 @@
   #
   home.sessionVariables = {
     # If cursors are invisible
-    #WLR_NO_HARDWARE_CURSORS = "1";
+    # WLR_NO_HARDWARE_CURSORS = "1";
     # Hint electron apps to use Wayland
     NIXOS_OZONE_WL = "1";
     # Disable window decorator on QT applications
@@ -416,9 +417,27 @@
     };
   };
 
+  # wayland.windowManager.sway = {
+  #   enable = true;
+  #   config = rec {
+  #     modifier = "Mod4";
+  #     terminal = "kitty";
+  #   };
+  # };
+
   ## WM and visuals
+
+  xsession.windowManager.i3 = {
+    enable = true;
+    config = {
+      modifier = "Mod4";
+      terminal = "kitty";
+    };
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
+    # package = inputs.hyprland.packages.${pkgs.system}.hyprland.override {legacyRenderer = true;};
     settings = {
       ## Basics
       input = {
@@ -529,7 +548,7 @@
                 in
                   builtins.toString (x + 1 - (c * 10));
               in [
-                "$mod, ${ws}, workspace, ${toString (x + 1)}"
+                # "$mod, ${ws}, workspace, ${toString (x + 1)}"
                 "$mod&SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
               ]
             )

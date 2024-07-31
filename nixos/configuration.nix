@@ -6,35 +6,61 @@
   config,
   pkgs,
   ...
-}: let
-  pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-in {
+}: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    #<home-manager/nixos> # Not using home-manager as module
+    <home-manager/nixos>
   ];
+
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
+  };
 
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = false; # powers up the default Bluetooth controller
 
-  hardware.graphics = {
+  hardware.opengl = {
     enable = true;
-    enable32Bit = true;
+    driSupport = true;
+    # package = pkgs.mesa.drivers;
+
+    driSupport32Bit = true;
+    # package32 = pkgs.pkgsi686Linux.mesa.drivers;
+
+    # Mesa RADV will be used as default. Proprietary drivers will be provided too and program will choose which to use
+    # extraPackages = with pkgs; [amdvlk libvdpau-va-gl ];
+    # extraPackages32 = with pkgs.driversi686Linux; [amdvlk libvdpau-va-gl];
+
+    # package = (pkgs.mesa.override {galliumDrivers = ["i915" "swrast" "radeonsi"];}).drivers;
   };
+
+  # unstable (>24.05)
+  # hardware.graphics = {
+  #   enable = true;
+  #   package = pkgs.hyprland-pkgs.mesa.drivers;
+  #   enable32Bit = true;
+  #   package32 = pkgs.hyprland-pkgs.pkgsi686Linux.mesa.drivers;
+
+  #   # extraPackages = with pkgs; [mesa.drivers amdvlk libvdpau-va-gl];
+  #   # extraPackages32 = with pkgs.driversi686Linux; [mesa.drivers amdvlk libvdpau-va-gl];
+  # };
 
   # Reducing disk usage
   nix.optimise.automatic = true;
   nix.gc = {
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 1w";
+    options = "--delete-older-than 2w";
   };
+  nix.settings.auto-optimise-store = true;
 
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
-    substituters = ["https://hyprland.cachix.org"];
-    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    # substituters = ["https://hyprland.cachix.org"];
+    # trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     trusted-users = [
       "root"
       "henriquelay"
@@ -49,8 +75,7 @@ in {
       # Limit the number of generations to keep
       systemd-boot.configurationLimit = 10;
     };
-
-    initrd.luks.devices."luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
+    # kernelPackages = pkgs.hyprland-pkgs.linuxPackages_latest;
   };
 
   virtualisation.libvirtd.enable = true;
@@ -96,9 +121,17 @@ in {
   };
 
   # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "br";
-    variant = "";
+  services.xserver = {
+    enable = true;
+    windowManager.i3.enable = true;
+    # videoDrivers = ["amdgpu"];
+    xkb = {
+      layout = "br";
+      variant = "";
+    };
+  };
+  services.displayManager = {
+    defaultSession = "none+i3";
   };
   # needed for store VS Code auth token
   services.gnome.gnome-keyring.enable = true;
@@ -112,16 +145,21 @@ in {
     description = "henriquelay";
     extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode" "docker"];
     shell = pkgs.fish;
-    packages = with pkgs; [home-manager];
+  };
+  home-manager.users.henriquelay = import ../henriquelay/home.nix {
+    inherit pkgs;
+    inherit config;
   };
 
   security.pam.services.hyprlock = {};
+  security.polkit.enable = true; # For Sway
 
   security.sudo.extraRules = [
     {
       users = ["henriquelay"];
       commands = [
         {
+          # Allow me to sudo without passwd
           command = "ALL";
           options = ["NOPASSWD"];
         }
@@ -146,7 +184,7 @@ in {
   environment.variables = {
     NIX_BUILD_CORES = 12;
     EDITOR = "hx";
-    # Force use of RADV Vulkan implementation
+    # Force use of RADV (Mesa) Vulkan implementation
     AMD_VULKAN_ICD = "RADV";
   };
 
@@ -154,7 +192,7 @@ in {
     fish.enable = true;
     hyprland = {
       enable = true;
-      #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      # package = pkgs.hyprland.hyprland;
     };
     virt-manager.enable = true;
 
@@ -197,6 +235,7 @@ in {
     enable = true;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
+    image = /home/henriquelay/nix-config/henriquelay/blackpx.jpg; # only for i3
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -224,5 +263,5 @@ in {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "24.05"; # Did you read the comment?
 }
