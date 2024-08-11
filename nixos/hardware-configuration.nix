@@ -18,12 +18,12 @@
   boot.kernelModules = ["kvm-amd"];
   boot.extraModulePackages = [];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/df0c3aaa-ad10-463a-866f-41f91263ebd8";
-    fsType = "ext4";
-  };
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/5b6c50ac-42c3-4286-924f-9cf4c327be4a";
+      fsType = "ext4";
+    };
 
-  boot.initrd.luks.devices."luks-ac3184b1-8da6-4110-a6e7-e015a91dee31".device = "/dev/disk/by-uuid/ac3184b1-8da6-4110-a6e7-e015a91dee31";
+  boot.initrd.luks.devices."luks-4b17c8d8-8cc5-4c4b-aa51-263933cdb956".device = "/dev/disk/by-uuid/4b17c8d8-8cc5-4c4b-aa51-263933cdb956";
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/788C-6DFD";

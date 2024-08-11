@@ -13,74 +13,84 @@
     <home-manager/nixos>
   ];
 
+  # Manual overlay for nur
   nixpkgs.config.packageOverrides = pkgs: {
     nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
       inherit pkgs;
     };
   };
 
-  hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot = false; # powers up the default Bluetooth controller
+  hardware.bluetooth = {
+    enable = true;
+    # Bluetooth controller not turned on by default
+    powerOnBoot = false;
+  };
 
+  ## Graphics
   hardware.opengl = {
     enable = true;
     driSupport = true;
-    # package = pkgs.mesa.drivers;
-
     driSupport32Bit = true;
-    # package32 = pkgs.pkgsi686Linux.mesa.drivers;
 
-    # Mesa RADV will be used as default. Proprietary drivers will be provided too and program will choose which to use
-    # extraPackages = with pkgs; [amdvlk libvdpau-va-gl ];
-    # extraPackages32 = with pkgs.driversi686Linux; [amdvlk libvdpau-va-gl];
-
-    # package = (pkgs.mesa.override {galliumDrivers = ["i915" "swrast" "radeonsi"];}).drivers;
-  };
-
-  # unstable (>24.05)
-  # hardware.graphics = {
-  #   enable = true;
-  #   package = pkgs.hyprland-pkgs.mesa.drivers;
-  #   enable32Bit = true;
-  #   package32 = pkgs.hyprland-pkgs.pkgsi686Linux.mesa.drivers;
-
-  #   # extraPackages = with pkgs; [mesa.drivers amdvlk libvdpau-va-gl];
-  #   # extraPackages32 = with pkgs.driversi686Linux; [mesa.drivers amdvlk libvdpau-va-gl];
-  # };
-
-  # Reducing disk usage
-  nix.optimise.automatic = true;
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 2w";
-  };
-  nix.settings.auto-optimise-store = true;
-
-  nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
-    # substituters = ["https://hyprland.cachix.org"];
-    # trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-    trusted-users = [
-      "root"
-      "henriquelay"
+    extraPackages = with pkgs; [
+      rocmPackages.clr.icd # OpenCL
     ];
   };
+  # Workaround for HIP libraries
+  systemd.tmpfiles.rules = let
+    rocmEnv = pkgs.symlinkJoin {
+      name = "rocm-combined";
+      paths = with pkgs.rocmPackages; [
+        rocblas
+        hipblas
+        clr
+      ];
+    };
+  in [
+    "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
+  ];
+
+  ## System/nix options
+  # Reducing disk usage
+  nix = {
+    optimise.automatic = true;
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 2w";
+    };
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = ["nix-command" "flakes"];
+      trusted-users = [
+        "root"
+        "henriquelay"
+      ];
+    };
+  };
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
   # Bootloader.
   boot = {
     loader = {
-      systemd-boot.enable = true;
+      systemd-boot = {
+        enable = true;
+        memtest86.enable = true;
+      };
       efi.canTouchEfiVariables = true;
       # Limit the number of generations to keep
-      systemd-boot.configurationLimit = 10;
+      # systemd-boot.configurationLimit = 10;
     };
-    # kernelPackages = pkgs.hyprland-pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
-  virtualisation.libvirtd.enable = true;
-  virtualisation.docker.enable = true;
+  virtualisation = {
+    libvirtd.enable = true;
+    docker.enable = true;
+  };
 
+  ## Networking
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -100,45 +110,38 @@
     stevenblack.enable = true;
   };
 
+  ## TZ and Locale
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = let
-    locale = "pt_BR.UTF-8";
-  in {
-    LC_ADDRESS = locale;
-    LC_IDENTIFICATION = locale;
-    LC_MEASUREMENT = locale;
-    LC_MONETARY = locale;
-    LC_NAME = locale;
-    LC_NUMERIC = locale;
-    LC_PAPER = locale;
-    LC_TELEPHONE = locale;
-    LC_TIME = locale;
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings = let
+      locale = "pt_BR.UTF-8";
+    in {
+      LC_ADDRESS = locale;
+      LC_IDENTIFICATION = locale;
+      LC_MEASUREMENT = locale;
+      LC_MONETARY = locale;
+      LC_NAME = locale;
+      LC_NUMERIC = locale;
+      LC_PAPER = locale;
+      LC_TELEPHONE = locale;
+      LC_TIME = locale;
+    };
   };
 
   # Configure keymap in X11
-  services.xserver = {
-    enable = true;
-    windowManager.i3.enable = true;
-    # videoDrivers = ["amdgpu"];
-    xkb = {
-      layout = "br";
-      variant = "";
-    };
+  services.xserver.xkb = {
+    layout = "br";
+    variant = "";
   };
-  services.displayManager = {
-    defaultSession = "none+i3";
-  };
-  # needed for store VS Code auth token
-  services.gnome.gnome-keyring.enable = true;
 
   # Configure console keymap
   console.keyMap = "br-abnt2";
 
+  ## Users
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.henriquelay = {
     isNormalUser = true;
@@ -146,13 +149,10 @@
     extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode" "docker"];
     shell = pkgs.fish;
   };
-  home-manager.users.henriquelay = import ../henriquelay/home.nix {
+  home-manager.users.henriquelay = import henriquelay/home.nix {
     inherit pkgs;
     inherit config;
   };
-
-  security.pam.services.hyprlock = {};
-  security.polkit.enable = true; # For Sway
 
   security.sudo.extraRules = [
     {
@@ -167,33 +167,26 @@
     }
   ];
 
-  # Enable automatic login for the user.
+  ## Requirement for some home-manager programs, mostly security related
+  security.pam.services.hyprlock = {};
+  security.polkit.enable = true; # For Sway
+  # needed for store VS Code auth token
+  services.gnome.gnome-keyring.enable = true;
+
+  # Enable automatic login for a user.
   # services.getty.autologinUser = "henriquelay";
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
+  ## Some system-level programs
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+
   environment.systemPackages = with pkgs; [
     helix
     wget
-    fish
   ];
-
-  environment.variables = {
-    NIX_BUILD_CORES = 12;
-    EDITOR = "hx";
-    # Force use of RADV (Mesa) Vulkan implementation
-    AMD_VULKAN_ICD = "RADV";
-  };
-
   programs = {
     fish.enable = true;
-    hyprland = {
-      enable = true;
-      # package = pkgs.hyprland.hyprland;
-    };
+    hyprland.enable = true;
     virt-manager.enable = true;
 
     gamemode.enable = true;
@@ -204,6 +197,13 @@
     };
 
     appimage.binfmt = true;
+  };
+
+  environment.variables = {
+    NIX_BUILD_CORES = 12;
+    EDITOR = "hx";
+    # Force usage of RADV (Mesa) Vulkan implementation
+    AMD_VULKAN_ICD = "RADV";
   };
 
   fonts.packages = with pkgs; [
@@ -219,6 +219,7 @@
     (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 
+  ## Sound
   # Remove sound.enable or set it to false if you had it set previously, as sound.enable is only meant for ALSA-based configurations
   # rtkit is optional but recommended
   security.rtkit.enable = true;
@@ -235,7 +236,7 @@
     enable = true;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
-    image = /home/henriquelay/nix-config/henriquelay/blackpx.jpg; # only for i3
+    image = ./henriquelay/blackpx.jpg; # only for i3
   };
 
   # Some programs need SUID wrappers, can be configured further or are

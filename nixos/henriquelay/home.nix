@@ -1,6 +1,5 @@
 {
   config,
-  # inputs,
   pkgs,
   ...
 }: {
@@ -286,7 +285,6 @@
       enable = true;
       extraConfig = ''set selection-clipboard clipboard'';
     };
-    #poetry.enable = true; # use https://github.com/nix-community/poetry2nix instead
     bottom.enable = true;
     librewolf = {
       enable = true;
@@ -417,27 +415,10 @@
     };
   };
 
-  # wayland.windowManager.sway = {
-  #   enable = true;
-  #   config = rec {
-  #     modifier = "Mod4";
-  #     terminal = "kitty";
-  #   };
-  # };
-
   ## WM and visuals
-
-  xsession.windowManager.i3 = {
-    enable = true;
-    config = {
-      modifier = "Mod4";
-      terminal = "kitty";
-    };
-  };
 
   wayland.windowManager.hyprland = {
     enable = true;
-    # package = inputs.hyprland.packages.${pkgs.system}.hyprland.override {legacyRenderer = true;};
     settings = {
       ## Basics
       input = {
@@ -447,7 +428,7 @@
       # Assumes a 4k monitor
       # change monitor to high resolution, the last argument is the scale factor
       # currently, fractional scaling on Wayland is very good! ...
-      monitor = ",highres,auto,1.5";
+      monitor = "DP-1,preferred,auto,1.5,vrr,1";
       # ... but not on X. This is specially apparent with games.
       # unscale XWayland
       xwayland.force_zero_scaling = true;
@@ -469,7 +450,6 @@
         force_split = 2;
         no_gaps_when_only = 1;
       };
-      # "env" = ["HYPRCURSOR_SIZE,24" "HYPRCURSOR_THEME,hypr-rose-pine-dawn-cursor"];
 
       "windowrulev2" = [
         # Terminal Launcher rules
@@ -483,7 +463,8 @@
         "opacity 0.7, class:^(launcher)$"
         "xray 1, class:^(launcher)$"
         # Fixes
-        "stayfocused, class:^(pinentry-) # fix pinentry losing focus"
+        "stayfocused, class:^(pinentry-)" # fix pinentry losing focus
+        "workspace 10 silent, class:^(Nextcloud)$" # Send Nextcloud to workspace 0
       ];
 
       # Autostart
@@ -516,7 +497,7 @@
         [
           "$mod, D, exec, $term --app-id=launcher sway-launcher-desktop"
           "$mod, Return, exec, $term"
-          "$mod&SHIFT, Q, killactive" # Closes, don't kill despite the name
+          "$mod&SHIFT, Q, killactive" # Closes, don't kill pid despite the name
           "$mod, Up, movefocus, u"
           "$mod, Down, movefocus, d"
           "$mod, Left, movefocus, l"
@@ -530,7 +511,7 @@
           "$mod&SHIFT, Left, movewindow, l"
           "$mod&SHIFT, Right, movewindow, r"
           "$mod&SHIFT, SPACE, togglefloating"
-          "$mod&SHIFT, I, exec, $term home-manager edit"
+          "$mod&SHIFT, I, exec, $term hx ~/nix-config/nixos/henriquelay/home.nix"
           "$mod&CTRL&SHIFT, I, exec, $term hx ~/nix-config/nixos/configuration.nix"
           "$mod, mouse_down, workspace, e-1"
           "$mod, mouse_up, workspace, e+1"
@@ -548,7 +529,7 @@
                 in
                   builtins.toString (x + 1 - (c * 10));
               in [
-                # "$mod, ${ws}, workspace, ${toString (x + 1)}"
+                "$mod, ${ws}, workspace, ${toString (x + 1)}"
                 "$mod&SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
               ]
             )
@@ -584,14 +565,6 @@
     };
   };
 
-  #home.pointerCursor = {
-  #  gtk.enable = true;
-  #  # x11.enable = true;
-  #  package = pkgs.rose-pine-cursor;
-  #  name = "rose-pine-dawn-cursor";
-  #  size = 18;
-  #};
-
   gtk = {
     enable = true;
     iconTheme = {
@@ -615,7 +588,7 @@
     };
   };
 
-  # TODO mimetypes and portal
+  # TODO mimetypes and portal, open files on yazi
   xdg.portal = {
     enable = true;
     configPackages = [pkgs.xdg-desktop-portal-hyprland];
