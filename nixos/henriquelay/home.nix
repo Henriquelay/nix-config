@@ -350,6 +350,7 @@
             monitor = "";
             dots_center = true;
             fade_on_empty = false;
+            # TODO use stylix colors
             font_color = "rgb(202, 211, 245)";
             inner_color = "rgb(91, 96, 120)";
             outer_color = "rgb(24, 25, 38)";
@@ -368,6 +369,141 @@
         obs-backgroundremoval
         obs-pipewire-audio-capture
       ];
+    };
+    waybar = {
+      enable = true;
+      systemd.enable = true;
+      systemd.target = "hyprland-session.target";
+      settings = {
+        waybar = {
+          layer = "top";
+          position = "top";
+          modules-left = [
+            "hyprland/workspaces"
+            "custom/right-arrow-dark"
+          ];
+
+          modules-center = [
+            # "custom/left-arrow-dark"
+            # "clock#1"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "hyprland/window"
+            "custom/right-arrow-dark"
+            "custom/right-arrow-light"
+            # "clock#3"
+            "custom/right-arrow-dark"
+          ];
+          modules-right = [
+            "custom/left-arrow-dark"
+            "mpd"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "idle_inhibitor"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "pulseaudio"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            # "network"
+            # "custom/left-arrow-light"
+            # "custom/left-arrow-dark"
+            "disk#root"
+            "disk#home"
+            "disk#vault"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "temperature"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "cpu"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "memory"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "clock"
+            "custom/left-arrow-light"
+            "custom/left-arrow-dark"
+            "tray"
+          ];
+
+          "custom/left-arrow-dark" = {
+            "format" = "";
+            "tooltip" = false;
+          };
+          "custom/left-arrow-light" = {
+            "format" = "";
+            "tooltip" = false;
+          };
+          "custom/right-arrow-dark" = {
+            "format" = "";
+            "tooltip" = false;
+          };
+          "custom/right-arrow-light" = {
+            "format" = "";
+            "tooltip" = false;
+          };
+
+          clock = {
+            interval = 5;
+            format = "{:%d/%m %A %T}";
+          };
+
+          idle_inhibitor = {
+            format = "{icon}";
+            format-icons = {
+              activated = " ";
+              deactivated = " ";
+            };
+            tooltip-format-activated = "Activated. The computer will not idle";
+            tooltip-format-deactivated = "Deactivated. The computer may idle";
+          };
+
+          "disk#root" = {
+            interval = 30;
+            format = "/ {percentage_used:2}%";
+            path = "/";
+          };
+          "disk#home" = {
+            interval = 30;
+            format = "/home {percentage_used:2}%";
+            path = "/home";
+          };
+          "disk#vault" = {
+            interval = 30;
+            format = "/vault {percentage_used:2}%";
+            path = "/vault";
+          };
+
+          cpu = {
+            interval = 2;
+            format = "  {usage}% {load}";
+          };
+
+          pulseaudio = {
+            format = "{icon}  {volume}%";
+            format-bluetooth = "{volume}% {icon}";
+            format-icons = {
+              "alsa_output.pci-0000_00_1f.3.analog-stereo" = "";
+              "alsa_output.pci-0000_00_1f.3.analog-stereo-muted" = "";
+              car = "";
+              default = ["" ""];
+              hands-free = "";
+              headphone = "";
+              headset = "";
+              phone = "";
+              phone-muted = "";
+              portable = "";
+            };
+            format-muted = "";
+            ignored-sinks = ["Easy Effects Sink"];
+            on-click = "pavucontrol";
+            scroll-step = 1;
+          };
+          # "hyprland/workspaces" = { };
+        };
+      };
     };
   };
 
