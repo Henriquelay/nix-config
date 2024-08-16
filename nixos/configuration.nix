@@ -219,6 +219,13 @@
     (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
   ];
 
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+
   ## Sound
   # Remove sound.enable or set it to false if you had it set previously, as sound.enable is only meant for ALSA-based configurations
   # rtkit is optional but recommended
