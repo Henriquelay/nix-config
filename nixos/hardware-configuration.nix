@@ -12,40 +12,42 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["ahci" "xhci_pci" "usb_storage" "usbhid" "sd_mod"];
-  boot.initrd.kernelModules = ["amdgpu"];
-  # boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-amd"];
-  boot.extraModulePackages = [];
+  boot = {
+    initrd = {
+      availableKernelModules = ["ahci" "xhci_pci" "usb_storage" "usbhid" "sd_mod"];
+      kernelModules = ["amdgpu"];
+      luks.devices = {
+        "luks-192aa104-aa43-4da2-9423-c08704d987aa".device = "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";
+        "luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
+        "luks-4b17c8d8-8cc5-4c4b-aa51-263933cdb956".device = "/dev/disk/by-uuid/4b17c8d8-8cc5-4c4b-aa51-263933cdb956";
+        "luks-1df67eee-4d68-47c3-bd32-a160c68752f6".device = "/dev/disk/by-uuid/1df67eee-4d68-47c3-bd32-a160c68752f6";
+      };
+    };
+    # kernelModules = [];
+    kernelModules = ["kvm-amd"];
+    extraModulePackages = [];
+  };
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/5b6c50ac-42c3-4286-924f-9cf4c327be4a";
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/5b6c50ac-42c3-4286-924f-9cf4c327be4a";
       fsType = "ext4";
     };
-
-  boot.initrd.luks.devices."luks-4b17c8d8-8cc5-4c4b-aa51-263933cdb956".device = "/dev/disk/by-uuid/4b17c8d8-8cc5-4c4b-aa51-263933cdb956";
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/788C-6DFD";
-    fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    "/boot" = {
+      device = "/dev/disk/by-uuid/788C-6DFD";
+      fsType = "vfat";
+      options = ["fmask=0022" "dmask=0022"];
+    };
+    "/home" = {
+      device = "/dev/disk/by-uuid/271f68dd-e5db-4935-a037-c6ac9be03da8";
+      fsType = "ext4";
+    };
+    "/vault" = {
+      device = "/dev/disk/by-uuid/85ef5bf5-e468-4727-912d-440e09c7b2fa";
+      fsType = "ext4";
+      options = ["defaults" "nofail" "users" "rw" "exec"];
+    };
   };
-
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/271f68dd-e5db-4935-a037-c6ac9be03da8";
-    fsType = "ext4";
-  };
-
-  boot.initrd.luks.devices."luks-1df67eee-4d68-47c3-bd32-a160c68752f6".device = "/dev/disk/by-uuid/1df67eee-4d68-47c3-bd32-a160c68752f6";
-
-  fileSystems."/vault" = {
-    device = "/dev/disk/by-uuid/85ef5bf5-e468-4727-912d-440e09c7b2fa";
-    fsType = "ext4";
-    options = ["defaults" "nofail" "users" "rw" "exec"];
-  };
-
-  boot.initrd.luks.devices."luks-192aa104-aa43-4da2-9423-c08704d987aa".device = "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";
-  boot.initrd.luks.devices."luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
 
   swapDevices = [
     {device = "/dev/disk/by-uuid/d6b52230-16de-41ff-b1ba-d314d55b3474";}

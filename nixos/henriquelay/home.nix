@@ -561,10 +561,14 @@
         kb_layout = "br";
         numlock_by_default = "true";
       };
-      # Assumes a 4k monitor
-      # change monitor to high resolution, the last argument is the scale factor
-      # currently, fractional scaling on Wayland is very good! ...
-      monitor = "DP-1,preferred,auto,1.5,vrr,1";
+      monitor = [
+        # For the main monitor
+        # Assumes a 4k monitor
+        # fourth arg is the scale factor
+        # currently, fractional scaling on Wayland is very good! ...
+        "DP-1,preferred,auto,1.5,vrr,1"
+        ", preferred, auto, 1" # Fallback monitor rule
+      ];
       # ... but not on X. This is specially apparent with games.
       # unscale XWayland
       xwayland.force_zero_scaling = true;
