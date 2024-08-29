@@ -62,7 +62,7 @@
     gogdl # GOG downloading module for heroic
     obsidian
     feh
-    nur.repos.nltch.spotify-adblock
+    config.nur.repos.nltch.spotify-adblock
 
     # Langs and lang servers. Dev stuff
     python312
@@ -158,24 +158,23 @@
     fish = {
       enable = true;
       loginShellInit = ''
-        set fish_greeting # Disable greeting
         if [ (tty) = "/dev/tty1" ]
           exec Hyprland
         end
       '';
       shellInit = ''
+        set -g fish_greeting # Disable greeting
         if command -q nix-your-shell
           nix-your-shell fish | source
         end
       '';
       functions = {
         yy = {
-          # To cd into the directory yazi exits on
           body = ''
-            set tmp (mktemp -t "yazi-cwd.XXXXXX")
+            set tmp (mktemp -t "yazi-cwd.XXXXX")
             yazi $argv --cwd-file="$tmp"
             if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-            	cd -- "$cwd"
+              builtin cd -- "$cwd"
             end
             rm -f -- "$tmp"
           '';
@@ -329,6 +328,10 @@
       enable = true;
       enableFishIntegration = true;
       icons = true;
+      extraOptions = [
+        "--group-directories-first"
+        "--header"
+      ];
     };
 
     hyprlock = {
@@ -611,7 +614,7 @@
       exec-once = [
         "[workspace 1 silent] telegram-desktop -- %u"
         "[workspace 1 silent] spotify %U"
-        "[workspace 6 silent] qbittorrent"
+        "[workspace 10 silent] qbittorrent"
       ];
 
       ## Binds

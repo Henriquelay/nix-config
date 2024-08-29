@@ -10,20 +10,11 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    <home-manager/nixos>
   ];
-
-  # Manual overlay for nur
-  nixpkgs.config.packageOverrides = pkgs: {
-    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
-      inherit pkgs;
-    };
-  };
 
   hardware.bluetooth = {
     enable = true;
-    # Bluetooth controller not turned on by default
-    powerOnBoot = false;
+    powerOnBoot = true; # Turn on with computer
   };
 
   ## Graphics
@@ -80,7 +71,7 @@
       };
       efi.canTouchEfiVariables = true;
       # Limit the number of generations to keep
-      # systemd-boot.configurationLimit = 10;
+      systemd-boot.configurationLimit = 20;
     };
     kernelPackages = pkgs.linuxPackages_latest;
   };
@@ -102,12 +93,17 @@
       "192.168.3.100"
       #"9.9.9.9"
     ];
-    #wireless.enable = true;  # Enables wireless support via wpa_supplicant.
     #networkmanager.enable = true;
     hosts = {
       "192.168.3.100" = ["netbook"];
     };
     stevenblack.enable = true;
+
+    # WIFI
+    wireless.networks = {
+      "SEM INTERNET_5G".pskRaw = "6e460263308866cef1a01596c15630978dbae65cdae0baac75c339899dfea2c9";
+      "SEM INTERNET".pskRaw = "2186a3307702e4946184ea36295cf2f55a11343f7fd0c9f214356f4bb4489d6b";
+    };
   };
 
   ## TZ and Locale
@@ -150,8 +146,8 @@
     shell = pkgs.fish;
   };
   home-manager.users.henriquelay = import henriquelay/home.nix {
-    inherit pkgs;
     inherit config;
+    inherit pkgs;
   };
 
   security.sudo.extraRules = [
