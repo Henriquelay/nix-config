@@ -133,6 +133,13 @@
       kitty.enable = false;
       helix.enable = false;
     };
+
+    fonts = {
+      monospace = {
+        package = pkgs.nerdfonts.override {fonts = ["Hack"];};
+        name = "Hack";
+      };
+    };
   };
 
   programs = {
@@ -259,6 +266,7 @@
           bufferline = "multiple";
           cursor-shape.insert = "bar";
           auto-format = true;
+          soft-wrap.enable = true;
         };
       };
     };
@@ -384,6 +392,21 @@
           modules-left = [
             "hyprland/workspaces"
             "custom/right-arrow-dark"
+            "custom/right-arrow-light"
+            "disk#root"
+            "disk#home"
+            "disk#vault"
+            "custom/right-arrow-dark"
+            "custom/right-arrow-light"
+            "cpu"
+            "custom/right-arrow-dark"
+            "custom/right-arrow-light"
+            "memory"
+            "custom/right-arrow-dark"
+            "custom/right-arrow-light"
+            # "temperature"
+            # "custom/left-arrow-light"
+            # "custom/left-arrow-dark"
           ];
 
           modules-center = [
@@ -395,34 +418,18 @@
             "custom/right-arrow-dark"
             "custom/right-arrow-light"
             # "clock#3"
-            "custom/right-arrow-dark"
+            # "custom/right-arrow-dark"
           ];
           modules-right = [
-            "custom/left-arrow-dark"
-            "mpd"
+            # "custom/left-arrow-dark"
+            # "mpd"
             "custom/left-arrow-light"
             "custom/left-arrow-dark"
             "idle_inhibitor"
             "custom/left-arrow-light"
             "custom/left-arrow-dark"
             "pulseaudio"
-            "custom/left-arrow-light"
-            "custom/left-arrow-dark"
             # "network"
-            # "custom/left-arrow-light"
-            # "custom/left-arrow-dark"
-            "disk#root"
-            "disk#home"
-            "disk#vault"
-            "custom/left-arrow-light"
-            "custom/left-arrow-dark"
-            "temperature"
-            "custom/left-arrow-light"
-            "custom/left-arrow-dark"
-            "cpu"
-            "custom/left-arrow-light"
-            "custom/left-arrow-dark"
-            "memory"
             "custom/left-arrow-light"
             "custom/left-arrow-dark"
             "clock"
@@ -450,6 +457,7 @@
 
           clock = {
             interval = 5;
+            # format = "📅{:%d/%m %A ⏰%T}";
             format = "{:%d/%m %A %T}";
           };
 
@@ -459,29 +467,33 @@
               activated = " ";
               deactivated = " ";
             };
-            tooltip-format-activated = "Activated. The computer will not idle";
-            tooltip-format-deactivated = "Deactivated. The computer may idle";
+            tooltip-format-activated = "Idle inhibitor activated. The computer will not idle";
+            tooltip-format-deactivated = "Idle inhibitor deactivated. The computer may idle";
           };
 
           "disk#root" = {
             interval = 30;
-            format = "/ {percentage_used:2}%";
+            format = "🖴 / {percentage_used:2}%";
             path = "/";
           };
           "disk#home" = {
             interval = 30;
-            format = "/home {percentage_used:2}%";
+            format = "🖴 /home {percentage_used:2}%";
             path = "/home";
           };
           "disk#vault" = {
             interval = 30;
-            format = "/vault {percentage_used:2}%";
+            format = "🖴 /vault {percentage_used:2}%";
             path = "/vault";
           };
 
           cpu = {
-            interval = 2;
+            interval = 1;
             format = "  {usage}% {load}";
+          };
+
+          memory = {
+            "format" = "🐏 {}%";
           };
 
           pulseaudio = {
@@ -507,6 +519,40 @@
           # "hyprland/workspaces" = { };
         };
       };
+      style = ''
+        * {
+        	font-size: 11pt;
+        	font-family: Hack Nerd Font;
+        }
+
+        window#waybar {
+          background: #${config.lib.stylix.colors.base00};
+        	color: #${config.lib.stylix.colors.base05};
+        }
+
+        #custom-right-arrow-light,
+        #custom-left-arrow-light {
+        	color: #${config.lib.stylix.colors.base02};
+        }
+        #custom-right-arrow-dark,
+        #custom-left-arrow-dark {
+        	background: #${config.lib.stylix.colors.base02};
+        	color: #${config.lib.stylix.colors.base00};
+        }
+
+        #workspaces button {
+        	color: #${config.lib.stylix.colors.base05};
+          padding: 0 3px;
+        }
+        #workspaces button.focused {
+        	color: #${config.lib.stylix.colors.base01};
+        }
+        #workspaces button:hover {
+        	background: #${config.lib.stylix.colors.base02};
+        	border: #${config.lib.stylix.colors.base01};
+          padding: 0 3px;
+        }
+      '';
     };
   };
 
