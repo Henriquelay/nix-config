@@ -52,7 +52,6 @@
     gvfs # For trash support and other stuff like that
     xdg-utils
     poppler
-    (nerdfonts.override {fonts = ["Hack"];})
     grc
     webcord
     blueman

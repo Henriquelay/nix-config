@@ -207,6 +207,7 @@
     noto-fonts-cjk
     noto-fonts-emoji
     liberation_ttf
+    font-awesome
     (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono" "Hack"];})
   ];
 
