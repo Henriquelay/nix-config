@@ -66,6 +66,7 @@
     # Langs and lang servers. Dev stuff
     python312
     ruff-lsp
+    ltex-ls
     pyright
     quarto
     typst
@@ -137,6 +138,10 @@
       monospace = {
         package = pkgs.nerdfonts.override {fonts = ["Hack"];};
         name = "Hack";
+      };
+      emoji = {
+        package = pkgs.font-awesome;
+        name = "Font Awesome 6";
       };
     };
   };
@@ -245,7 +250,7 @@
           }
           {
             name = "typst";
-            language-servers = ["tinymist" "typst-lsp"];
+            language-servers = ["tinymist" "typst-lsp" "ltex"];
             formatter.command = "${pkgs.typstyle}/bin/typstyle";
             auto-format = true;
           }
@@ -254,6 +259,7 @@
         language-server = {
           ruff.command = "ruff-lsp";
           tinymist.command = "tinymist";
+          ltex.command = "ltex-ls";
         };
       };
       settings = {
@@ -492,7 +498,7 @@
           };
 
           memory = {
-            "format" = "🐏 {}%";
+            "format" = " {}%";
           };
 
           pulseaudio = {
@@ -521,7 +527,7 @@
       style = ''
         * {
         	font-size: 11pt;
-        	font-family: Hack Nerd Font;
+        	font-family: "Hack Nerd Font", "Font Awesome 6 Free";
         }
 
         window#waybar {
@@ -581,6 +587,7 @@
         };
         listener = [
           {
+            # Warning
             timeout = 900; # in seconds. 15m
             on-timeout = "notify-send 'Screen off in 30s'"; # command to run when timeout has passed.
             on-resume = "notify-send 'Screen off canceled''"; # command to run when activity is detected after timeout has fired.
@@ -698,6 +705,10 @@
           "$mod&SHIFT, Down, movewindow, d"
           "$mod&SHIFT, Left, movewindow, l"
           "$mod&SHIFT, Right, movewindow, r"
+          "$mod&SHIFT, K, movewindow, u"
+          "$mod&SHIFT, J, movewindow, d"
+          "$mod&SHIFT, H, movewindow, l"
+          "$mod&SHIFT, L, movewindow, r"
           "$mod&SHIFT, SPACE, togglefloating"
           "$mod&SHIFT, I, exec, $term hx ~/nix-config/nixos/henriquelay/home.nix"
           "$mod&CTRL&SHIFT, I, exec, $term hx ~/nix-config/nixos/configuration.nix"

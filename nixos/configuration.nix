@@ -18,10 +18,9 @@
   };
 
   ## Graphics
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
 
     extraPackages = with pkgs; [
       rocmPackages.clr.icd # OpenCL
@@ -208,7 +207,7 @@
     noto-fonts-emoji
     liberation_ttf
     font-awesome
-    (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono" "Hack"];})
+    (nerdfonts.override {fonts = ["FiraCode" "Hack"];})
   ];
 
   services.sunshine = {
