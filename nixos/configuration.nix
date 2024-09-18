@@ -105,6 +105,15 @@
     };
   };
 
+  # VPN
+
+  services.zerotierone = {
+    enable = true;
+    joinNetworks = [
+      "ebe7fbd445ee2222"
+    ];
+  };
+
   ## TZ and Locale
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
