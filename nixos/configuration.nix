@@ -70,7 +70,7 @@
       };
       efi.canTouchEfiVariables = true;
       # Limit the number of generations to keep
-      systemd-boot.configurationLimit = 20;
+      systemd-boot.configurationLimit = 10;
     };
     kernelPackages = pkgs.linuxPackages_latest;
   };
@@ -153,6 +153,7 @@
     extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode" "docker"];
     shell = pkgs.fish;
   };
+  home-manager.backupFileExtension = "backup";
   home-manager.users.henriquelay = import henriquelay/home.nix {
     inherit config;
     inherit pkgs;
@@ -212,7 +213,7 @@
 
   fonts.packages = with pkgs; [
     noto-fonts
-    noto-fonts-cjk
+    noto-fonts-cjk-sans
     noto-fonts-emoji
     liberation_ttf
     font-awesome
@@ -235,15 +236,22 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
   };
 
+  ## Extra
   stylix = {
     enable = true;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
     image = ./henriquelay/blackpx.jpg; # only for i3
+  };
+
+  services.ucodenix = {
+    enable = true;
+    cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
   };
 
   # Some programs need SUID wrappers, can be configured further or are

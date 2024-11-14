@@ -44,8 +44,8 @@
     hyprcursor
     playerctl
     grimblast
-    wineWowPackages.waylandFull
-    pcmanfm
+    # wineWowPackages.waylandFull
+    # pcmanfm
 
     # General programs
     telegram-desktop
@@ -56,29 +56,33 @@
     webcord
     blueman
     qbittorrent
-    jackett
-    heroic # Games launcher
-    gogdl # GOG downloading module for heroic
+    # jackett
+    # heroic # Games launcher
+    # gogdl # GOG downloading module for heroic
     obsidian
     feh
     config.nur.repos.nltch.spotify-adblock
+    mpv
 
     # Langs and lang servers. Dev stuff
+    # Should most of these be here? Should be handled by a dev shell
     python312
     ruff-lsp
-    ltex-ls
     pyright
-    quarto
+    # quarto
     typst
     tinymist
     typstyle
     nil
     alejandra
-    rust-analyzer
-    rustfmt
-    clippy
+    # rust-analyzer
+    # rustfmt
+    # clippy
     nix-your-shell
     marksman # markdown lsp
+
+    # Local packages
+    # (callPackage ../../packages/notekit.nix {})
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -230,7 +234,7 @@
     kitty = {
       enable = true;
       shellIntegration.enableFishIntegration = true;
-      theme = "Rosé Pine";
+      themeFile = "rose-pine";
     };
 
     helix = {
@@ -314,7 +318,7 @@
     };
 
     pyenv = {
-      enable = true;
+      enable = false; # Should be handled by devShell, or use user package.
       enableFishIntegration = true;
     };
 
@@ -340,7 +344,7 @@
     eza = {
       enable = true;
       enableFishIntegration = true;
-      icons = true;
+      icons = "auto";
       extraOptions = [
         "--group-directories-first"
         "--header"
@@ -379,10 +383,10 @@
     };
 
     obs-studio = {
-      enable = true;
+      enable = false;
       plugins = with pkgs.obs-studio-plugins; [
         wlrobs
-        obs-backgroundremoval
+        # obs-backgroundremoval
         obs-pipewire-audio-capture
       ];
     };
@@ -593,13 +597,13 @@
             on-resume = "notify-send 'Screen off canceled''"; # command to run when activity is detected after timeout has fired.
           }
           {
-            timeout = 930; # 15:30min
+            timeout = 930; # 15min30s
             on-timeout = "hyprctl dispatch dpms off"; # screen off when timeout has passed
             on-resume = "hyprctl dispatch dpms on"; # screen on when activity is detected after timeout has fired.
           }
           {
             timeout = 3600; # 1h
-            on-timeout = "systemctl suspend"; # suspend pc
+            on-timeout = "systemctl hybrid-sleep"; # suspend pc
           }
         ];
       };
@@ -793,7 +797,7 @@
     configPackages = [pkgs.xdg-desktop-portal-hyprland];
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      xdg-desktop-portal-wlr
+      # xdg-desktop-portal-wlr
     ];
   };
 }

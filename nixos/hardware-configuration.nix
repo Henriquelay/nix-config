@@ -15,7 +15,7 @@
   boot = {
     initrd = {
       availableKernelModules = ["ahci" "xhci_pci" "usb_storage" "usbhid" "sd_mod"];
-      kernelModules = ["amdgpu"];
+      # kernelModules = ["amdgpu"];
       luks.devices = {
         "luks-192aa104-aa43-4da2-9423-c08704d987aa".device = "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";
         "luks-c258bf9d-345e-4140-a345-58465ed6370f".device = "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
