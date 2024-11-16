@@ -603,7 +603,7 @@
           }
           {
             timeout = 3600; # 1h
-            on-timeout = "systemctl hybrid-sleep"; # suspend pc
+            on-timeout = "systemctl suspend"; # suspend pc
           }
         ];
       };
