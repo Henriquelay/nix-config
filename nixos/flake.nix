@@ -16,35 +16,38 @@
     nur.url = "github:nix-community/NUR";
   };
 
-  outputs = inputs @ {
-    nixpkgs,
-    stylix,
-    home-manager,
-    nur,
-    ucodenix,
-    # hyprland,
-    ...
-  }: let
-    system = "x86_64-linux";
-  in {
-    nixosConfigurations."acad-router" = nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = [
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-          };
-        }
+  outputs =
+    {
+      nixpkgs,
+      stylix,
+      home-manager,
+      nur,
+      ucodenix,
+      # hyprland,
+      ...
+    }:
+    let
+      system = "x86_64-linux";
+    in
+    {
+      nixosConfigurations."acad-router" = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = false;
+              useUserPackages = true;
+            };
+          }
 
-        ucodenix.nixosModules.default
+          ucodenix.nixosModules.default
 
-        nur.nixosModules.nur
+          nur.modules.nixos.default
 
-        stylix.nixosModules.stylix
-        ./configuration.nix
-      ];
+          stylix.nixosModules.stylix
+          ./configuration.nix
+        ];
+      };
     };
-  };
 }

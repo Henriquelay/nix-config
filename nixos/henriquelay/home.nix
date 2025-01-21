@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "henriquelay";
@@ -41,7 +42,7 @@
     libnotify
     sway-launcher-desktop
     pavucontrol
-    hyprcursor
+    # hyprcursor
     playerctl
     grimblast
     # wineWowPackages.waylandFull
@@ -61,25 +62,25 @@
     # gogdl # GOG downloading module for heroic
     obsidian
     feh
-    config.nur.repos.nltch.spotify-adblock
+    nur.repos.nltch.spotify-adblock
     mpv
 
     # Langs and lang servers. Dev stuff
-    # Should most of these be here? Should be handled by a dev shell
-    python312
-    ruff-lsp
-    pyright
+    # Should most of these be here? Should be handled by a dev shell. I'll keep only the scripting and ones I want quick access to.
+    # python312
+    # ruff-lsp
+    # pyright
     # quarto
-    typst
-    tinymist
-    typstyle
+    # typst
+    # tinymist
+    # typstyle
     nil
-    alejandra
+    nixfmt-rfc-style
     # rust-analyzer
     # rustfmt
     # clippy
     nix-your-shell
-    marksman # markdown lsp
+    # marksman # markdown lsp
 
     # Local packages
     # (callPackage ../../packages/notekit.nix {})
@@ -140,7 +141,7 @@
 
     fonts = {
       monospace = {
-        package = pkgs.nerdfonts.override {fonts = ["Hack"];};
+        package = pkgs.nerd-fonts.hack;
         name = "Hack";
       };
       emoji = {
@@ -244,17 +245,24 @@
         language = [
           {
             name = "nix";
-            formatter.command = "${pkgs.alejandra}/bin/alejandra";
+            formatter.command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
             auto-format = true;
           }
           {
             name = "python";
-            language-servers = ["ruff" "pyright"];
+            language-servers = [
+              "ruff"
+              "pyright"
+            ];
             auto-format = true;
           }
           {
             name = "typst";
-            language-servers = ["tinymist" "typst-lsp" "ltex"];
+            language-servers = [
+              "tinymist"
+              "typst-lsp"
+              "ltex"
+            ];
             formatter.command = "${pkgs.typstyle}/bin/typstyle";
             auto-format = true;
           }
@@ -337,7 +345,7 @@
     };
 
     vscode = {
-      enable = true;
+      enable = false;
       package = pkgs.vscode.fhs;
     };
 
@@ -358,38 +366,39 @@
           grace = 300;
           hide_cursor = true;
         };
-        background = {
-          path = "screenshot";
-          blur_passes = 3;
-          blur_size = 8;
-        };
-        input-field = [
-          {
-            size = "200, 50";
-            position = "0, -80";
-            monitor = "";
-            dots_center = true;
-            fade_on_empty = false;
-            # TODO use stylix colors
-            font_color = "rgb(202, 211, 245)";
-            inner_color = "rgb(91, 96, 120)";
-            outer_color = "rgb(24, 25, 38)";
-            outline_thickness = 5;
-            placeholder_text = "Password...";
-            shadow_passes = 2;
-          }
-        ];
+        # background = {
+        #   path = "screenshot";
+        #   blur_passes = 3;
+        #   blur_size = 8;
+        # };
+        # input-field = [
+        #   {
+        #     size = "200, 50";
+        #     position = "0, -80";
+        #     monitor = "";
+        #     dots_center = true;
+        #     fade_on_empty = false;
+        #     # TODO use stylix colors
+        #     font_color = "rgb(202, 211, 245)";
+        #     inner_color = "rgb(91, 96, 120)";
+        #     outer_color = "rgb(24, 25, 38)";
+        #     outline_thickness = 5;
+        #     placeholder_text = "Password...";
+        #     shadow_passes = 2;
+        #   }
+        # ];
       };
     };
 
-    obs-studio = {
-      enable = false;
-      plugins = with pkgs.obs-studio-plugins; [
-        wlrobs
-        # obs-backgroundremoval
-        obs-pipewire-audio-capture
-      ];
-    };
+    # obs-studio = {
+    #   enable = true;
+    #   plugins = with pkgs.obs-studio-plugins; [
+    #     droidcam-obs
+    #     # wlrobs
+    #     # obs-backgroundremoval
+    #     # obs-pipewire-audio-capture
+    #   ];
+    # };
     waybar = {
       enable = true;
       systemd.enable = true;
@@ -512,7 +521,10 @@
               "alsa_output.pci-0000_00_1f.3.analog-stereo" = "";
               "alsa_output.pci-0000_00_1f.3.analog-stereo-muted" = "";
               car = "";
-              default = ["" ""];
+              default = [
+                ""
+                ""
+              ];
               hands-free = "";
               headphone = "";
               headset = "";
@@ -521,7 +533,7 @@
               portable = "";
             };
             format-muted = "";
-            ignored-sinks = ["Easy Effects Sink"];
+            ignored-sinks = [ "Easy Effects Sink" ];
             on-click = "pavucontrol";
             scroll-step = 1;
           };
@@ -601,10 +613,10 @@
             on-timeout = "hyprctl dispatch dpms off"; # screen off when timeout has passed
             on-resume = "hyprctl dispatch dpms on"; # screen on when activity is detected after timeout has fired.
           }
-          {
-            timeout = 3600; # 1h
-            on-timeout = "systemctl suspend"; # suspend pc
-          }
+          # {
+          #   timeout = 3600; # 1h
+          #   on-timeout = "systemctl suspend"; # suspend pc
+          # }
         ];
       };
     };
@@ -725,18 +737,22 @@
         ++ (
           # workspaces
           # binds $mod + [shift +] {1..10} to [move to] workspace {1..10}
-          builtins.concatLists (builtins.genList (
-              x: let
-                ws = let
-                  c = (x + 1) / 10;
-                in
+          builtins.concatLists (
+            builtins.genList (
+              x:
+              let
+                ws =
+                  let
+                    c = (x + 1) / 10;
+                  in
                   builtins.toString (x + 1 - (c * 10));
-              in [
+              in
+              [
                 "$mod, ${ws}, workspace, ${toString (x + 1)}"
                 "$mod&SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
               ]
-            )
-            10)
+            ) 10
+          )
         );
     };
   };
@@ -778,7 +794,9 @@
 
   xdg.mimeApps = {
     enable = true;
-    defaultApplications = {"x-scheme-handler/tg" = "org.telegram.desktop.desktop";};
+    defaultApplications = {
+      "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
+    };
   };
 
   xdg.desktopEntries = {
@@ -787,14 +805,17 @@
       name = "Virtual Machine Manager (GDK_BACKEND=x11)";
       exec = "env GDK_BACKEND=x11 virt-manager";
       terminal = false;
-      categories = ["Utility" "Emulator"];
+      categories = [
+        "Utility"
+        "Emulator"
+      ];
     };
   };
 
   # TODO mimetypes and portal, open files on yazi
   xdg.portal = {
     enable = true;
-    configPackages = [pkgs.xdg-desktop-portal-hyprland];
+    configPackages = [ pkgs.xdg-desktop-portal-hyprland ];
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
       # xdg-desktop-portal-wlr

@@ -6,7 +6,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -22,23 +23,25 @@
     enable = true;
     enable32Bit = true;
 
-    extraPackages = with pkgs; [
-      rocmPackages.clr.icd # OpenCL
-    ];
+    # extraPackages = with pkgs; [
+    #   rocmPackages.clr.icd # OpenCL
+    # ];
   };
   # Workaround for HIP libraries
-  systemd.tmpfiles.rules = let
-    rocmEnv = pkgs.symlinkJoin {
-      name = "rocm-combined";
-      paths = with pkgs.rocmPackages; [
-        rocblas
-        hipblas
-        clr
-      ];
-    };
-  in [
-    "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
-  ];
+  # systemd.tmpfiles.rules =
+  #   let
+  #     rocmEnv = pkgs.symlinkJoin {
+  #       name = "rocm-combined";
+  #       paths = with pkgs.rocmPackages; [
+  #         rocblas
+  #         hipblas
+  #         clr
+  #       ];
+  #     };
+  #   in
+  #   [
+  #     "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
+  #   ];
 
   ## System/nix options
   # Reducing disk usage
@@ -51,7 +54,10 @@
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       trusted-users = [
         "root"
         "henriquelay"
@@ -94,12 +100,13 @@
     ];
     #networkmanager.enable = true;
     hosts = {
-      "192.168.3.100" = ["netbook"];
+      "192.168.3.100" = [ "netbook" ];
     };
     stevenblack.enable = true;
 
     # WIFI
     wireless.networks = {
+      # Not highly-sensitive information
       "SEM INTERNET_5G".pskRaw = "6e460263308866cef1a01596c15630978dbae65cdae0baac75c339899dfea2c9";
       "SEM INTERNET".pskRaw = "2186a3307702e4946184ea36295cf2f55a11343f7fd0c9f214356f4bb4489d6b";
     };
@@ -110,6 +117,7 @@
   services.zerotierone = {
     enable = true;
     joinNetworks = [
+      # Not highly-sensitive information
       "ebe7fbd445ee2222"
     ];
   };
@@ -121,19 +129,21 @@
   # Select internationalisation properties.
   i18n = {
     defaultLocale = "en_US.UTF-8";
-    extraLocaleSettings = let
-      locale = "pt_BR.UTF-8";
-    in {
-      LC_ADDRESS = locale;
-      LC_IDENTIFICATION = locale;
-      LC_MEASUREMENT = locale;
-      LC_MONETARY = locale;
-      LC_NAME = locale;
-      LC_NUMERIC = locale;
-      LC_PAPER = locale;
-      LC_TELEPHONE = locale;
-      LC_TIME = locale;
-    };
+    extraLocaleSettings =
+      let
+        locale = "pt_BR.UTF-8";
+      in
+      {
+        LC_ADDRESS = locale;
+        LC_IDENTIFICATION = locale;
+        LC_MEASUREMENT = locale;
+        LC_MONETARY = locale;
+        LC_NAME = locale;
+        LC_NUMERIC = locale;
+        LC_PAPER = locale;
+        LC_TELEPHONE = locale;
+        LC_TIME = locale;
+      };
   };
 
   # Configure keymap in X11
@@ -150,7 +160,14 @@
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henriquelay";
-    extraGroups = ["networkmanager" "wheel" "libvirtd" "gamemode" "docker"];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "gamemode"
+      "docker"
+      # config.services.kubo.group
+    ];
     shell = pkgs.fish;
   };
   home-manager.backupFileExtension = "backup";
@@ -161,19 +178,19 @@
 
   security.sudo.extraRules = [
     {
-      users = ["henriquelay"];
+      users = [ "henriquelay" ];
       commands = [
         {
           # Allow me to sudo without passwd
           command = "ALL";
-          options = ["NOPASSWD"];
+          options = [ "NOPASSWD" ];
         }
       ];
     }
   ];
 
   ## Requirement for some home-manager programs, mostly security related
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
   security.polkit.enable = true; # For Sway
   # needed for store VS Code auth token
   services.gnome.gnome-keyring.enable = true;
@@ -217,14 +234,21 @@
     noto-fonts-emoji
     liberation_ttf
     font-awesome
-    (nerdfonts.override {fonts = ["FiraCode" "Hack"];})
+    nerd-fonts.fira-code
+    nerd-fonts.hack
   ];
 
   services.sunshine = {
-    enable = true;
+    enable = false;
     autoStart = true;
     capSysAdmin = true;
     openFirewall = true;
+  };
+
+  services.kubo = {
+    enable = false;
+    dataDir = "/vault/ipfs";
+    enableGC = true;
   };
 
   ## Sound
@@ -253,6 +277,8 @@
     enable = true;
     cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
   };
+
+  # programs.droidcam.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
