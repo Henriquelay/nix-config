@@ -170,7 +170,7 @@
     ];
     shell = pkgs.fish;
   };
-  home-manager.backupFileExtension = "backup";
+  home-manager.backupFileExtension = "hmbackup";
   home-manager.users.henriquelay = import henriquelay/home.nix {
     inherit config;
     inherit pkgs;

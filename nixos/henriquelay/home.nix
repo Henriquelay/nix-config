@@ -64,6 +64,7 @@
     feh
     nur.repos.nltch.spotify-adblock
     mpv
+    wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
 
     # Langs and lang servers. Dev stuff
     # Should most of these be here? Should be handled by a dev shell. I'll keep only the scripting and ones I want quick access to.
@@ -119,7 +120,8 @@
     NIXOS_OZONE_WL = "1";
     # Disable window decorator on QT applications
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-    TERMINAL = "kitty";
+    TERMINAL = "${pkgs.kitty}/bin/kitty";
+    # EDITOR = "${pkgs.helix}/bin/hx";
   };
 
   home.sessionPath = [
@@ -137,6 +139,7 @@
       fish.enable = false;
       kitty.enable = false;
       helix.enable = false;
+      # hyprland.enable = false;
     };
 
     fonts = {
@@ -175,7 +178,7 @@
       enable = true;
       loginShellInit = ''
         if [ (tty) = "/dev/tty1" ]
-          exec Hyprland
+          exec sway
         end
       '';
       shellInit = ''
@@ -236,6 +239,11 @@
       enable = true;
       shellIntegration.enableFishIntegration = true;
       themeFile = "rose-pine";
+      font = {
+        package = pkgs.nerd-fonts.hack;
+        name = "Hack Nerd Font";
+        size = 18;
+      };
     };
 
     helix = {
@@ -360,7 +368,7 @@
     };
 
     hyprlock = {
-      enable = true;
+      enable = false;
       settings = {
         general = {
           grace = 300;
@@ -388,6 +396,7 @@
         #   }
         # ];
       };
+
     };
 
     # obs-studio = {
@@ -400,7 +409,7 @@
     #   ];
     # };
     waybar = {
-      enable = true;
+      enable = false;
       systemd.enable = true;
       systemd.target = "hyprland-session.target";
       settings = {
@@ -575,6 +584,116 @@
         }
       '';
     };
+    i3status-rust = {
+      enable = true;
+
+      bars = {
+        default = {
+          theme = "srcery";
+          icons = "awesome6";
+          blocks = [
+            {
+              block = "focused_window";
+              # max_width = 50;
+              # show_marks = "visible";
+            }
+            {
+              block = "docker";
+              interval = 10;
+              format = " $icon $running/$total";
+            }
+            {
+              block = "disk_space";
+              path = "/";
+              format = " $icon / $available";
+              info_type = "available";
+              alert_unit = "GB";
+              interval = 20;
+              warning = 20.0;
+              alert = 10.0;
+            }
+            {
+              block = "disk_space";
+              path = "/home";
+              format = " $icon /home $available";
+              info_type = "available";
+              alert_unit = "GB";
+              interval = 20;
+              warning = 20.0;
+              alert = 10.0;
+            }
+            {
+              block = "disk_space";
+              path = "/vault";
+              format = " $icon /vault $available";
+              info_type = "available";
+              alert_unit = "GB";
+              interval = 20;
+              warning = 30.0;
+              alert = 10.0;
+            }
+            {
+              block = "memory";
+              format = " $icon $mem_total_used/$mem_total ($mem_total_used_percents)";
+              format_alt = " $icon_swap $swap_used/$swap_total ($swap_used_percents)";
+              # display_type = "memory";
+              # icons = true;
+              # clickable = true;
+              interval = 3;
+            }
+            {
+              block = "cpu";
+              interval = 2;
+              format = " $icon $utilization $frequency $boost";
+            }
+            {
+              block = "temperature";
+              # collapsed = false;
+              # interval = 5;
+              format = " $icon $average";
+            }
+            {
+              block = "music";
+              player = "spotify";
+              format = " $icon {$combo.str(max_w:25,rot_interval:0.5) $play $next |}";
+              # buttons = [
+              #   "play"
+              #   "next"
+              # ];
+              # on_collapsed_click = "kitty -e spt";
+              # dynamic_width = true;
+            }
+            {
+              block = "sound";
+              show_volume_when_muted = true;
+              # on_click = "pavucontrol";
+            }
+            {
+              block = "net";
+              device = "enp13s0";
+              format = " $icon ↓$speed_down ↑$speed_up";
+              format_alt = "$icon ↓$graph_down ↑$graph_up";
+              # interval = 3;
+            }
+            {
+              block = "weather";
+              format = " $icon $weather $temp";
+              service = {
+                name = "openweathermap";
+                api_key = "4d8b9e3c0cd2b311891fc18f52493a6e";
+                city_id = "3445026";
+                units = "metric";
+              };
+            }
+            {
+              block = "time";
+              interval = 1;
+              format = " $timestamp.datetime(f:'%a %d/%m %R:%S')";
+            }
+          ];
+        };
+      };
+    };
   };
 
   services = {
@@ -594,7 +713,7 @@
     nextcloud-client.enable = true;
 
     hypridle = {
-      enable = true;
+      enable = false;
       settings = {
         general = {
           lock_cmd = "pidof hyprlock || hyprlock"; # avoid starting multiple hyprlock instances.
@@ -624,8 +743,177 @@
 
   ## WM and visuals
 
+  wayland.windowManager.sway =
+    let
+      modifier = "Mod4";
+      terminal = "${pkgs.kitty}/bin/kitty";
+    in
+    # editor = "${pkgs.helix}/bin/hx";
+    {
+      enable = true;
+      config = {
+        modifier = modifier;
+        # Use kitty as default terminal
+        terminal = terminal;
+        input = {
+          "*" = {
+            xkb_layout = "br";
+            xkb_numlock = "enabled";
+          };
+        };
+        output = {
+          DP-1 = {
+            # scale = "1.5";
+            adaptive_sync = "on";
+            # TODO ICC
+          };
+        };
+
+        gaps = {
+          # smartGaps = true;
+        };
+        window = {
+          border = 1;
+          titlebar = false;
+          hideEdgeBorders = "both";
+          commands = [
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "^launcher$";
+              };
+            }
+            {
+              command = "focus";
+              criteria = {
+                app_id = "^launcher$";
+              };
+            }
+          ];
+        };
+        assigns = {
+          "5" = [
+            { app_id = "^WebCord$"; }
+          ];
+          "10" = [
+            { app_id = "^org.qbittorrent.qBittorrent$"; }
+          ];
+        };
+
+        startup = [
+          { command = "${pkgs.telegram-desktop}/bin/telegram-desktop -- %u"; }
+          {
+            command = "${pkgs.nur.repos.nltch.spotify-adblock}/bin/spotify %U";
+          }
+          { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
+        ];
+        bars = [
+          {
+            fonts = {
+              names = [
+                "Hack Nerd Font"
+                "Font Awesome 6 Free-Regular"
+              ];
+              style = "Regular";
+              size = 12.0;
+            };
+            position = "top";
+            statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs config-default";
+          }
+        ];
+        floating.criteria = [ { class = "launcher"; } ];
+        keybindings =
+          {
+            # Basics
+            "${modifier}+Return" = "exec ${terminal}";
+            "${modifier}+Shift+q" = "kill";
+            "${modifier}+d" =
+              "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
+            "${modifier}+r" = "mode \"resize\"";
+
+            # Layout
+            "${modifier}+b" = "splith";
+            "${modifier}+v" = "splitv";
+            "${modifier}+s" = "layout stacking";
+            "${modifier}+t" = "layout tabbed";
+            "${modifier}+e" = "layout toggle split";
+
+            #   # Quick access
+            #   "$mod&SHIFT, I, exec, $term hx ~/nix-config/nixos/henriquelay/home.nix"
+            #   "$mod&CTRL&SHIFT, I, exec, $term hx ~/nix-config/nixos/configuration.nix"
+
+            #   "$mod, mouse_down, workspace, e-1"
+            #   "$mod, mouse_up, workspace, e+1"
+            #   "ALT, TAB, workspace, previous_per_monitor"
+            #   "$mod, F, fullscreen, 0"
+            "${modifier}+F" = "fullscreen";
+            "${modifier}+Shift+space" = "floating toggle";
+            "${modifier}+A" = "focus parent";
+            "Print" = "exec ${pkgs.grimblast}/bin/grimblast copy area";
+
+          }
+          # Not a comment, attrset update
+          //
+            # Focus and move to direction
+            builtins.foldl' (acc: elem: acc // elem) { } (
+              builtins.attrValues (
+                builtins.mapAttrs
+                  (
+                    direction: key_names:
+                    builtins.foldl' (acc: elem: acc // elem) { } (
+                      builtins.map (key: {
+                        "${modifier}+${key}" = "focus ${direction}";
+                        "${modifier}+Shift+${key}" = "move ${direction}";
+                      }) key_names
+                    )
+                  )
+                  {
+                    # $left is the left home row jey (usually h), defined by default
+                    # Left is the left arrow key
+                    left = [
+                      "h"
+                      "Left"
+                    ];
+                    right = [
+                      "l"
+                      "Right"
+                    ];
+                    up = [
+                      "k"
+                      "Up"
+                    ];
+                    down = [
+                      "j"
+                      "Down"
+                    ];
+                  }
+              )
+            )
+          # Not a comment, attrset update
+          //
+            # Workspace moves
+            builtins.foldl' (acc: elem: acc // elem) { } (
+              builtins.genList (
+                x:
+                let
+                  ws =
+                    let
+                      c = (x + 1) / 10;
+                    in
+                    builtins.toString (x + 1 - (c * 10));
+                in
+                {
+                  "${modifier}+${ws}" = "workspace number " + toString (x + 1);
+                  "${modifier}+Shift+${ws}" = "move container to workspace number " + toString (x + 1);
+                }
+              ) 10
+            );
+
+      };
+    };
+
   wayland.windowManager.hyprland = {
-    enable = true;
+    enable = false;
     settings = {
       ## Basics
       input = {
@@ -815,7 +1103,7 @@
   # TODO mimetypes and portal, open files on yazi
   xdg.portal = {
     enable = true;
-    configPackages = [ pkgs.xdg-desktop-portal-hyprland ];
+    configPackages = [ pkgs.xdg-desktop-portal-wlr ];
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
       # xdg-desktop-portal-wlr
