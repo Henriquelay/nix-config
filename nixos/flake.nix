@@ -12,7 +12,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ucodenix.url = "github:e-tho/ucodenix";
+    # ucodenix.url = "github:e-tho/ucodenix";
     nur.url = "github:nix-community/NUR";
   };
 
@@ -22,7 +22,7 @@
       stylix,
       home-manager,
       nur,
-      ucodenix,
+      # ucodenix,
       # hyprland,
       ...
     }:
@@ -41,7 +41,7 @@
             };
           }
 
-          ucodenix.nixosModules.default
+          # ucodenix.nixosModules.default
 
           nur.modules.nixos.default
 

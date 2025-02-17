@@ -47,20 +47,20 @@
 
       # Langs and lang servers. Dev stuff
       # Should most of these be here? Should be handled by a dev shell. I'll keep only the scripting and ones I want quick access to.
-      # python312
-      # ruff-lsp
-      # pyright
+      # python313
+      ruff-lsp
+      pyright
       # quarto
       # typst
       # tinymist
       # typstyle
       nil
       nixfmt-rfc-style
-      # rust-analyzer
-      # rustfmt
-      # clippy
+      rust-analyzer
+      rustfmt
+      clippy
       nix-your-shell
-      # marksman # markdown lsp
+      marksman # markdown lsp
 
       # Local packages
       # (callPackage ../../packages/notekit.nix {})
@@ -347,8 +347,6 @@
           blocks = [
             {
               block = "focused_window";
-              # max_width = 50;
-              # show_marks = "visible";
             }
             {
               block = "docker";
@@ -389,9 +387,6 @@
               block = "memory";
               format = " $icon $mem_total_used/$mem_total ($mem_total_used_percents)";
               format_alt = " $icon_swap $swap_used/$swap_total ($swap_used_percents)";
-              # display_type = "memory";
-              # icons = true;
-              # clickable = true;
               interval = 3;
             }
             {
@@ -401,32 +396,22 @@
             }
             {
               block = "temperature";
-              # collapsed = false;
-              # interval = 5;
               format = " $icon $average";
             }
             {
               block = "music";
               player = "spotify";
               format = " $icon {$combo.str(max_w:25,rot_interval:0.5) $play $next |}";
-              # buttons = [
-              #   "play"
-              #   "next"
-              # ];
-              # on_collapsed_click = "kitty -e spt";
-              # dynamic_width = true;
             }
             {
               block = "sound";
               show_volume_when_muted = true;
-              # on_click = "pavucontrol";
             }
             {
               block = "net";
-              device = "enp13s0";
+              device = "enp14s0";
               format = " $icon ↓$speed_down ↑$speed_up";
               format_alt = "$icon ↓$graph_down ↑$graph_up";
-              # interval = 3;
             }
             {
               block = "weather";
@@ -525,7 +510,7 @@
             { app_id = "^org.qbittorrent.qBittorrent$"; }
           ];
         };
-        defaultWorkspace = "workspace number 0";
+        defaultWorkspace = "workspace 0";
 
         startup = [
           { command = "${pkgs.telegram-desktop}/bin/telegram-desktop -- %u"; }
@@ -616,6 +601,16 @@
 
             "${modifier}+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/henriquelay/home.nix";
             "${modifier}+Ctrl+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/configuration.nix";
+            "XF86AudioPlay" = "exec playerctl play-pause";
+            "XF86AudioNext" = "exec playerctl next";
+            "XF86AudioPrev" = "exec playerctl previous";
+            # ", XF86AudioRaiseVolume, exec, vol --up"
+            # ", XF86AudioLowerVolume, exec, vol --down"
+            # ", XF86MonBrightnessUp, exec, bri --up"
+            # ", XF86MonBrightnessDown, exec, bri --down"
+            # ", XF86Search, exec, launchpad"
+            # ", XF86AudioMute, exec, amixer set Master toggle"
+            # ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
 
           }
           # Not a comment, attrset update

@@ -1,6 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
 {
   inputs,
   config,
@@ -8,6 +5,7 @@
   ...
 }:
 {
+  # services.logrotate.checkConfig = false;
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -96,7 +94,7 @@
     hostName = "acad-router";
     nameservers = [
       "192.168.3.100"
-      #"9.9.9.9"
+      # "9.9.9.9"
     ];
     #networkmanager.enable = true;
     hosts = {
@@ -105,17 +103,22 @@
     stevenblack.enable = true;
 
     # WIFI
-    wireless.networks = {
-      # Not highly-sensitive information
-      "SEM INTERNET_5G".pskRaw = "6e460263308866cef1a01596c15630978dbae65cdae0baac75c339899dfea2c9";
-      "SEM INTERNET".pskRaw = "2186a3307702e4946184ea36295cf2f55a11343f7fd0c9f214356f4bb4489d6b";
+    wireless = {
+      enable = false;
+      networks = {
+        # Not highly-sensitive information
+        "SEM INTERNET_5G".pskRaw = "6e460263308866cef1a01596c15630978dbae65cdae0baac75c339899dfea2c9";
+        "SEM INTERNET".pskRaw = "2186a3307702e4946184ea36295cf2f55a11343f7fd0c9f214356f4bb4489d6b";
+        "henrique hotspot".psk = "henrique";
+      };
     };
+
   };
 
   # VPN
 
   services.zerotierone = {
-    enable = true;
+    enable = false;
     joinNetworks = [
       # Not highly-sensitive information
       "ebe7fbd445ee2222"
@@ -208,7 +211,7 @@
   ];
   programs = {
     fish.enable = true;
-    hyprland.enable = true;
+    # hyprland.enable = true;
     virt-manager.enable = true;
 
     gamemode.enable = true;
@@ -273,10 +276,10 @@
     image = ./henriquelay/blackpx.jpg; # only for i3
   };
 
-  services.ucodenix = {
-    enable = true;
-    cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
-  };
+  # services.ucodenix = {
+  #   enable = true;
+  #   # cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
+  # };
 
   # programs.droidcam.enable = true;
 
