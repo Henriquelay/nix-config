@@ -510,7 +510,7 @@
             { app_id = "^org.qbittorrent.qBittorrent$"; }
           ];
         };
-        defaultWorkspace = "workspace 0";
+        defaultWorkspace = "workspace number 1";
 
         startup = [
           { command = "${pkgs.telegram-desktop}/bin/telegram-desktop -- %u"; }
