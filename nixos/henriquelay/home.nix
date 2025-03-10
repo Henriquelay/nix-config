@@ -61,6 +61,10 @@
       clippy
       nix-your-shell
       marksman # markdown lsp
+      ltex-ls
+      # texlab
+
+      slack
 
       # Local packages
       # (callPackage ../../packages/notekit.nix {})
@@ -138,7 +142,8 @@
       enable = true;
       loginShellInit = ''
         if [ (tty) = "/dev/tty1" ]
-          exec sway
+          set --local --export XDG_CURRENT_DESKTOP sway
+          exec dbus-run-session sway > ~/sway_output.log
         end
       '';
       shellInit = ''
@@ -147,18 +152,18 @@
           nix-your-shell fish | source
         end
       '';
-      functions = {
-        yy = {
-          body = ''
-            set tmp (mktemp -t "yazi-cwd.XXXXX")
-            yazi $argv --cwd-file="$tmp"
-            if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-              builtin cd -- "$cwd"
-            end
-            rm -f -- "$tmp"
-          '';
-        };
-      };
+      # functions = {
+      # yy = {
+      #   body = ''
+      #     set tmp (mktemp -t "yazi-cwd.XXXXX")
+      #     yazi $argv --XDG_CURRENT_DESKTOP=sway dbus-run-session swaycwd-file="$tmp"
+      #     if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+      #       builtin cd -- "$cwd"
+      #     end
+      #     rm -f -- "$tmp"
+      #   '';
+      # };
+      # };
 
       shellAliases = {
         cat = "bat";
@@ -186,7 +191,7 @@
 
     mangohud = {
       enable = true;
-      enableSessionWide = true;
+      enableSessionWide = false;
       settings = {
         preset = 3;
         # TODO can't change with stylix enabled
@@ -234,12 +239,19 @@
             formatter.command = "${pkgs.typstyle}/bin/typstyle";
             auto-format = true;
           }
+          {
+            name = "latex";
+            language-servers = [
+              "ltex"
+              "texlab" # not in this config. Start a nix-shell
+            ];
+          }
         ];
 
         language-server = {
           ruff.command = "ruff-lsp";
           tinymist.command = "tinymist";
-          ltex.command = "ltex-ls";
+          ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
         };
       };
       settings = {
@@ -253,6 +265,12 @@
           auto-format = true;
           soft-wrap.enable = true;
         };
+        keys.normal = {
+          "C-S-p" = "command_palette";
+        };
+        keys.insert = {
+          "C-S-p" = "command_palette";
+        };
       };
     };
 
@@ -262,7 +280,7 @@
       settings = {
         manager = {
           show_hidden = true;
-          sort_by = "modified";
+          sort_by = "mtime";
           sort_dir_first = true;
           sort_reverse = true;
         };
@@ -462,6 +480,7 @@
     # editor = "${pkgs.helix}/bin/hx";
     {
       enable = true;
+      wrapperFeatures.gtk = true;
       config = {
         modifier = modifier;
         # Use kitty as default terminal
@@ -730,11 +749,17 @@
     # TODO mimetypes and portal, open files on yazi
     portal = {
       enable = true;
-      configPackages = [ pkgs.xdg-desktop-portal-wlr ];
-      extraPortals = with pkgs; [
+      configPackages = with pkgs; [
+        xdg-desktop-portal-hyprland
+        xdg-desktop-portal-wlr
         xdg-desktop-portal-gtk
-        # xdg-desktop-portal-wlr
       ];
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-hyprland
+        xdg-desktop-portal-wlr
+        xdg-desktop-portal-gtk
+      ];
+      xdgOpenUsePortal = true;
     };
   };
 }
