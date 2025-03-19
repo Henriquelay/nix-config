@@ -24,6 +24,7 @@
       pavucontrol
       playerctl
       grimblast
+      # slurp
       # wineWowPackages.waylandFull
       # pcmanfm
 
@@ -78,6 +79,10 @@
       # WLR_NO_HARDWARE_CURSORS = "1";
       # Hint electron apps to use Wayland
       NIXOS_OZONE_WL = "1";
+      MOZ_ENABLE_WAYLAND = "1";
+      XDG_SESSION_TYPE = "wayland";
+      XDG_CURRENT_DESKTOP = "sway";
+      # WAYLAND_DISPLAY = "wayland-1";
       # Disable window decorator on QT applications
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       TERMINAL = "${pkgs.kitty}/bin/kitty";
@@ -94,8 +99,11 @@
     polarity = "dark";
     # image = ./blackpx.jpg; # required for enabling hyprland, I guess
     base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
-    cursor.package = pkgs.rose-pine-cursor;
-    cursor.name = "BreezeX-RosePine-Linux";
+    cursor = {
+      package = pkgs.rose-pine-cursor;
+      name = "BreezeX-RosePine-Linux";
+      size = 32;
+    };
     targets = {
       vscode.enable = false;
       # fish.enable = false;
@@ -142,8 +150,11 @@
       enable = true;
       loginShellInit = ''
         if [ (tty) = "/dev/tty1" ]
-          set --local --export XDG_CURRENT_DESKTOP sway
-          exec dbus-run-session sway > ~/sway_output.log
+          # Sway users might achieve this by adding the following to their Sway config file
+          # This ensures all user units started after the command (not those already running) set the variables
+          systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK
+          # exec dbus-run-session sway > ~/sway_output.log
+          exec sway > ~/sway_output.log
         end
       '';
       shellInit = ''
@@ -194,6 +205,7 @@
       enableSessionWide = false;
       settings = {
         preset = 3;
+        # no_display = true;
         # TODO can't change with stylix enabled
         # background_alpha = 0.5;
         # alpha = 0.9;
@@ -302,6 +314,17 @@
         "webgl.disabled" = false;
         "identity.fxaccounts.enabled" = true;
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        # "privacy.clearOnShutdown.history" = false;
+        # "privacy.clearOnShutdown.cookies" = false;
+        # "network.cookie.lifetimePolicy" = 0;
+
+        # "privacy.donottrackheader.enabled" = true;
+        # "privacy.fingerprintingProtection" = true;
+        "privacy.resistFingerprinting" = false;
+        # "privacy.trackingprotection.emailtracking.enabled" = true;
+        # "privacy.trackingprotection.enabled" = true;
+        # "privacy.trackingprotection.fingerprinting.enabled" = true;
+        # "privacy.trackingprotection.socialtracking.enabled" = true;
       };
     };
 
@@ -345,15 +368,14 @@
       ];
     };
 
-    # obs-studio = {
-    #   enable = true;
-    #   plugins = with pkgs.obs-studio-plugins; [
-    #     droidcam-obs
-    #     # wlrobs
-    #     # obs-backgroundremoval
-    #     # obs-pipewire-audio-capture
-    #   ];
-    # };
+    obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-backgroundremoval
+        obs-pipewire-audio-capture
+      ];
+    };
 
     i3status-rust = {
       enable = true;
@@ -481,6 +503,9 @@
     {
       enable = true;
       wrapperFeatures.gtk = true;
+      extraConfigEarly = ''
+        exec dbus-update-activation-environment WAYLAND_DISPLAY
+      '';
       config = {
         modifier = modifier;
         # Use kitty as default terminal
@@ -749,17 +774,15 @@
     # TODO mimetypes and portal, open files on yazi
     portal = {
       enable = true;
-      configPackages = with pkgs; [
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal-wlr
-        xdg-desktop-portal-gtk
-      ];
+      config.common.default = "*";
+      # configPackages = with pkgs; [
+      #   xdg-desktop-portal-wlr
+      # ];
       extraPortals = with pkgs; [
-        xdg-desktop-portal-hyprland
         xdg-desktop-portal-wlr
-        xdg-desktop-portal-gtk
+        # xdg-desktop-portal-gtk
       ];
-      xdgOpenUsePortal = true;
+      # xdgOpenUsePortal = true;
     };
   };
 }

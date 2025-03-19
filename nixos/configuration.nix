@@ -193,9 +193,9 @@
   ];
 
   ## Requirement for some home-manager programs, mostly security related
-  security.pam.services.hyprlock = { };
+  # security.pam.services.hyprlock = { };
   security.polkit.enable = true; # For Sway
-  # needed for store VS Code auth token
+  # needed for storing VS Code auth token
   services.gnome.gnome-keyring.enable = true;
 
   # Enable automatic login for a user.
