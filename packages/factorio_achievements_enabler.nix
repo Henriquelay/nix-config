@@ -8,13 +8,14 @@
 
 stdenv.mkDerivation rec {
   pname = "fae_linux";
-  version = "1.3";
+  version = "1.3.2";
 
   src = fetchFromGitHub {
     owner = "UnlegitSenpaii";
     repo = "FAE_Linux";
     rev = "refs/tags/v${version}";
-    hash = "sha256-lm/s9rc4/2TIT2mzIPwdFoPB9GZm4qluK2yVoL7KwnE";
+    # hash = "sha256-0jgs33k8h46nswjh5fb5x6x2kc67db5qap5zbrw78nclbxiqf386";
+    hash = "sha256-Bg2HY1+UWXR4Xr9chctqx7ApuulluQIl19YQiOYY+kk=";
   };
 
   nativeBuildInputs = [

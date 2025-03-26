@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "Outroll/bitfy-agent"
+		}
+	],
+	"settings": {
+		"nixEnvSelector.suggestion": false
+	}
+}

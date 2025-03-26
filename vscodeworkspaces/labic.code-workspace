@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "API-Redes-Sociais"
+		},
+		{
+			"path": "ford-api"
+		},
+		{
+			"path": "../Downloads/youtube_transcription"
+		}
+	],
+	"settings": {
+		"nixEnvSelector.suggestion": false,
+		"nixEnvSelector.nixFile": "${workspaceFolder}/shell.nix"
+	}
+}

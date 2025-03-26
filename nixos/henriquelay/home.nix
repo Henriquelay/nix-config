@@ -23,10 +23,7 @@
       sway-launcher-desktop
       pavucontrol
       playerctl
-      grimblast
-      # slurp
-      # wineWowPackages.waylandFull
-      # pcmanfm
+      sway-contrib.grimshot
 
       # General programs
       telegram-desktop
@@ -87,6 +84,7 @@
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       TERMINAL = "${pkgs.kitty}/bin/kitty";
       # EDITOR = "${pkgs.helix}/bin/hx";
+      sponge_purge_only_on_exit = "1";
     };
 
     sessionPath = [
@@ -153,8 +151,7 @@
           # Sway users might achieve this by adding the following to their Sway config file
           # This ensures all user units started after the command (not those already running) set the variables
           systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK
-          # exec dbus-run-session sway > ~/sway_output.log
-          exec sway > ~/sway_output.log
+          exec dbus-run-session sway > ~/sway_output.log
         end
       '';
       shellInit = ''
@@ -641,7 +638,7 @@
             "${modifier}+F" = "fullscreen";
             "${modifier}+Shift+space" = "floating toggle";
             "${modifier}+A" = "focus parent";
-            "Print" = "exec ${pkgs.grimblast}/bin/grimblast copy area";
+            "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
 
             "${modifier}+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/henriquelay/home.nix";
             "${modifier}+Ctrl+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/configuration.nix";

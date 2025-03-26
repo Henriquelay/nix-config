@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "TCC/polka-halfsiphash"
+		},
+		{
+			"path": "TCC/polka_probe_checker"
+		},
+		{
+			"path": "Notes/tcc-info"
+		},
+		{
+			"path": "TCC/SipHash"
+		}
+	],
+	"settings": {
+		"nixEnvSelector.suggestion": false,
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
+}
