@@ -45,6 +45,7 @@
 
       # Langs and lang servers. Dev stuff
       # Should most of these be here? Should be handled by a dev shell. I'll keep only the scripting and ones I want quick access to.
+      helix-gpt
       # python313
       ruff-lsp
       pyright
@@ -83,7 +84,6 @@
       # Disable window decorator on QT applications
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       TERMINAL = "${pkgs.kitty}/bin/kitty";
-      # EDITOR = "${pkgs.helix}/bin/hx";
       sponge_purge_only_on_exit = "1";
     };
 
@@ -226,6 +226,13 @@
       languages = {
         language = [
           {
+            name = "rust";
+            language-servers = [
+              "rust-analyzer"
+              "gpt"
+            ];
+          }
+          {
             name = "nix";
             formatter.command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
             auto-format = true;
@@ -235,6 +242,7 @@
             language-servers = [
               "ruff"
               "pyright"
+              "gpt"
             ];
             auto-format = true;
           }
@@ -244,6 +252,7 @@
               "tinymist"
               "typst-lsp"
               "ltex"
+              "gpt"
             ];
             formatter.command = "${pkgs.typstyle}/bin/typstyle";
             auto-format = true;
@@ -253,6 +262,17 @@
             language-servers = [
               "ltex"
               "texlab" # not in this config. Start a nix-shell
+              "gpt"
+            ];
+            auto-format = true;
+          }
+          {
+            name = "toml";
+            auto-format = true;
+            formatter.command = "taplo";
+            formatter.args = [
+              "fmt"
+              "-"
             ];
           }
         ];
@@ -261,6 +281,13 @@
           ruff.command = "ruff-lsp";
           tinymist.command = "tinymist";
           ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
+          gpt = {
+            command = "${pkgs.helix-gpt}/bin/helix-gpt";
+            args = [
+              "--handler"
+              "copilot"
+            ];
+          };
         };
       };
       settings = {
@@ -273,6 +300,12 @@
           cursor-shape.insert = "bar";
           auto-format = true;
           soft-wrap.enable = true;
+          cursorline = true;
+          end-of-line-diagnostics = "hint";
+          inline-diagnostics = {
+            cursor-line = "error";
+            other-lines = "error";
+          };
         };
         keys.normal = {
           "C-S-p" = "command_palette";
@@ -558,7 +591,7 @@
           {
             command = "${pkgs.nur.repos.nltch.spotify-adblock}/bin/spotify %U";
           }
-          { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
+          # { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
           {
             command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
             always = true;
