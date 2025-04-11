@@ -3,6 +3,21 @@
   pkgs,
   ...
 }:
+let
+
+  sway-import-script = pkgs.writeShellApplication {
+    name = "sway-import-script.sh";
+    text = ''
+      systemctl --user set-environment "WAYLAND_DISPLAY=wayland-1" "XDG_CURRENT_DESKTOP=sway" "XDG_RUNTIME_DIR=/run/user/$(id -u)"
+        # Import the WAYLAND_DISPLAY env var from sway into the d user session.
+        dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway "XDG_RUNTIME_DIR=/run/user/$(id -u)"
+
+        # Stop any services that are running, so that they receive the new env var when they restart.
+        systemctl --user stop pipewire wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
+        systemctl --user start wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
+    '';
+  };
+in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -21,6 +36,7 @@
       # Desktop/WM stuff
       libnotify
       sway-launcher-desktop
+      sway-import-script
       pavucontrol
       playerctl
       sway-contrib.grimshot
@@ -42,6 +58,7 @@
       nur.repos.nltch.spotify-adblock
       mpv
       wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
+      # slurp # For screencapture. Needed from xdg-desktop-portal-wlr
 
       # Langs and lang servers. Dev stuff
       # Should most of these be here? Should be handled by a dev shell. I'll keep only the scripting and ones I want quick access to.
@@ -60,7 +77,8 @@
       clippy
       nix-your-shell
       marksman # markdown lsp
-      ltex-ls
+      markdown-oxide
+      # ltex-ls
       # texlab
 
       slack
@@ -79,7 +97,9 @@
       NIXOS_OZONE_WL = "1";
       MOZ_ENABLE_WAYLAND = "1";
       XDG_SESSION_TYPE = "wayland";
+      XDG_SESSION_DESKTOP = "sway";
       XDG_CURRENT_DESKTOP = "sway";
+      GTK_USE_PORTAL = "1";
       # WAYLAND_DISPLAY = "wayland-1";
       # Disable window decorator on QT applications
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
@@ -137,6 +157,7 @@
         sw = "switch";
         br = "branch";
         co = "checkout";
+        st = "status";
       };
       extraConfig = {
         init.defaultBranch = "main";
@@ -148,10 +169,7 @@
       enable = true;
       loginShellInit = ''
         if [ (tty) = "/dev/tty1" ]
-          # Sway users might achieve this by adding the following to their Sway config file
-          # This ensures all user units started after the command (not those already running) set the variables
-          systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP WAYLAND_DISPLAY DISPLAY DBUS_SESSION_BUS_ADDRESS SWAYSOCK
-          exec dbus-run-session sway > ~/sway_output.log
+          exec dbus-run-session sway &> ~/sway_output.log
         end
       '';
       shellInit = ''
@@ -275,9 +293,22 @@
               "-"
             ];
           }
+          {
+            name = "markdown";
+            auto-format = true;
+            language-servers = [
+              "markdown-oxide"
+              "marksman"
+              "gpt"
+            ];
+          }
         ];
 
         language-server = {
+          rust-analyzer.config = {
+            check.command = "clippy";
+            features = "all";
+          };
           ruff.command = "ruff-lsp";
           tinymist.command = "tinymist";
           ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
@@ -305,6 +336,10 @@
           inline-diagnostics = {
             cursor-line = "error";
             other-lines = "error";
+          };
+          lsp = {
+            display-inlay-hints = false;
+            display-messages = true;
           };
         };
         keys.normal = {
@@ -402,8 +437,7 @@
       enable = true;
       plugins = with pkgs.obs-studio-plugins; [
         wlrobs
-        obs-backgroundremoval
-        obs-pipewire-audio-capture
+        obs-vaapi
       ];
     };
 
@@ -518,7 +552,7 @@
 
     syncthing.enable = true;
 
-    nextcloud-client.enable = true;
+    # nextcloud-client.enable = true;
 
   };
 
@@ -529,13 +563,29 @@
       modifier = "Mod4";
       terminal = "${pkgs.kitty}/bin/kitty";
     in
-    # editor = "${pkgs.helix}/bin/hx";
     {
       enable = true;
       wrapperFeatures.gtk = true;
+      # This needs to call a script because exec's are parallel and we want sequential
       extraConfigEarly = ''
-        exec dbus-update-activation-environment WAYLAND_DISPLAY
+        exec ${pkgs.lib.getExe sway-import-script}
       '';
+      systemd = {
+        enable = true;
+        variables = [
+          "DISPLAY"
+          "WAYLAND_DISPLAY"
+          "I3SOCK"
+          "SWAYSOCK"
+          "XDG_CURRENT_DESKTOP"
+          "XDG_CURRENT_SESSION"
+          "XDG_SESSION_TYPE"
+          "NIXOS_OZONE_WL"
+          "XCURSOR_THEME"
+          "XCURSOR_SIZE"
+        ];
+        xdgAutostart = true;
+      };
       config = {
         modifier = modifier;
         # Use kitty as default terminal
@@ -557,17 +607,18 @@
         gaps = {
           # smartGaps = true;
         };
+        floating.criteria = [ { class = "launcher"; } ];
         window = {
           border = 1;
           titlebar = false;
           hideEdgeBorders = "both";
           commands = [
-            {
-              command = "floating enable";
-              criteria = {
-                app_id = "^launcher$";
-              };
-            }
+            # {
+            #   command = "floating enable";
+            #   criteria = {
+            #     app_id = "^launcher$";
+            #   };
+            # }
             {
               command = "focus";
               criteria = {
@@ -647,7 +698,6 @@
               };
           }
         ];
-        floating.criteria = [ { class = "launcher"; } ];
         keybindings =
           {
             # Basics
@@ -656,6 +706,7 @@
             "${modifier}+d" =
               "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
             "${modifier}+r" = "mode \"resize\"";
+            "alt+tab" = "workspace back_and_forth";
 
             # Layout
             "${modifier}+b" = "splith";
@@ -664,15 +715,12 @@
             "${modifier}+t" = "layout tabbed";
             "${modifier}+e" = "layout toggle split";
 
-            #   # Quick access
-            #   "$mod, mouse_down, workspace, e-1"
-            #   "$mod, mouse_up, workspace, e+1"
-            #   "ALT, TAB, workspace, previous_per_monitor"
             "${modifier}+F" = "fullscreen";
             "${modifier}+Shift+space" = "floating toggle";
             "${modifier}+A" = "focus parent";
-            "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
 
+            #   # Quick access
+            "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
             "${modifier}+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/henriquelay/home.nix";
             "${modifier}+Ctrl+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/configuration.nix";
             "XF86AudioPlay" = "exec playerctl play-pause";
@@ -756,7 +804,7 @@
     settings = {
       global = {
         width = "(300, 800)";
-        offset = "5x5";
+        offset = "(5, 5)";
 
         progress_bar_min_width = 380;
         progress_bar_max_width = 680;
@@ -797,22 +845,29 @@
     };
     mimeApps = {
       enable = true;
-      defaultApplications = {
-        "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
-      };
+      # defaultApplications = {
+      #   "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
+      # };
     };
     # TODO mimetypes and portal, open files on yazi
     portal = {
       enable = true;
-      config.common.default = "*";
+      config.sway = {
+        default = [
+          "gtk"
+          "wlr"
+        ];
+        "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+      };
       # configPackages = with pkgs; [
       #   xdg-desktop-portal-wlr
       # ];
       extraPortals = with pkgs; [
+        # xdg-desktop-portal-hyprland
         xdg-desktop-portal-wlr
-        # xdg-desktop-portal-gtk
+        xdg-desktop-portal-gtk
       ];
-      # xdgOpenUsePortal = true;
+      xdgOpenUsePortal = true;
     };
   };
 }
