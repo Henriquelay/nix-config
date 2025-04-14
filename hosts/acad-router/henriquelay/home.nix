@@ -1,5 +1,5 @@
 {
-  config,
+  # config,
   pkgs,
   ...
 }:
@@ -8,13 +8,17 @@ let
   sway-import-script = pkgs.writeShellApplication {
     name = "sway-import-script.sh";
     text = ''
-      systemctl --user set-environment "WAYLAND_DISPLAY=wayland-1" "XDG_CURRENT_DESKTOP=sway" "XDG_RUNTIME_DIR=/run/user/$(id -u)"
-        # Import the WAYLAND_DISPLAY env var from sway into the d user session.
-        dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway "XDG_RUNTIME_DIR=/run/user/$(id -u)"
+      # systemctl --user set-environment "WAYLAND_DISPLAY=wayland-1" "XDG_CURRENT_DESKTOP=sway" "XDG_RUNTIME_DIR=/run/user/$(id -u)"
+      #   # Import the WAYLAND_DISPLAY env var from sway into the d user session.
+      #   dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway "XDG_RUNTIME_DIR=/run/user/$(id -u)"
 
         # Stop any services that are running, so that they receive the new env var when they restart.
-        systemctl --user stop pipewire wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
-        systemctl --user start wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
+        # systemctl --user stop pipewire wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
+        # systemctl --user start wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
+
+        # systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+        # dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+        dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL XCURSOR_THEME XCURSOR_SIZE; systemctl --user reset-failed && systemctl --user start sway-session.target && swaymsg -mt subscribe '[]' || true && systemctl --user stop sway-session.target
     '';
   };
 in
@@ -489,7 +493,7 @@ in
             }
             {
               block = "memory";
-              format = " $icon $mem_total_used/$mem_total ($mem_total_used_percents)";
+              format = " $icon $mem_used/$mem_total ($mem_avail free)";
               format_alt = " $icon_swap $swap_used/$swap_total ($swap_used_percents)";
               interval = 3;
             }
@@ -566,25 +570,14 @@ in
     {
       enable = true;
       wrapperFeatures.gtk = true;
-      # This needs to call a script because exec's are parallel and we want sequential
+      # This needs to call a script because sway's execs are parallel and we want sequential
       extraConfigEarly = ''
         exec ${pkgs.lib.getExe sway-import-script}
       '';
       systemd = {
         enable = true;
-        variables = [
-          "DISPLAY"
-          "WAYLAND_DISPLAY"
-          "I3SOCK"
-          "SWAYSOCK"
-          "XDG_CURRENT_DESKTOP"
-          "XDG_CURRENT_SESSION"
-          "XDG_SESSION_TYPE"
-          "NIXOS_OZONE_WL"
-          "XCURSOR_THEME"
-          "XCURSOR_SIZE"
-        ];
-        xdgAutostart = true;
+        # variables = [ "--all" ];
+        # xdgAutostart = true;
       };
       config = {
         modifier = modifier;
@@ -721,8 +714,8 @@ in
 
             #   # Quick access
             "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
-            "${modifier}+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/henriquelay/home.nix";
-            "${modifier}+Ctrl+Shift+I" = "exec ${terminal} hx ~/nix-config/nixos/configuration.nix";
+            "${modifier}+Shift+I" = "exec ${terminal} hx /etc/nixos/henriquelay/home.nix";
+            "${modifier}+Ctrl+Shift+I" = "exec ${terminal} hx /etc/nixos/configuration.nix";
             "XF86AudioPlay" = "exec playerctl play-pause";
             "XF86AudioNext" = "exec playerctl next";
             "XF86AudioPrev" = "exec playerctl previous";
@@ -843,21 +836,30 @@ in
         ];
       };
     };
-    mimeApps = {
-      enable = true;
-      # defaultApplications = {
-      #   "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
-      # };
-    };
-    # TODO mimetypes and portal, open files on yazi
+    # TODO mimetypes and portal, open files on yazi (xdg-desktop-portal-termfilechooser)
     portal = {
       enable = true;
-      config.sway = {
-        default = [
-          "gtk"
-          "wlr"
-        ];
-        "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+      config = {
+        # common = {
+        #   default = [
+        #     "gtk"
+        #     "wlr"
+        #   ];
+        #   "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+        # };
+        sway = {
+          default = [
+            "wlr"
+            "gtk"
+          ];
+          "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+          "org.freedesktop.impl.portal.Screenshot" = "wlr";
+          # xdg-desktop-portal-gtk's implementation uses org.gnome.SessionManager and
+          # org.freedesktop.ScreenSaver, neither of which is implemented by Sway. This
+          # will cause some programs (e.g. Firefox) to use Wayland's idle-inhibit
+          # protocol instead, which sway does implement.
+          "org.freedesktop.impl.portal.Inhibit" = "none";
+        };
       };
       # configPackages = with pkgs; [
       #   xdg-desktop-portal-wlr
@@ -867,7 +869,7 @@ in
         xdg-desktop-portal-wlr
         xdg-desktop-portal-gtk
       ];
-      xdgOpenUsePortal = true;
+      #     xdgOpenUsePortal = true;
     };
   };
 }
