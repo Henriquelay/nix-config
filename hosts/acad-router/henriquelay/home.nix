@@ -35,7 +35,7 @@ in
     # You should not change this value, even if you update Home Manager. If you do
     # want to update the value, then make sure to first check the Home Manager
     # release notes.
-    stateVersion = "24.05"; # Please read the comment before changing.
+    stateVersion = "25.05"; # Please read the comment before changing.
     packages = with pkgs; [
       # Desktop/WM stuff
       libnotify
@@ -65,8 +65,10 @@ in
       # slurp # For screencapture. Needed from xdg-desktop-portal-wlr
 
       # Langs and lang servers. Dev stuff
-      # Should most of these be here? Should be handled by a dev shell. I'll keep only the scripting and ones I want quick access to.
+      # Should most of these be here? Should be handled by a dev shell.
+      # I'll keep only the scripting and ones I want quick access to.
       helix-gpt
+      taplo # TOML
       # python313
       ruff-lsp
       pyright
@@ -80,7 +82,7 @@ in
       rustfmt
       clippy
       nix-your-shell
-      marksman # markdown lsp
+      # marksman # markdown lsp
       markdown-oxide
       # ltex-ls
       # texlab
@@ -240,19 +242,45 @@ in
         name = "Hack Nerd Font";
         size = 18;
       };
+      actionAliases = {
+        "launch_tab" = "launch --cwd=current --type=tab";
+        "launch_window" = "launch --cwd=current --type=os-window";
+      };
+      keybindings = {
+        "f1" = "launch --cwd=current --type=os-window";
+      };
+
     };
 
     helix = {
       enable = true;
       defaultEditor = true;
       languages = {
+        language-server = {
+          rust-analyzer.config = {
+            check.command = "clippy";
+            features = "all";
+          };
+          ruff.command = "ruff-lsp";
+          tinymist.command = "tinymist";
+          ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
+          helix-gpt = {
+            command = "${pkgs.helix-gpt}/bin/helix-gpt";
+            args = [
+              "--handler"
+              "copilot"
+            ];
+          };
+        };
         language = [
           {
             name = "rust";
             language-servers = [
               "rust-analyzer"
-              "gpt"
+              "helix-gpt"
             ];
+            # formatter.command = "rustfmt";
+            # auto-format = true;
           }
           {
             name = "nix";
@@ -264,7 +292,7 @@ in
             language-servers = [
               "ruff"
               "pyright"
-              "gpt"
+              "helix-gpt"
             ];
             auto-format = true;
           }
@@ -274,7 +302,7 @@ in
               "tinymist"
               "typst-lsp"
               "ltex"
-              "gpt"
+              "helix-gpt"
             ];
             formatter.command = "${pkgs.typstyle}/bin/typstyle";
             auto-format = true;
@@ -284,7 +312,7 @@ in
             language-servers = [
               "ltex"
               "texlab" # not in this config. Start a nix-shell
-              "gpt"
+              "helix-gpt"
             ];
             auto-format = true;
           }
@@ -302,28 +330,11 @@ in
             auto-format = true;
             language-servers = [
               "markdown-oxide"
-              "marksman"
-              "gpt"
+              # "marksman"
+              "helix-gpt"
             ];
           }
         ];
-
-        language-server = {
-          rust-analyzer.config = {
-            check.command = "clippy";
-            features = "all";
-          };
-          ruff.command = "ruff-lsp";
-          tinymist.command = "tinymist";
-          ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
-          gpt = {
-            command = "${pkgs.helix-gpt}/bin/helix-gpt";
-            args = [
-              "--handler"
-              "copilot"
-            ];
-          };
-        };
       };
       settings = {
         theme = "rose_pine";
@@ -338,8 +349,8 @@ in
           cursorline = true;
           end-of-line-diagnostics = "hint";
           inline-diagnostics = {
-            cursor-line = "error";
-            other-lines = "error";
+            cursor-line = "hint";
+            other-lines = "hint";
           };
           lsp = {
             display-inlay-hints = false;
@@ -347,10 +358,12 @@ in
           };
         };
         keys.normal = {
-          "C-S-p" = "command_palette";
+          "F2" = "command_palette";
+          "home" = "goto_first_nonwhitespace";
         };
         keys.insert = {
-          "C-S-p" = "command_palette";
+          "F2" = "command_palette";
+          "home" = "goto_first_nonwhitespace";
         };
       };
     };
@@ -849,8 +862,8 @@ in
         # };
         sway = {
           default = [
-            "wlr"
             "gtk"
+            "wlr"
           ];
           "org.freedesktop.impl.portal.ScreenCast" = "wlr";
           "org.freedesktop.impl.portal.Screenshot" = "wlr";
