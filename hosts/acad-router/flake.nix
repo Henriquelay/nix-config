@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.url = "github:hyprwm/Hyprland";
     # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     # stylix.url = "github:danth/stylix/release-24.05";
     stylix.url = "github:danth/stylix";
@@ -25,12 +25,15 @@
       # ucodenix,
       # hyprland,
       ...
-    }:
+    }
+    # @inputs
+    :
     let
       system = "x86_64-linux";
     in
     {
       nixosConfigurations."acad-router" = nixpkgs.lib.nixosSystem {
+        # specialArgs = { inherit inputs; }; # this is the important part (hyprland)
         inherit system;
         modules = [
           home-manager.nixosModules.home-manager

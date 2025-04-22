@@ -60,6 +60,9 @@
         "root"
         "henriquelay"
       ];
+      # Hyprland cachix
+      substituters = [ "https://hyprland.cachix.org" ];
+      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
     };
   };
   # Allow unfree packages
@@ -149,6 +152,8 @@
       };
   };
 
+  services.dbus.implementation = "broker";
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "br";
@@ -211,7 +216,7 @@
   ];
   programs = {
     fish.enable = true;
-    # hyprland.enable = true;
+    hyprland.enable = true;
     virt-manager.enable = true;
 
     gamemode.enable = true;

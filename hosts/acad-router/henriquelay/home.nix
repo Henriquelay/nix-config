@@ -1,24 +1,54 @@
 {
-  # config,
+  config,
   pkgs,
   ...
 }:
 let
 
-  sway-import-script = pkgs.writeShellApplication {
-    name = "sway-import-script.sh";
+  sway-launch = pkgs.writeShellApplication {
+    name = "sway-launch";
     text = ''
-      # systemctl --user set-environment "WAYLAND_DISPLAY=wayland-1" "XDG_CURRENT_DESKTOP=sway" "XDG_RUNTIME_DIR=/run/user/$(id -u)"
-      #   # Import the WAYLAND_DISPLAY env var from sway into the d user session.
-      #   dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway "XDG_RUNTIME_DIR=/run/user/$(id -u)"
+      #! /usr/bin/env sh
 
-        # Stop any services that are running, so that they receive the new env var when they restart.
-        # systemctl --user stop pipewire wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
-        # systemctl --user start wireplumber xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-hyprland
+      # see: https://man.sr.ht/~kennylevinsen/greetd/#how-to-set-xdg_session_typewayland
 
-        # systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-        # dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-        dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE NIXOS_OZONE_WL XCURSOR_THEME XCURSOR_SIZE; systemctl --user reset-failed && systemctl --user start sway-session.target && swaymsg -mt subscribe '[]' || true && systemctl --user stop sway-session.target
+      set -eu
+
+      # __dotfiles_wayland_teardown() {
+      #   # true: as long as we try it's okay
+      #   systemctl --user stop sway-session.target || true
+
+      #   # this teardown makes it easier to switch between compositors
+      #   unset DISPLAY SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
+      #   systemctl --user unset-environment DISPLAY SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
+      #   if command -v dbus-update-activation-environment >/dev/null; then
+      #     dbus-update-activation-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
+      #   fi
+      # }
+      # __dotfiles_wayland_teardown
+
+      export XDG_CURRENT_DESKTOP=sway  # xdg-desktop-portal
+      export XDG_SESSION_DESKTOP=sway  # systemd
+      export XDG_SESSION_TYPE=wayland  # xdg/systemd
+      export WAYLAND_DISPLAY=wayland-1 # hack, hardcoded by me
+
+      if command -v dbus-update-activation-environment >/dev/null; then
+        dbus-update-activation-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE WAYLAND_DISPLAY
+      fi
+      # without this, systemd starts xdg-desktop-portal without these environment variables,
+      # and the xdg-desktop-portal does not start xdg-desktop-portal-wrl as expected
+      # https://github.com/emersion/xdg-desktop-portal-wlr/issues/39#issuecomment-638752975
+      systemctl --user import-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE WAYLAND_DISPLAY
+
+      unset WAYLAND_DISPLAY
+      dbus-run-session sway
+
+      # use systemd-run here, because systemd units inherit variables from ~/.config/environment.d
+      # true: ignore errors here so we always do the teardown afterwards
+      ## shellcheck disable=SC2068
+      # systemd-run --quiet --unit=sway --user --wait sway --config ~/.config/sway/config $@ || true
+
+      # __dotfiles_wayland_teardown
     '';
   };
 in
@@ -40,10 +70,12 @@ in
       # Desktop/WM stuff
       libnotify
       sway-launcher-desktop
-      sway-import-script
+      sway-launch
       pavucontrol
       playerctl
-      sway-contrib.grimshot
+      sway-contrib.grimshot # Sway specific features
+      grimblast
+      i3bar-river # Port of i3bar for river and other wlroots wms
 
       # General programs
       telegram-desktop
@@ -62,7 +94,8 @@ in
       nur.repos.nltch.spotify-adblock
       mpv
       wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
-      # slurp # For screencapture. Needed from xdg-desktop-portal-wlr
+      slurp # For screencapture. Needed from xdg-desktop-portal-wlr
+      wf-recorder
 
       # Langs and lang servers. Dev stuff
       # Should most of these be here? Should be handled by a dev shell.
@@ -93,24 +126,19 @@ in
       # (callPackage ../../packages/notekit.nix {})
     ];
 
-    file = {
-    };
-
     sessionVariables = {
       # If cursors are invisible
       # WLR_NO_HARDWARE_CURSORS = "1";
       # Hint electron apps to use Wayland
       NIXOS_OZONE_WL = "1";
       MOZ_ENABLE_WAYLAND = "1";
-      XDG_SESSION_TYPE = "wayland";
-      XDG_SESSION_DESKTOP = "sway";
-      XDG_CURRENT_DESKTOP = "sway";
-      GTK_USE_PORTAL = "1";
+      # XDG_SESSION_TYPE = "wayland";
+      # XDG_SESSION_DESKTOP = "sway";
+      # XDG_CURRENT_DESKTOP = "sway";
       # WAYLAND_DISPLAY = "wayland-1";
       # Disable window decorator on QT applications
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       TERMINAL = "${pkgs.kitty}/bin/kitty";
-      sponge_purge_only_on_exit = "1";
     };
 
     sessionPath = [
@@ -122,7 +150,32 @@ in
     enable = true;
     polarity = "dark";
     # image = ./blackpx.jpg; # required for enabling hyprland, I guess
+    # base16Scheme = "${pkgs.base16-schemes}/share/themes/ashen.yaml";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
+    # base16Override = '' # TODO finish replacing with ASHEN
+    #   # Ashen scheme for the Base16 Builder (git.sr.ht/~ficd/ashen)
+    #   system: "base16"
+    #   name: "Ashen"
+    #   author: "Daniel Fichtinger (sr.ht/~ficd)"
+    #   variant: "dark"
+    #   palette:
+    #     base00: "#1C2023" # ----
+    #     base01: "#393F45" # ---
+    #     base02: "#565E65" # --
+    #     base03: "#747C84" # -
+    #     base04: "#ADB3BA" # +
+    #     base05: "#C7CCD1" # ++
+    #     base06: "#DFE2E5" # +++
+    #     base07: "#F3F4F5" # ++++
+    #     base08: "#C7AE95" # orange
+    #     base09: "#C7C795" # yellow
+    #     base0A: "#AEC795" # poison green
+    #     base0B: "#95C7AE" # turquois
+    #     base0C: "#95AEC7" # aqua
+    #     base0D: "#AE95C7" # purple
+    #     base0E: "#C795AE" # pink
+    #     base0F: "#C79595" # light red
+    # '';
     cursor = {
       package = pkgs.rose-pine-cursor;
       name = "BreezeX-RosePine-Linux";
@@ -175,7 +228,9 @@ in
       enable = true;
       loginShellInit = ''
         if [ (tty) = "/dev/tty1" ]
-          exec dbus-run-session sway &> ~/sway_output.log
+          # exec ${pkgs.lib.getExe sway-launch} &> ~/sway_output.log
+          # exec sway &> ~/sway_output.log
+          exec Hyprland &> ~/hyprland_output.log
         end
       '';
       shellInit = ''
@@ -223,7 +278,7 @@ in
 
     mangohud = {
       enable = true;
-      enableSessionWide = false;
+      enableSessionWide = true;
       settings = {
         preset = 3;
         # no_display = true;
@@ -236,7 +291,7 @@ in
     kitty = {
       enable = true;
       shellIntegration.enableFishIntegration = true;
-      themeFile = "rose-pine";
+      # themeFile = "rose-pine";
       font = {
         package = pkgs.nerd-fonts.hack;
         name = "Hack Nerd Font";
@@ -249,6 +304,39 @@ in
       keybindings = {
         "f1" = "launch --cwd=current --type=os-window";
       };
+
+      extraConfig = "
+        # Ashen Theme
+        # Theme Author: Daniel Fichtinger
+        # Ported By: Dibbli
+        # License: MIT
+
+        background            #121212
+        foreground            #f5f5f5
+        cursor                #b4b4b4
+        selection_background  #b4b4b4
+        selection_foreground  #f5f5f5
+
+        color0                #121212
+        color1                #B14242
+        color2                #D87C4A
+        color3                #E49A44
+        color4                #4A8B8B
+        color5                #a7a7a7
+        color6                #b4b4b4
+        color7                #d5d5d5
+        color8                #949494
+        color9                #B14242
+        color10               #D87C4A
+        color11               #E49A44
+        color12               #4A8B8B
+        color13               #a7a7a7
+        color14               #b4b4b4
+        color15               #d5d5d5
+
+        active_border_color     #B14242
+        inactive_border_color   #949494
+        bell_border_color       #D87C4A";
 
     };
 
@@ -336,18 +424,358 @@ in
           }
         ];
       };
+      themes = {
+        ashen = {
+          attribute = "g_4";
+          type = "blue";
+          "type.builtin" = "blue";
+          "type.parameter" = "orange_glow";
+          "type.enum.variant" = "orange_blaze";
+          constructor = "g_1";
+          constant = "orange_blaze";
+          "constant.builtin" = "blue";
+          "constant.character" = {
+            fg = "red_glowing";
+            modifiers = [ "bold" ];
+          };
+          "constant.character.escape" = "g_2";
+          "constant.numeric" = "blue";
+          string = "red_glowing";
+          "string.regexp" = "orange_glow";
+          "string.special" = "g_2";
+          "string.special.url" = {
+            fg = "red_glowing";
+            modifiers = [ "bold" ];
+          };
+          "string.special.path" = {
+            fg = "red_glowing";
+            modifiers = [ "bold" ];
+          };
+          "string.special.symbol" = "orange_smolder";
+          comment = {
+            fg = "g_6";
+            modifiers = [ "italic" ];
+          };
+          comment.block.documentation = {
+            fg = "g_5";
+            modifiers = [ "italic" ];
+          };
+          variable = "g_3";
+          "variable.parameter" = {
+            fg = "g_2";
+            modifiers = [ "italic" ];
+          };
+          "variable.builtin" = "blue";
+          "variable.other.member" = {
+            fg = "g_2";
+          };
+          label = "red_ember";
+          punctuation = "g_2";
+          "punctuation.special" = "orange_golden";
+          "punctuation.bracket" = "g_6";
+          "punctuation.delimiter" = "orange_smolder";
+          keyword = "red_ember";
+          "keyword.operator" = "orange_blaze";
+          "keyword.directive" = {
+            fg = "red_ember";
+            modifiers = [ "italic" ];
+          };
+          "keyword.storage.modifier" = {
+            fg = "red_ember";
+            modifiers = [ "italic" ];
+          };
+          operator = "orange_glow";
+          function = {
+            fg = "g_3";
+            modifiers = [ "bold" ];
+          };
+          function.builtin = {
+            fg = "g_3";
+            modifiers = [
+              "bold"
+              "italic"
+            ];
+          };
+          function.macro = "red_ember";
+          tag = {
+            fg = "orange_glow";
+            modifiers = [ "italic" ];
+          };
+          namespace = {
+            fg = "orange_glow";
+            modifiers = [ "bold" ];
+          };
+          special = "orange_smolder";
+          markup.heading = {
+            fg = "red_glowing";
+            modifiers = [ "bold" ];
+          };
+          markup.list = "orange_glow";
+          markup.bold = {
+            modifiers = [ "bold" ];
+          };
+          markup.italic = {
+            modifiers = [ "italic" ];
+          };
+          markup.link.url = {
+            fg = "red_glowing";
+            modifiers = [
+              "italic"
+              "underlined"
+            ];
+          };
+          markup.link.text = "red_ember";
+          markup.raw = {
+            fg = "g_2";
+            bg = "g_10";
+          };
+          markup.quote = {
+            modifiers = [ "italic" ];
+          };
+          diff.plus = "g_6";
+          diff.minus = "red_ember";
+          diff.delta = "brown";
+          ui.background = {
+            fg = "text";
+            bg = "background";
+          };
+          ui.linenr = {
+            fg = "g_8";
+          };
+          ui.linenr.selected = {
+            fg = "g_6";
+          };
+          ui.statusline = {
+            fg = "g_3";
+            bg = "g_9";
+          };
+          ui.statusline.inactive = {
+            fg = "g_5";
+            bg = "g_10";
+          };
+          ui.statusline.normal = {
+            fg = "background";
+            bg = "orange_blaze";
+            modifiers = [ "bold" ];
+          };
+          ui.statusline.insert = {
+            fg = "g_1";
+            bg = "g_7";
+            modifiers = [ "bold" ];
+          };
+          ui.statusline.select = {
+            fg = "background";
+            bg = "orange_golden";
+            modifiers = [ "bold" ];
+          };
+          ui.popup = {
+            fg = "text";
+            bg = "g_10";
+          };
+          ui.info = {
+            fg = "orange_blaze";
+            bg = "g_10";
+          };
+          ui.window = {
+            fg = "g_7";
+          };
+          ui.help = {
+            fg = "text";
+            bg = "g_10";
+            modifiers = [ "bold" ];
+          };
+          ui.bufferline = {
+            fg = "text";
+            bg = "background";
+          };
+          ui.bufferline.active = {
+            fg = "g_2";
+            bg = "g_10";
+            underline = {
+              color = "orange_blaze";
+              style = "line";
+            };
+          };
+          ui.bufferline.background = {
+            bg = "background";
+          };
+          ui.text = "text";
+          "ui.text.focus" = {
+            fg = "g_2";
+            bg = "g_10";
+            underline = {
+              color = "red_ember";
+              style = "line";
+            };
+            modifiers = [ "bold" ];
+          };
+          "ui.text.inactive" = {
+            fg = "g_7";
+          };
+          "ui.text.directory" = {
+            fg = "red_ember";
+          };
+          ui.virtual = "g_5";
+          "ui.virtual.ruler" = {
+            bg = "cursorline";
+          };
+          "ui.virtual.whitespace" = "g_7";
+          "ui.virtual.indent-guide" = "g_7";
+          "ui.virtual.wrap" = "g_7";
+          "ui.virtual.inlay-hint" = {
+            fg = "g_6";
+            modifiers = [ "italic" ];
+          };
+          "ui.virtual.jump-label" = {
+            fg = "background";
+            bg = "orange_blaze";
+            modifiers = [ "bold" ];
+          };
+          ui.selection = {
+            bg = "brown_dark";
+          };
+          ui.cursor.normal = {
+            fg = "background";
+            bg = "orange_muted";
+          };
+          ui.cursor.insert = {
+            fg = "background";
+            bg = "g_7";
+          };
+          ui.cursor.select = {
+            fg = "background";
+            bg = "golden_muted";
+          };
+          ui.cursor.primary.normal = {
+            fg = "background";
+            bg = "orange_blaze";
+            modifiers = [ "bold" ];
+          };
+          ui.cursor.primary.insert = {
+            fg = "background";
+            bg = "g_3";
+            modifiers = [ "bold" ];
+          };
+          ui.cursor.primary.select = {
+            fg = "background";
+            bg = "orange_golden";
+            modifiers = [ "bold" ];
+          };
+          ui.cursor.match = {
+            fg = "orange_smolder";
+            modifiers = [ "underlined" ];
+          };
+          ui.cursorline.primary = {
+            bg = "cursorline";
+          };
+          ui.cursorline = {
+            bg = "g_12";
+          };
+          ui.highlight = {
+            fg = "orange_blaze";
+            bg = "cursorline";
+            underline = {
+              color = "red_ember";
+              style = "line";
+            };
+            modifiers = [ "bold" ];
+          };
+          ui.menu = {
+            fg = "g_2";
+            bg = "g_10";
+          };
+          ui.menu.selected = {
+            fg = "background";
+            bg = "orange_blaze";
+            modifiers = [ "bold" ];
+          };
+          diagnostic.error = {
+            underline = {
+              color = "red_flame";
+              style = "curl";
+            };
+          };
+          diagnostic.warning = {
+            underline = {
+              color = "orange_golden";
+              style = "curl";
+            };
+          };
+          diagnostic.info = {
+            underline = {
+              color = "g_4";
+              style = "dotted";
+            };
+          };
+          diagnostic.hint = {
+            underline = {
+              color = "g_5";
+              style = "dotted";
+            };
+          };
+          diagnostic.unnecessary = {
+            modifiers = [ "dim" ];
+          };
+          error = {
+            fg = "red_flame";
+            bg = "g_10";
+          };
+          warning = {
+            fg = "orange_golden";
+            bg = "g_10";
+          };
+          info = {
+            fg = "g_2";
+            bg = "g_10";
+          };
+          hint = {
+            fg = "g_4";
+            bg = "g_10";
+          };
+          palette = {
+            cursorline = "#191919";
+            text = "#b4b4b4";
+            red_flame = "#C53030";
+            red_glowing = "#DF6464";
+            red_ember = "#B14242";
+            orange_glow = "#D87C4A";
+            orange_blaze = "#C4693D";
+            orange_muted = "#6D3B22";
+            orange_smolder = "#E49A44";
+            orange_golden = "#E5A72A";
+            golden_muted = "#6D4D0D";
+            brown = "#89492a";
+            brown_dark = "#322119";
+            blue = "#4A8B8B";
+            background = "#121212";
+            g_1 = "#e5e5e5";
+            g_2 = "#d5d5d5";
+            g_3 = "#b4b4b4";
+            g_4 = "#a7a7a7";
+            g_5 = "#949494";
+            g_6 = "#737373";
+            g_7 = "#535353";
+            g_8 = "#323232";
+            g_9 = "#212121";
+            g_10 = "#1d1d1d";
+            g_11 = "#191919";
+            g_12 = "#151515";
+          };
+        };
+      };
       settings = {
         theme = "rose_pine";
         editor = {
-          color-modes = true;
-          popup-border = "all";
-          line-number = "relative";
-          bufferline = "multiple";
-          cursor-shape.insert = "bar";
           auto-format = true;
-          soft-wrap.enable = true;
+          bufferline = "multiple";
+          color-modes = true;
+          cursor-shape.insert = "bar";
           cursorline = true;
           end-of-line-diagnostics = "hint";
+          line-number = "relative";
+          popup-border = "all";
+          soft-wrap.enable = true;
+          undercurl = true;
           inline-diagnostics = {
             cursor-line = "hint";
             other-lines = "hint";
@@ -581,16 +1009,12 @@ in
       terminal = "${pkgs.kitty}/bin/kitty";
     in
     {
-      enable = true;
+      enable = false;
       wrapperFeatures.gtk = true;
-      # This needs to call a script because sway's execs are parallel and we want sequential
-      extraConfigEarly = ''
-        exec ${pkgs.lib.getExe sway-import-script}
-      '';
       systemd = {
         enable = true;
-        # variables = [ "--all" ];
-        # xdgAutostart = true;
+        variables = [ "--all" ];
+        xdgAutostart = true;
       };
       config = {
         modifier = modifier;
@@ -801,6 +1225,153 @@ in
       };
     };
 
+  home.file = {
+
+    ".config/i3bar-river/config.toml".text = ''
+      command = "i3status-rs config-default"
+    '';
+
+  };
+
+  wayland.windowManager.hyprland =
+    let
+      modifier = "SUPER";
+      terminal = "${pkgs.kitty}/bin/kitty";
+      editor = "${pkgs.helix}/bin/hx";
+    in
+    {
+      enable = true;
+      package = null;
+      portalPackage = null;
+      settings = {
+        ## Basics
+        input = {
+          kb_layout = "br";
+          numlock_by_default = "true";
+        };
+        monitor = [
+          # For the main monitor
+          # Assumes a 4k monitor
+          # fourth arg is the scale factor
+          # currently, fractional scaling on Wayland is very good! ...
+          "DP-1,preferred,auto,1.5,vrr,1"
+          ", preferred, auto, 1" # Fallback monitor rule
+        ];
+        # ... but not on X. This is specially apparent with games.
+        # unscale XWayland
+        xwayland.force_zero_scaling = true;
+        misc = {
+          disable_hyprland_logo = true;
+          disable_splash_rendering = true;
+        };
+        animation = [
+          "workspaces, 0"
+          "global, 1, 1, default"
+        ];
+        general = {
+          gaps_in = 0;
+          gaps_out = 0;
+          resize_on_border = true;
+          extend_border_grab_area = 10;
+        };
+        dwindle = {
+          force_split = 0;
+        };
+        windowrulev2 = [
+          # Terminal Launcher rules
+          "float, class:^(launcher)$"
+          "pin, class:^(launcher)$"
+          "stayfocused, class:^(launcher)$"
+          "bordersize 10, class:^(launcher)$"
+          "dimaround, class:^(launcher)$"
+          "rounding 5, class:^(launcher)$"
+          "bordercolor ${config.lib.stylix.colors.base01}, class:^(launcher)$"
+          # "opacity 0.7, class:^(launcher)$"
+          "xray 1, class:^(launcher)$"
+          # Fixes
+          "stayfocused, class:^(pinentry-)" # fix pinentry losing focus
+          "workspace 10 silent, class:^(Nextcloud)$" # Send Nextcloud to workspace 10
+        ];
+        # Autostart
+        exec-once = [
+          "[workspace 1 silent] telegram-desktop -- %u"
+          "[workspace 1 silent] spotify %U"
+          # "[workspace 10 silent] qbittorrent"
+          "i3bar-river"
+        ];
+        ## Binds
+        bindm = [
+          "${modifier}, mouse:272, movewindow"
+          "${modifier}, mouse:273, resizewindow"
+        ];
+        bindl = [
+          # ", XF86AudioRaiseVolume, exec, vol --up"
+          # ", XF86AudioLowerVolume, exec, vol --down"
+          #", XF86MonBrightnessUp, exec, bri --up"
+          #", XF86MonBrightnessDown, exec, bri --down"
+          #", XF86Search, exec, launchpad"
+          #", XF86AudioMute, exec, amixer set Master toggle"
+          #", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+          ", XF86AudioPlay, exec, playerctl play-pause" # the stupid key is called play , but it toggles
+          ", XF86AudioNext, exec, playerctl next"
+          ", XF86AudioPrev, exec, playerctl previous"
+        ];
+        bind =
+          [
+            "${modifier}, D, exec, ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop"
+            "${modifier}, Return, exec, ${terminal}"
+            "${modifier}&SHIFT, Q, killactive" # Closes, don't kill (-9) pid despite the name
+            "${modifier}, Up, movefocus, u"
+            "${modifier}, Down, movefocus, d"
+            "${modifier}, Left, movefocus, l"
+            "${modifier}, Right, movefocus, r"
+            "${modifier}, K, movefocus, u"
+            "${modifier}, J, movefocus, d"
+            "${modifier}, H, movefocus, l"
+            "${modifier}, L, movefocus, r"
+            "${modifier}&SHIFT, Up, movewindow, u"
+            "${modifier}&SHIFT, Down, movewindow, d"
+            "${modifier}&SHIFT, Left, movewindow, l"
+            "${modifier}&SHIFT, Right, movewindow, r"
+            "${modifier}&SHIFT, K, movewindow, u"
+            "${modifier}&SHIFT, J, movewindow, d"
+            "${modifier}&SHIFT, H, movewindow, l"
+            "${modifier}&SHIFT, L, movewindow, r"
+            "${modifier}&SHIFT, SPACE, togglefloating"
+
+            # Shortcuts
+            "${modifier}&SHIFT, I, exec, ${terminal} ${editor} /etc/nixos/henriquelay/home.nix"
+            "${modifier}&CTRL&SHIFT, I, exec, ${terminal} ${editor} /etc/nixos/configuration.nix"
+
+            "${modifier}, mouse_down, workspace, e-1"
+            "${modifier}, mouse_up, workspace, e+1"
+            "ALT, TAB, workspace, previous_per_monitor"
+            "${modifier}, F, fullscreen, 0"
+            ", Print, exec, ${pkgs.grimblast}/bin/grimblast copy area --notify"
+          ]
+          ++ (
+            # workspaces
+            # binds ${modifier} + [shift +] {1..10} to [move to] workspace {1..10}
+            builtins.concatLists (
+              builtins.genList (
+                x:
+                let
+                  ws =
+                    let
+                      c = (x + 1) / 10;
+                    in
+                    builtins.toString (x + 1 - (c * 10));
+                in
+                [
+                  "${modifier}, ${ws}, workspace, ${toString (x + 1)}"
+                  "${modifier}&SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
+                ]
+              ) 10
+            )
+          );
+      };
+    };
+
   services.dunst = {
     enable = true;
     iconTheme = {
@@ -848,41 +1419,6 @@ in
           "Emulator"
         ];
       };
-    };
-    # TODO mimetypes and portal, open files on yazi (xdg-desktop-portal-termfilechooser)
-    portal = {
-      enable = true;
-      config = {
-        # common = {
-        #   default = [
-        #     "gtk"
-        #     "wlr"
-        #   ];
-        #   "org.freedesktop.impl.portal.ScreenCast" = "wlr";
-        # };
-        sway = {
-          default = [
-            "gtk"
-            "wlr"
-          ];
-          "org.freedesktop.impl.portal.ScreenCast" = "wlr";
-          "org.freedesktop.impl.portal.Screenshot" = "wlr";
-          # xdg-desktop-portal-gtk's implementation uses org.gnome.SessionManager and
-          # org.freedesktop.ScreenSaver, neither of which is implemented by Sway. This
-          # will cause some programs (e.g. Firefox) to use Wayland's idle-inhibit
-          # protocol instead, which sway does implement.
-          "org.freedesktop.impl.portal.Inhibit" = "none";
-        };
-      };
-      # configPackages = with pkgs; [
-      #   xdg-desktop-portal-wlr
-      # ];
-      extraPortals = with pkgs; [
-        # xdg-desktop-portal-hyprland
-        xdg-desktop-portal-wlr
-        xdg-desktop-portal-gtk
-      ];
-      #     xdgOpenUsePortal = true;
     };
   };
 }
