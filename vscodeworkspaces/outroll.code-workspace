@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "../../Gits/Outroll/bitfy-agent"
+		},
+		{
+			"path": "../../Gits/Outroll/vestacp-private"
 		}
 	],
 	"settings": {

@@ -427,339 +427,339 @@ in
       themes = {
         ashen = {
           attribute = "g_4";
-          type = "blue";
+          "type" = "blue";
           "type.builtin" = "blue";
           "type.parameter" = "orange_glow";
           "type.enum.variant" = "orange_blaze";
-          constructor = "g_1";
-          constant = "orange_blaze";
+          "constructor" = "g_1";
+          "constant" = "orange_blaze";
           "constant.builtin" = "blue";
           "constant.character" = {
-            fg = "red_glowing";
-            modifiers = [ "bold" ];
+            "fg" = "red_glowing";
+            "modifiers" = [ "bold" ];
           };
           "constant.character.escape" = "g_2";
           "constant.numeric" = "blue";
-          string = "red_glowing";
+          "string" = "red_glowing";
           "string.regexp" = "orange_glow";
           "string.special" = "g_2";
           "string.special.url" = {
-            fg = "red_glowing";
-            modifiers = [ "bold" ];
+            "fg" = "red_glowing";
+            "modifiers" = [ "bold" ];
           };
           "string.special.path" = {
-            fg = "red_glowing";
-            modifiers = [ "bold" ];
+            "fg" = "red_glowing";
+            "modifiers" = [ "bold" ];
           };
           "string.special.symbol" = "orange_smolder";
-          comment = {
-            fg = "g_6";
-            modifiers = [ "italic" ];
+          "comment" = {
+            "fg" = "g_6";
+            "modifiers" = [ "italic" ];
           };
-          comment.block.documentation = {
-            fg = "g_5";
-            modifiers = [ "italic" ];
+          "comment.block.documentation" = {
+            "fg" = "g_5";
+            "modifiers" = [ "italic" ];
           };
-          variable = "g_3";
+          "variable" = "g_3";
           "variable.parameter" = {
-            fg = "g_2";
-            modifiers = [ "italic" ];
+            "fg" = "g_2";
+            "modifiers" = [ "italic" ];
           };
           "variable.builtin" = "blue";
           "variable.other.member" = {
-            fg = "g_2";
+            "fg" = "g_2";
           };
-          label = "red_ember";
-          punctuation = "g_2";
+          "label" = "red_ember";
+          "punctuation" = "g_2";
           "punctuation.special" = "orange_golden";
           "punctuation.bracket" = "g_6";
           "punctuation.delimiter" = "orange_smolder";
-          keyword = "red_ember";
+          "keyword" = "red_ember";
           "keyword.operator" = "orange_blaze";
           "keyword.directive" = {
-            fg = "red_ember";
-            modifiers = [ "italic" ];
+            "fg" = "red_ember";
+            "modifiers" = [ "italic" ];
           };
           "keyword.storage.modifier" = {
-            fg = "red_ember";
-            modifiers = [ "italic" ];
+            "fg" = "red_ember";
+            "modifiers" = [ "italic" ];
           };
-          operator = "orange_glow";
-          function = {
-            fg = "g_3";
-            modifiers = [ "bold" ];
+          "operator" = "orange_glow";
+          "function" = {
+            "fg" = "g_3";
+            "modifiers" = [ "bold" ];
           };
-          function.builtin = {
-            fg = "g_3";
-            modifiers = [
+          "function.builtin" = {
+            "fg" = "g_3";
+            "modifiers" = [
               "bold"
               "italic"
             ];
           };
-          function.macro = "red_ember";
-          tag = {
-            fg = "orange_glow";
-            modifiers = [ "italic" ];
+          "function.macro" = "red_ember";
+          "tag" = {
+            "fg" = "orange_glow";
+            "modifiers" = [ "italic" ];
           };
-          namespace = {
-            fg = "orange_glow";
-            modifiers = [ "bold" ];
+          "namespace" = {
+            "fg" = "orange_glow";
+            "modifiers" = [ "bold" ];
           };
-          special = "orange_smolder";
-          markup.heading = {
-            fg = "red_glowing";
-            modifiers = [ "bold" ];
+          "special" = "orange_smolder";
+          "markup.heading" = {
+            "fg" = "red_glowing";
+            "modifiers" = [ "bold" ];
           };
-          markup.list = "orange_glow";
-          markup.bold = {
-            modifiers = [ "bold" ];
+          "markup.list" = "orange_glow";
+          "markup.bold" = {
+            "modifiers" = [ "bold" ];
           };
-          markup.italic = {
-            modifiers = [ "italic" ];
+          "markup.italic" = {
+            "modifiers" = [ "italic" ];
           };
-          markup.link.url = {
-            fg = "red_glowing";
-            modifiers = [
+          "markup.link.url" = {
+            "fg" = "red_glowing";
+            "modifiers" = [
               "italic"
               "underlined"
             ];
           };
-          markup.link.text = "red_ember";
-          markup.raw = {
-            fg = "g_2";
-            bg = "g_10";
+          "markup.link.text" = "red_ember";
+          "markup.raw" = {
+            "fg" = "g_2";
+            "bg" = "g_10";
           };
-          markup.quote = {
-            modifiers = [ "italic" ];
+          "markup.quote" = {
+            "modifiers" = [ "italic" ];
           };
-          diff.plus = "g_6";
-          diff.minus = "red_ember";
-          diff.delta = "brown";
-          ui.background = {
-            fg = "text";
-            bg = "background";
+          "diff.plus" = "g_6";
+          "diff.minus" = "red_ember";
+          "diff.delta" = "brown";
+          "ui.background" = {
+            "fg" = "text";
+            "bg" = "background";
           };
-          ui.linenr = {
-            fg = "g_8";
+          "ui.linenr" = {
+            "fg" = "g_8";
           };
-          ui.linenr.selected = {
-            fg = "g_6";
+          "ui.linenr.selected" = {
+            "fg" = "g_6";
           };
-          ui.statusline = {
-            fg = "g_3";
-            bg = "g_9";
+          "ui.statusline" = {
+            "fg" = "g_3";
+            "bg" = "g_9";
           };
-          ui.statusline.inactive = {
-            fg = "g_5";
-            bg = "g_10";
+          "ui.statusline.inactive" = {
+            "fg" = "g_5";
+            "bg" = "g_10";
           };
-          ui.statusline.normal = {
-            fg = "background";
-            bg = "orange_blaze";
-            modifiers = [ "bold" ];
+          "ui.statusline.normal" = {
+            "fg" = "background";
+            "bg" = "orange_blaze";
+            "modifiers" = [ "bold" ];
           };
-          ui.statusline.insert = {
-            fg = "g_1";
-            bg = "g_7";
-            modifiers = [ "bold" ];
+          "ui.statusline.insert" = {
+            "fg" = "g_1";
+            "bg" = "g_7";
+            "modifiers" = [ "bold" ];
           };
-          ui.statusline.select = {
-            fg = "background";
-            bg = "orange_golden";
-            modifiers = [ "bold" ];
+          "ui.statusline.select" = {
+            "fg" = "background";
+            "bg" = "orange_golden";
+            "modifiers" = [ "bold" ];
           };
-          ui.popup = {
-            fg = "text";
-            bg = "g_10";
+          "ui.popup" = {
+            "fg" = "text";
+            "bg" = "g_10";
           };
-          ui.info = {
-            fg = "orange_blaze";
-            bg = "g_10";
+          "ui.info" = {
+            "fg" = "orange_blaze";
+            "bg" = "g_10";
           };
-          ui.window = {
-            fg = "g_7";
+          "ui.window" = {
+            "fg" = "g_7";
           };
-          ui.help = {
-            fg = "text";
-            bg = "g_10";
-            modifiers = [ "bold" ];
+          "ui.help" = {
+            "fg" = "text";
+            "bg" = "g_10";
+            "modifiers" = [ "bold" ];
           };
-          ui.bufferline = {
-            fg = "text";
-            bg = "background";
+          "ui.bufferline" = {
+            "fg" = "text";
+            "bg" = "background";
           };
-          ui.bufferline.active = {
-            fg = "g_2";
-            bg = "g_10";
-            underline = {
-              color = "orange_blaze";
-              style = "line";
+          "ui.bufferline.active" = {
+            "fg" = "g_2";
+            "bg" = "g_10";
+            "underline" = {
+              "color" = "orange_blaze";
+              "style" = "line";
             };
           };
-          ui.bufferline.background = {
-            bg = "background";
+          "ui.bufferline.background" = {
+            "bg" = "background";
           };
-          ui.text = "text";
+          "ui.text" = "text";
           "ui.text.focus" = {
-            fg = "g_2";
-            bg = "g_10";
-            underline = {
-              color = "red_ember";
-              style = "line";
+            "fg" = "g_2";
+            "bg" = "g_10";
+            "underline" = {
+              "color" = "red_ember";
+              "style" = "line";
             };
-            modifiers = [ "bold" ];
+            "modifiers" = [ "bold" ];
           };
           "ui.text.inactive" = {
-            fg = "g_7";
+            "fg" = "g_7";
           };
           "ui.text.directory" = {
-            fg = "red_ember";
+            "fg" = "red_ember";
           };
-          ui.virtual = "g_5";
+          "ui.virtual" = "g_5";
           "ui.virtual.ruler" = {
-            bg = "cursorline";
+            "bg" = "cursorline";
           };
           "ui.virtual.whitespace" = "g_7";
           "ui.virtual.indent-guide" = "g_7";
           "ui.virtual.wrap" = "g_7";
           "ui.virtual.inlay-hint" = {
-            fg = "g_6";
-            modifiers = [ "italic" ];
+            "fg" = "g_6";
+            "modifiers" = [ "italic" ];
           };
           "ui.virtual.jump-label" = {
-            fg = "background";
-            bg = "orange_blaze";
-            modifiers = [ "bold" ];
+            "fg" = "background";
+            "bg" = "orange_blaze";
+            "modifiers" = [ "bold" ];
           };
-          ui.selection = {
-            bg = "brown_dark";
+          "ui.selection" = {
+            "bg" = "brown_dark";
           };
-          ui.cursor.normal = {
-            fg = "background";
-            bg = "orange_muted";
+          "ui.cursor.normal" = {
+            "fg" = "background";
+            "bg" = "orange_muted";
           };
-          ui.cursor.insert = {
-            fg = "background";
-            bg = "g_7";
+          "ui.cursor.insert" = {
+            "fg" = "background";
+            "bg" = "g_7";
           };
-          ui.cursor.select = {
-            fg = "background";
-            bg = "golden_muted";
+          "ui.cursor.select" = {
+            "fg" = "background";
+            "bg" = "golden_muted";
           };
-          ui.cursor.primary.normal = {
-            fg = "background";
-            bg = "orange_blaze";
-            modifiers = [ "bold" ];
+          "ui.cursor.primary.normal" = {
+            "fg" = "background";
+            "bg" = "orange_blaze";
+            "modifiers" = [ "bold" ];
           };
-          ui.cursor.primary.insert = {
-            fg = "background";
-            bg = "g_3";
-            modifiers = [ "bold" ];
+          "ui.cursor.primary.insert" = {
+            "fg" = "background";
+            "bg" = "g_3";
+            "modifiers" = [ "bold" ];
           };
-          ui.cursor.primary.select = {
-            fg = "background";
-            bg = "orange_golden";
-            modifiers = [ "bold" ];
+          "ui.cursor.primary.select" = {
+            "fg" = "background";
+            "bg" = "orange_golden";
+            "modifiers" = [ "bold" ];
           };
-          ui.cursor.match = {
-            fg = "orange_smolder";
-            modifiers = [ "underlined" ];
+          "ui.cursor.match" = {
+            "fg" = "orange_smolder";
+            "modifiers" = [ "underlined" ];
           };
-          ui.cursorline.primary = {
-            bg = "cursorline";
+          "ui.cursorline.primary" = {
+            "bg" = "cursorline";
           };
-          ui.cursorline = {
-            bg = "g_12";
+          "ui.cursorline" = {
+            "bg" = "g_12";
           };
-          ui.highlight = {
-            fg = "orange_blaze";
-            bg = "cursorline";
-            underline = {
-              color = "red_ember";
-              style = "line";
+          "ui.highlight" = {
+            "fg" = "orange_blaze";
+            "bg" = "cursorline";
+            "underline" = {
+              "color" = "red_ember";
+              "style" = "line";
             };
-            modifiers = [ "bold" ];
+            "modifiers" = [ "bold" ];
           };
-          ui.menu = {
-            fg = "g_2";
-            bg = "g_10";
+          "ui.menu" = {
+            "fg" = "g_2";
+            "bg" = "g_10";
           };
-          ui.menu.selected = {
-            fg = "background";
-            bg = "orange_blaze";
-            modifiers = [ "bold" ];
+          "ui.menu.selected" = {
+            "fg" = "background";
+            "bg" = "orange_blaze";
+            "modifiers" = [ "bold" ];
           };
-          diagnostic.error = {
-            underline = {
-              color = "red_flame";
-              style = "curl";
-            };
-          };
-          diagnostic.warning = {
-            underline = {
-              color = "orange_golden";
-              style = "curl";
+          "diagnostic.error" = {
+            "underline" = {
+              "color" = "red_flame";
+              "style" = "curl";
             };
           };
-          diagnostic.info = {
-            underline = {
-              color = "g_4";
-              style = "dotted";
+          "diagnostic.warning" = {
+            "underline" = {
+              "color" = "orange_golden";
+              "style" = "curl";
             };
           };
-          diagnostic.hint = {
-            underline = {
-              color = "g_5";
-              style = "dotted";
+          "diagnostic.info" = {
+            "underline" = {
+              "color" = "g_4";
+              "style" = "dotted";
             };
           };
-          diagnostic.unnecessary = {
-            modifiers = [ "dim" ];
+          "diagnostic.hint" = {
+            "underline" = {
+              "color" = "g_5";
+              "style" = "dotted";
+            };
           };
-          error = {
-            fg = "red_flame";
-            bg = "g_10";
+          "diagnostic.unnecessary" = {
+            "modifiers" = [ "dim" ];
           };
-          warning = {
-            fg = "orange_golden";
-            bg = "g_10";
+          "error" = {
+            "fg" = "red_flame";
+            "bg" = "g_10";
           };
-          info = {
-            fg = "g_2";
-            bg = "g_10";
+          "warning" = {
+            "fg" = "orange_golden";
+            "bg" = "g_10";
           };
-          hint = {
-            fg = "g_4";
-            bg = "g_10";
+          "info" = {
+            "fg" = "g_2";
+            "bg" = "g_10";
           };
-          palette = {
-            cursorline = "#191919";
-            text = "#b4b4b4";
-            red_flame = "#C53030";
-            red_glowing = "#DF6464";
-            red_ember = "#B14242";
-            orange_glow = "#D87C4A";
-            orange_blaze = "#C4693D";
-            orange_muted = "#6D3B22";
-            orange_smolder = "#E49A44";
-            orange_golden = "#E5A72A";
-            golden_muted = "#6D4D0D";
-            brown = "#89492a";
-            brown_dark = "#322119";
-            blue = "#4A8B8B";
-            background = "#121212";
-            g_1 = "#e5e5e5";
-            g_2 = "#d5d5d5";
-            g_3 = "#b4b4b4";
-            g_4 = "#a7a7a7";
-            g_5 = "#949494";
-            g_6 = "#737373";
-            g_7 = "#535353";
-            g_8 = "#323232";
-            g_9 = "#212121";
-            g_10 = "#1d1d1d";
-            g_11 = "#191919";
-            g_12 = "#151515";
+          "hint" = {
+            "fg" = "g_4";
+            "bg" = "g_10";
+          };
+          "palette" = {
+            "cursorline" = "#191919";
+            "text" = "#b4b4b4";
+            "red_flame" = "#C53030";
+            "red_glowing" = "#DF6464";
+            "red_ember" = "#B14242";
+            "orange_glow" = "#D87C4A";
+            "orange_blaze" = "#C4693D";
+            "orange_muted" = "#6D3B22";
+            "orange_smolder" = "#E49A44";
+            "orange_golden" = "#E5A72A";
+            "golden_muted" = "#6D4D0D";
+            "brown" = "#89492a";
+            "brown_dark" = "#322119";
+            "blue" = "#4A8B8B";
+            "background" = "#121212";
+            "g_1" = "#e5e5e5";
+            "g_2" = "#d5d5d5";
+            "g_3" = "#b4b4b4";
+            "g_4" = "#a7a7a7";
+            "g_5" = "#949494";
+            "g_6" = "#737373";
+            "g_7" = "#535353";
+            "g_8" = "#323232";
+            "g_9" = "#212121";
+            "g_10" = "#1d1d1d";
+            "g_11" = "#191919";
+            "g_12" = "#151515";
           };
         };
       };
@@ -823,7 +823,7 @@ in
       settings = {
         "webgl.disabled" = false;
         "identity.fxaccounts.enabled" = true;
-        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        "toolkit.legacyUserProfileCustomizations.stylesheetums" = true;
         # "privacy.clearOnShutdown.history" = false;
         # "privacy.clearOnShutdown.cookies" = false;
         # "network.cookie.lifetimePolicy" = 0;
@@ -865,7 +865,7 @@ in
 
     vscode = {
       enable = true;
-      package = pkgs.vscode.fhs;
+      package = pkgs.code-cursor;
     };
 
     eza = {
@@ -1034,9 +1034,6 @@ in
           };
         };
 
-        gaps = {
-          # smartGaps = true;
-        };
         floating.criteria = [ { class = "launcher"; } ];
         window = {
           border = 1;
@@ -1229,6 +1226,8 @@ in
 
     ".config/i3bar-river/config.toml".text = ''
       command = "i3status-rs config-default"
+
+      tags_padding = 8.0
     '';
 
   };
