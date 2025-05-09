@@ -101,6 +101,7 @@ in
       # Should most of these be here? Should be handled by a dev shell.
       # I'll keep only the scripting and ones I want quick access to.
       helix-gpt
+      harper
       taplo # TOML
       # python313
       # ruff-lsp
@@ -318,6 +319,10 @@ in
           };
           ruff.command = "ruff-lsp";
           tinymist.command = "tinymist";
+          harper-ls = {
+            command = "harper-ls";
+            args = [ "--stdio" ];
+          };
           ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
           helix-gpt = {
             command = "${pkgs.helix-gpt}/bin/helix-gpt";
@@ -333,6 +338,7 @@ in
             language-servers = [
               "rust-analyzer"
               "helix-gpt"
+              "harper-ls"
             ];
             # formatter.command = "rustfmt";
             # auto-format = true;
@@ -348,6 +354,7 @@ in
               "ruff"
               "pyright"
               "helix-gpt"
+              "harper-ls"
             ];
             auto-format = true;
           }
@@ -358,6 +365,7 @@ in
               "typst-lsp"
               "ltex"
               "helix-gpt"
+              "harper-ls"
             ];
             formatter.command = "${pkgs.typstyle}/bin/typstyle";
             auto-format = true;
@@ -368,6 +376,7 @@ in
               "ltex"
               "texlab" # not in this config. Start a nix-shell
               "helix-gpt"
+              "harper-ls"
             ];
             auto-format = true;
           }
@@ -387,6 +396,7 @@ in
               "markdown-oxide"
               # "marksman"
               "helix-gpt"
+              "harper-ls"
             ];
           }
         ];
@@ -832,7 +842,7 @@ in
 
     vscode = {
       enable = true;
-      package = pkgs.code-cursor;
+      # package = pkgs.code-cursor;
     };
 
     eza = {
