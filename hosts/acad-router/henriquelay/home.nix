@@ -96,6 +96,8 @@ in
       wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
       slurp # For screencapture. Needed from xdg-desktop-portal-wlr
       wf-recorder
+      dua # ncdu-like
+      presenterm # markdown slides. Support for typst and latex formulas
 
       # Langs and lang servers. Dev stuff
       # Should most of these be here? Should be handled by a dev shell.
@@ -112,7 +114,7 @@ in
       # typstyle
       nil
       nixfmt-rfc-style
-      rust-analyzer
+      # rust-analyzer
       # rustfmt
       # clippy
       nix-your-shell
@@ -258,10 +260,10 @@ in
       };
 
       plugins = with pkgs.fishPlugins; [
-        {
-          name = "tide";
-          src = tide.src;
-        }
+        # {
+        #   name = "tide";
+        #   src = tide.src;
+        # }
         {
           name = "sponge";
           src = sponge.src;
@@ -275,6 +277,14 @@ in
           src = done.src;
         }
       ];
+    };
+
+    starship = {
+      enable = true;
+      enableFishIntegration = true;
+      # settings = {
+
+      # };
     };
 
     mangohud = {
@@ -437,6 +447,10 @@ in
           "home" = "goto_first_nonwhitespace";
         };
       };
+    };
+
+    bacon = {
+      enable = true;
     };
 
     yazi = {
@@ -983,6 +997,7 @@ in
 
             # Shortcuts
             "${modifier}&SHIFT, I, exec, ${terminal} ${editor} /etc/nixos/henriquelay/home.nix"
+            "${modifier}&SHIFT, O, exec, ${terminal} ${editor} ~/Notes"
             "${modifier}&CTRL&SHIFT, I, exec, ${terminal} ${editor} /etc/nixos/configuration.nix"
 
             "${modifier}, mouse_down, workspace, e-1"
