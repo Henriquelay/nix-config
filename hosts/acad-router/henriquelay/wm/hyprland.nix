@@ -1,12 +1,25 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
+  enable = true;
+
   modifier = "SUPER";
   terminal = "${pkgs.kitty}/bin/kitty";
   editor = "${pkgs.helix}/bin/hx";
 in
 {
+  programs.fish.loginShellInit = lib.mkIf enable ''
+    if [ (tty) = "/dev/tty1" ]
+      exec Hyprland &> ~/hyprland_output.log
+    end
+  '';
+
   wayland.windowManager.hyprland = {
-    enable = true;
+    enable = enable;
     package = null;
     portalPackage = null;
     settings = {

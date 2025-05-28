@@ -1,8 +1,14 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
+  enable = false;
+
   modifier = "Mod4";
   terminal = "${pkgs.kitty}/bin/kitty";
-
 
   sway-launch = pkgs.writeShellApplication {
     name = "sway-launch";
@@ -52,13 +58,19 @@ let
   };
 in
 {
+  programs.fish.loginShellInit = lib.mkIf enable ''
+    if [ (tty) = "/dev/tty1" ]
+      exec sway &> ~/sway_output.log
+    end
+  '';
+
   home.packages = with pkgs; [
-      sway-contrib.grimshot # Sway specific features
-      sway-launch
+    sway-contrib.grimshot # Sway specific features
+    sway-launch
   ];
 
   wayland.windowManager.sway = {
-    enable = false;
+    enable = enable;
     wrapperFeatures.gtk = true;
     systemd = {
       enable = true;
@@ -101,55 +113,64 @@ in
       startup = [
         { command = "${pkgs.telegram-desktop}/bin/telegram-desktop -- %u"; }
         { command = "${pkgs.nur.repos.nltch.spotify-adblock}/bin/spotify %U"; }
-        { command = "${pkgs.autotiling-rs}/bin/autotiling-rs"; always = true; }
+        {
+          command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+          always = true;
+        }
       ];
       bars = [
         {
           fonts = {
-            names = [ "Hack Nerd Font" "Font Awesome 6 Free-Regular" ];
+            names = [
+              "Hack Nerd Font"
+              "Font Awesome 6 Free-Regular"
+            ];
             style = "Regular";
             size = 12.0;
           };
           position = "top";
           statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs config-default";
-          colors = let
-            bg = "#282828";
-            red = "#cc241d";
-            yellow = "#d79921";
-            aqua = "#689d68";
-            darkgray = "#1d2021";
-          in {
-            background = bg;
-            statusline = yellow;
-            separator = red;
-            focused_workspace = {
-              background = aqua;
-              border = aqua;
-              text = darkgray;
+          colors =
+            let
+              bg = "#282828";
+              red = "#cc241d";
+              yellow = "#d79921";
+              aqua = "#689d68";
+              darkgray = "#1d2021";
+            in
+            {
+              background = bg;
+              statusline = yellow;
+              separator = red;
+              focused_workspace = {
+                background = aqua;
+                border = aqua;
+                text = darkgray;
+              };
+              inactive_workspace = {
+                background = darkgray;
+                border = darkgray;
+                text = yellow;
+              };
+              active_workspace = {
+                background = darkgray;
+                border = darkgray;
+                text = yellow;
+              };
+              urgent_workspace = {
+                background = red;
+                border = red;
+                text = bg;
+              };
             };
-            inactive_workspace = {
-              background = darkgray;
-              border = darkgray;
-              text = yellow;
-            };
-            active_workspace = {
-              background = darkgray;
-              border = darkgray;
-              text = yellow;
-            };
-            urgent_workspace = {
-              background = red;
-              border = red;
-              text = bg;
-            };
-          };
         }
       ];
       keybindings =
         {
           "${modifier}+Return" = "exec ${terminal}";
           "${modifier}+Shift+q" = "kill";
-          "${modifier}+d" = "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
+          "${modifier}+d" =
+            "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
           "${modifier}+r" = "mode \"resize\"";
           "alt+tab" = "workspace back_and_forth";
           "${modifier}+b" = "splith";
@@ -169,34 +190,52 @@ in
         }
         // builtins.foldl' (acc: elem: acc // elem) { } (
           builtins.attrValues (
-            builtins.mapAttrs (
-              direction: key_names:
+            builtins.mapAttrs
+              (
+                direction: key_names:
                 builtins.foldl' (acc: elem: acc // elem) { } (
                   builtins.map (key: {
                     "${modifier}+${key}" = "focus ${direction}";
                     "${modifier}+Shift+${key}" = "move ${direction}";
                   }) key_names
                 )
-            ) {
-              left = [ "h" "Left" ];
-              right = [ "l" "Right" ];
-              up = [ "k" "Up" ];
-              down = [ "j" "Down" ];
-            }
+              )
+              {
+                left = [
+                  "h"
+                  "Left"
+                ];
+                right = [
+                  "l"
+                  "Right"
+                ];
+                up = [
+                  "k"
+                  "Up"
+                ];
+                down = [
+                  "j"
+                  "Down"
+                ];
+              }
           )
         )
         // builtins.foldl' (acc: elem: acc // elem) { } (
           builtins.genList (
             x:
-              let ws =
-                let c = (x + 1) / 10;
-                in builtins.toString (x + 1 - (c * 10));
-              in {
-                "${modifier}+${ws}" = "workspace number " + toString (x + 1);
-                "${modifier}+Shift+${ws}" = "move container to workspace number " + toString (x + 1);
-              }
+            let
+              ws =
+                let
+                  c = (x + 1) / 10;
+                in
+                builtins.toString (x + 1 - (c * 10));
+            in
+            {
+              "${modifier}+${ws}" = "workspace number " + toString (x + 1);
+              "${modifier}+Shift+${ws}" = "move container to workspace number " + toString (x + 1);
+            }
           ) 10
         );
     };
   };
-} 
+}

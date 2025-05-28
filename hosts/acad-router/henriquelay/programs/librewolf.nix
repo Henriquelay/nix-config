@@ -4,6 +4,7 @@
     profileNames = [ "default" ];
   };
   programs.librewolf = {
+    enable = true;
     settings = {
       "webgl.disabled" = false;
       "identity.fxaccounts.enabled" = true;
@@ -20,4 +21,4 @@
       "privacy.trackingprotection.socialtracking.enabled" = true;
     };
   };
-} 
+}
