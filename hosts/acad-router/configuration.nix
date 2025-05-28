@@ -79,7 +79,7 @@
       # Limit the number of generations to keep
       systemd-boot.configurationLimit = 10;
     };
-    kernelPackages = pkgs.linuxPackages_latest;
+    # kernelPackages = pkgs.linuxPackages_latest;
   };
 
   virtualisation = {
@@ -163,6 +163,13 @@
   # Configure console keymap
   console.keyMap = "br-abnt2";
 
+  # Home manager
+  home-manager = {
+    backupFileExtension = "hmbackup";
+    useGlobalPkgs = false;
+    useUserPackages = true;
+  };
+
   ## Users
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.henriquelay = {
@@ -178,7 +185,6 @@
     ];
     shell = pkgs.fish;
   };
-  home-manager.backupFileExtension = "hmbackup";
   home-manager.users.henriquelay = import henriquelay/home.nix {
     inherit config;
     inherit pkgs;
@@ -278,7 +284,6 @@
     enable = true;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark.yaml";
-    image = ./henriquelay/blackpx.jpg; # only for i3
   };
 
   # services.ucodenix = {
