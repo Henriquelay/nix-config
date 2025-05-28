@@ -68,60 +68,43 @@ in
     stateVersion = "25.05"; # Please read the comment before changing.
     packages = with pkgs; [
       # Desktop/WM stuff
-      libnotify
-      sway-launcher-desktop
-      sway-launch
-      pavucontrol
-      playerctl
-      sway-contrib.grimshot # Sway specific features
       grimblast
       i3bar-river # Port of i3bar for river and other wlroots wms
+      sway-contrib.grimshot # Sway specific features
+      sway-launch
+      sway-launcher-desktop
+      wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
+      # slurp # For screencapture. Needed from xdg-desktop-portal-wlr
+      # wf-recorder
+
+      # System utilities
+      blueman
+      gvfs # For trash support and other stuff like that
+      libnotify
+      pavucontrol
+      playerctl
+      poppler
+      xdg-utils
 
       # General programs
-      telegram-desktop
-      gvfs # For trash support and other stuff like that
-      xdg-utils
-      poppler
-      grc
-      webcord
-      blueman
-      qbittorrent
-      # jackett
-      # heroic # Games launcher
       # gogdl # GOG downloading module for heroic
-      obsidian
-      feh
-      nur.repos.nltch.spotify-adblock
-      mpv
-      wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
-      slurp # For screencapture. Needed from xdg-desktop-portal-wlr
-      wf-recorder
+      # heroic # Games launcher
+      # jackett
       dua # ncdu-like
+      feh
+      grc
+      mpv
+      nur.repos.nltch.spotify-adblock
+      obsidian
       presenterm # markdown slides. Support for typst and latex formulas
+      qbittorrent
+      telegram-desktop
+      webcord
 
       # Langs and lang servers. Dev stuff
       # Should most of these be here? Should be handled by a dev shell.
       # I'll keep only the scripting and ones I want quick access to.
-      helix-gpt
-      # harper
-      taplo # TOML
-      # python313
-      # ruff-lsp
-      # pyright
       # quarto
-      # typst
-      # tinymist
-      # typstyle
-      nil
-      nixfmt-rfc-style
-      # rust-analyzer
-      # rustfmt
-      # clippy
-      nix-your-shell
-      # marksman # markdown lsp
-      markdown-oxide
-      # ltex-ls
-      # texlab
 
       slack
 
@@ -154,41 +137,18 @@ in
     polarity = "dark";
     # image = ./blackpx.jpg; # required for enabling hyprland, I guess
     # base16Scheme = "${pkgs.base16-schemes}/share/themes/ashen.yaml";
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine.yaml";
-    # base16Override = '' # TODO finish replacing with ASHEN
-    #   # Ashen scheme for the Base16 Builder (git.sr.ht/~ficd/ashen)
-    #   system: "base16"
-    #   name: "Ashen"
-    #   author: "Daniel Fichtinger (sr.ht/~ficd)"
-    #   variant: "dark"
-    #   palette:
-    #     base00: "#1C2023" # ----
-    #     base01: "#393F45" # ---
-    #     base02: "#565E65" # --
-    #     base03: "#747C84" # -
-    #     base04: "#ADB3BA" # +
-    #     base05: "#C7CCD1" # ++
-    #     base06: "#DFE2E5" # +++
-    #     base07: "#F3F4F5" # ++++
-    #     base08: "#C7AE95" # orange
-    #     base09: "#C7C795" # yellow
-    #     base0A: "#AEC795" # poison green
-    #     base0B: "#95C7AE" # turquois
-    #     base0C: "#95AEC7" # aqua
-    #     base0D: "#AE95C7" # purple
-    #     base0E: "#C795AE" # pink
-    #     base0F: "#C79595" # light red
-    # '';
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark.yaml";
     cursor = {
-      package = pkgs.rose-pine-cursor;
-      name = "BreezeX-RosePine-Linux";
-      size = 32;
+      package = pkgs.capitaine-cursors-themed;
+      name = "Capitaine Cursors (Gruvbox)";
+      size = 42;
     };
     targets = {
       vscode.enable = false;
-      # fish.enable = false;
+      fish.enable = false;
       kitty.enable = false;
       helix.enable = false;
+      librewolf.profileNames = [ "default" ];
     };
 
     fonts = {
@@ -238,32 +198,16 @@ in
       '';
       shellInit = ''
         set -g fish_greeting # Disable greeting
-        if command -q nix-your-shell
-          nix-your-shell fish | source
+        if command -q ${pkgs.nix-your-shell}/bin/nix-your-shell
+          ${pkgs.nix-your-shell}/bin/nix-your-shell fish | source
         end
       '';
-      # functions = {
-      # yy = {
-      #   body = ''
-      #     set tmp (mktemp -t "yazi-cwd.XXXXX")
-      #     yazi $argv --XDG_CURRENT_DESKTOP=sway dbus-run-session swaycwd-file="$tmp"
-      #     if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-      #       builtin cd -- "$cwd"
-      #     end
-      #     rm -f -- "$tmp"
-      #   '';
-      # };
-      # };
 
       shellAliases = {
         cat = "bat";
       };
 
       plugins = with pkgs.fishPlugins; [
-        # {
-        #   name = "tide";
-        #   src = tide.src;
-        # }
         {
           name = "sponge";
           src = sponge.src;
@@ -275,6 +219,10 @@ in
         {
           name = "done";
           src = done.src;
+        }
+        {
+          name = "gruvbox";
+          src = gruvbox.src;
         }
       ];
     };
@@ -302,7 +250,7 @@ in
     kitty = {
       enable = true;
       shellIntegration.enableFishIntegration = true;
-      # themeFile = "rose-pine";
+      themeFile = "gruvbox-dark";
       font = {
         package = pkgs.nerd-fonts.hack;
         name = "Hack Nerd Font";
@@ -321,6 +269,42 @@ in
     helix = {
       enable = true;
       defaultEditor = true;
+      settings = {
+        theme = "gruvbox";
+        editor = {
+          auto-format = true;
+          bufferline = "multiple";
+          color-modes = true;
+          cursor-shape.insert = "bar";
+          cursorline = true;
+          end-of-line-diagnostics = "hint";
+          line-number = "relative";
+          popup-border = "all";
+          soft-wrap.enable = true;
+          undercurl = true;
+          inline-diagnostics = {
+            cursor-line = "hint";
+            other-lines = "hint";
+          };
+          lsp = {
+            display-inlay-hints = false;
+            display-messages = true;
+          };
+        };
+        keys.normal = {
+          "F2" = "command_palette";
+          "home" = "goto_first_nonwhitespace";
+          "C-l" = [
+            "search_selection"
+            "select_all"
+            "select_regex"
+          ];
+        };
+        keys.insert = {
+          "F2" = "command_palette";
+          "home" = "goto_first_nonwhitespace";
+        };
+      };
       languages = {
         language-server = {
           rust-analyzer.config = {
@@ -348,7 +332,7 @@ in
             language-servers = [
               "rust-analyzer"
               "helix-gpt"
-              # "harper-ls"
+              "harper-ls"
             ];
             # formatter.command = "rustfmt";
             # auto-format = true;
@@ -357,6 +341,10 @@ in
             name = "nix";
             formatter.command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
             auto-format = true;
+            language-servers = [
+              "nil"
+              "harper-ls"
+            ];
           }
           {
             name = "python";
@@ -398,6 +386,10 @@ in
               "fmt"
               "-"
             ];
+            language-servers = [
+              "taplo"
+              "harper-ls"
+            ];
           }
           {
             name = "markdown";
@@ -411,42 +403,7 @@ in
           }
         ];
       };
-      settings = {
-        theme = "rose_pine";
-        editor = {
-          auto-format = true;
-          bufferline = "multiple";
-          color-modes = true;
-          cursor-shape.insert = "bar";
-          cursorline = true;
-          end-of-line-diagnostics = "hint";
-          line-number = "relative";
-          popup-border = "all";
-          soft-wrap.enable = true;
-          undercurl = true;
-          inline-diagnostics = {
-            cursor-line = "hint";
-            other-lines = "hint";
-          };
-          lsp = {
-            display-inlay-hints = false;
-            display-messages = true;
-          };
-        };
-        keys.normal = {
-          "F2" = "command_palette";
-          "home" = "goto_first_nonwhitespace";
-          "C-l" = [
-            "search_selection"
-            "select_all"
-            "select_regex"
-          ];
-        };
-        keys.insert = {
-          "F2" = "command_palette";
-          "home" = "goto_first_nonwhitespace";
-        };
-      };
+
     };
 
     bacon = {
@@ -548,8 +505,8 @@ in
 
       bars = {
         default = {
-          theme = "ctp-frappe";
-          icons = "awesome6";
+          theme = "gruvbox-dark";
+          icons = "material-nf";
           blocks = [
             {
               block = "focused_window";
@@ -646,7 +603,7 @@ in
       enableFishIntegration = true;
       defaultCacheTtl = 604800; # 1 week
       enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-gtk2;
+      pinentry.package = pkgs.pinentry-gtk2;
       extraConfig = ''
         debug-pinentry
       '';
@@ -745,40 +702,44 @@ in
             position = "top";
             statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs config-default";
             colors =
+              # TODO when changing back to sway
               let
-                base = "#191724";
-                surface = "#1f1d2e";
-                overlay = "#26233a";
-                muted = "#6e6a86";
-                subtle = "#908caa";
-                text = "#e0def4";
-                love = "#eb6f92";
-                gold = "#f6c177";
-                rose = "#ebbcba";
-                pine = "#31748f";
-                foam = "#9ccfd8";
-                iris = "#c4a7e7";
-                highlightlow = "#21202e";
-                highlightmed = "#403d52";
-                highlighthigh = "#524f67";
+                # set primary gruvbox colorscheme colors
+                bg = "#282828";
+                red = "#cc241d";
+                green = "#98971a";
+                yellow = "#d79921";
+                blue = "#458588";
+                purple = "#b16286";
+                aqua = "#689d68";
+                gray = "#a89984";
+                darkgray = "#1d2021";
               in
               {
                 # activeWorkspace = ;
-                background = base;
-                # bindingMode = ;
-                # focusedBackground = ;
-                # focusedSeparator = ;
-                # focusedBackground = ;
-                # focusedWorkspace = ;
-                # inactiveWorkspace = ;
-                separator = pine;
-                # statusline = ;
-                urgentWorkspace = {
-                  background = base;
-                  border = love;
-                  text = text;
+                background = bg;
+                statusline = yellow;
+                separator = red;
+                focused_workspace = {
+                  background = aqua;
+                  border = aqua;
+                  text = darkgray;
                 };
-
+                inactive_workspace = {
+                  background = darkgray;
+                  border = darkgray;
+                  text = yellow;
+                };
+                active_workspace = {
+                  background = darkgray;
+                  border = darkgray;
+                  text = yellow;
+                };
+                urgent_workspace = {
+                  background = red;
+                  border = red;
+                  text = bg;
+                };
               };
           }
         ];
@@ -1032,8 +993,8 @@ in
   services.dunst = {
     enable = true;
     iconTheme = {
-      package = pkgs.rose-pine-icon-theme;
-      name = "rose-pine-icons";
+      package = pkgs.gruvbox-dark-icons-gtk;
+      name = "gruvbox-dark-gtl";
     };
     settings = {
       global = {
@@ -1059,8 +1020,8 @@ in
   gtk = {
     enable = true;
     iconTheme = {
-      package = pkgs.rose-pine-icon-theme;
-      name = "rose-pine-icons";
+      package = pkgs.gruvbox-dark-icons-gtk;
+      name = "gruvbox-dark-gtl";
     };
   };
 
