@@ -76,6 +76,7 @@
           auto-format = true;
           language-servers = [
             "nil"
+            "helix-gpt"
             "harper-ls"
           ];
         }
@@ -136,4 +137,4 @@
       ];
     };
   };
-} 
+}
