@@ -1,4 +1,8 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 {
   imports = [
     ./programs/fish.nix
@@ -118,6 +122,11 @@
     };
 
     fzf = {
+      enable = false; # Replaced by skim
+      enableFishIntegration = true;
+    };
+
+    skim = {
       enable = true;
       enableFishIntegration = true;
     };

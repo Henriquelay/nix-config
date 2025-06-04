@@ -8,35 +8,49 @@
   modulesPath,
   ...
 }:
-
+let
+  amdgpu-kernel-module = pkgs.callPackage ./amdgpu-kernel-module.nix {
+    # Make sure the module targets the same kernel as your system is using.
+    kernel = config.boot.kernelPackages.kernel;
+  };
+in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd = {
-    availableKernelModules = [
-      "nvme"
-      "ahci"
-      "xhci_pci"
-      "usbhid"
-      "usb_storage"
-      "sd_mod"
+  boot = {
+    # Workaround https://gitlab.freedesktop.org/drm/amd/-/issues?show=eyJpaWQiOiI0MjM4IiwiZnVsbF9wYXRoIjoiZHJtL2FtZCIsImlkIjoxMzMwODl9
+    extraModulePackages = [
+      (amdgpu-kernel-module.overrideAttrs (_: {
+        patches = [ ./amdgpu-revert.patch ];
+      }))
     ];
-    kernelModules = [ "amdgpu" ];
-    luks.devices = {
-      "luks-192aa104-aa43-4da2-9423-c08704d987aa".device =
-        "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";
-      "luks-c258bf9d-345e-4140-a345-58465ed6370f".device =
-        "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
-      "luks-4b17c8d8-8cc5-4c4b-aa51-263933cdb956".device =
-        "/dev/disk/by-uuid/4b17c8d8-8cc5-4c4b-aa51-263933cdb956";
-      "luks-1df67eee-4d68-47c3-bd32-a160c68752f6".device =
-        "/dev/disk/by-uuid/1df67eee-4d68-47c3-bd32-a160c68752f6";
+    kernelModules = [
+      "kvm-amd"
+      "amdgpu"
+    ];
+    initrd = {
+      availableKernelModules = [
+        "nvme"
+        "ahci"
+        "xhci_pci"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+      ];
+      luks.devices = {
+        "luks-192aa104-aa43-4da2-9423-c08704d987aa".device =
+          "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";
+        "luks-c258bf9d-345e-4140-a345-58465ed6370f".device =
+          "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
+        "luks-4b17c8d8-8cc5-4c4b-aa51-263933cdb956".device =
+          "/dev/disk/by-uuid/4b17c8d8-8cc5-4c4b-aa51-263933cdb956";
+        "luks-1df67eee-4d68-47c3-bd32-a160c68752f6".device =
+          "/dev/disk/by-uuid/1df67eee-4d68-47c3-bd32-a160c68752f6";
+      };
     };
   };
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/9a48ced3-f303-4abc-b66d-49b3884df906";

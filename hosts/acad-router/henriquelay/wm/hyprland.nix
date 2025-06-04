@@ -5,7 +5,7 @@
   ...
 }:
 let
-  enable = true;
+  enable = false;
 
   modifier = "SUPER";
   terminal = "${pkgs.kitty}/bin/kitty";

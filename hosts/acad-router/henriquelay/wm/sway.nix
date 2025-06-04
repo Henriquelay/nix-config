@@ -5,7 +5,7 @@
   ...
 }:
 let
-  enable = false;
+  enable = true;
 
   modifier = "Mod4";
   terminal = "${pkgs.kitty}/bin/kitty";
@@ -60,7 +60,7 @@ in
 {
   programs.fish.loginShellInit = lib.mkIf enable ''
     if [ (tty) = "/dev/tty1" ]
-      exec sway &> ~/sway_output.log
+      exec dbus-run-session sway &> ~/sway_output.log
     end
   '';
 
@@ -91,7 +91,11 @@ in
           adaptive_sync = "on";
         };
       };
-      floating.criteria = [ { class = "launcher"; } ];
+      floating.criteria = [
+        { app_id = "launcher"; }
+        { window_role = "pop-up"; }
+        { window_role = "About"; }
+      ];
       window = {
         border = 1;
         titlebar = false;
@@ -111,11 +115,11 @@ in
       };
       defaultWorkspace = "workspace number 1";
       startup = [
-        { command = "${pkgs.telegram-desktop}/bin/telegram-desktop -- %u"; }
-        { command = "${pkgs.nur.repos.nltch.spotify-adblock}/bin/spotify %U"; }
+        { command = "telegram-desktop -- %u"; }
+        { command = "spotify %U"; }
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
-          always = true;
+          # always = true;
         }
       ];
       bars = [
@@ -142,22 +146,22 @@ in
               background = bg;
               statusline = yellow;
               separator = red;
-              focused_workspace = {
+              focusedWorkspace = {
                 background = aqua;
                 border = aqua;
                 text = darkgray;
               };
-              inactive_workspace = {
+              inactiveWorkspace = {
                 background = darkgray;
                 border = darkgray;
                 text = yellow;
               };
-              active_workspace = {
+              activeWorkspace = {
                 background = darkgray;
                 border = darkgray;
                 text = yellow;
               };
-              urgent_workspace = {
+              urgentWorkspace = {
                 background = red;
                 border = red;
                 text = bg;
@@ -182,8 +186,11 @@ in
           "${modifier}+Shift+space" = "floating toggle";
           "${modifier}+A" = "focus parent";
           "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
-          "${modifier}+Shift+I" = "exec ${terminal} hx /etc/nixos/henriquelay/home.nix";
-          "${modifier}+Ctrl+Shift+I" = "exec ${terminal} hx /etc/nixos/configuration.nix";
+          "${modifier}+Shift+I" =
+            "exec ${terminal} hx /etc/nixos/henriquelay/home.nix --working-dir /etc/nixos/henriquelay";
+          "${modifier}+Ctrl+Shift+I" =
+            "exec ${terminal} hx /etc/nixos/configuration.nix --working-dir /etc/nixos";
+          "${modifier}+Shift+O" = "exec ${terminal} hx ~/Notes";
           "XF86AudioPlay" = "exec playerctl play-pause";
           "XF86AudioNext" = "exec playerctl next";
           "XF86AudioPrev" = "exec playerctl previous";
