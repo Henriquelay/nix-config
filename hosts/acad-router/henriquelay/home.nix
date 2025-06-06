@@ -4,13 +4,9 @@
   ...
 }:
 {
-  nixpkgs.config.allowUnfree = true;
-
   imports = [
     ./stylix.nix
-    # Imports the module `pkgs` with the `nur` overlay applied
-    # It should work without this but idk why it doesn't
-    (import ./programs.nix { inherit config pkgs; })
+    ./programs.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should

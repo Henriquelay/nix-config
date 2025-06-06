@@ -2,6 +2,8 @@
   inputs,
   config,
   pkgs,
+  nur,
+  helix-flake,
   ...
 }:
 {
@@ -166,8 +168,9 @@
   # Home manager
   home-manager = {
     backupFileExtension = "hmbackup";
-    useGlobalPkgs = false;
+    useGlobalPkgs = true;
     useUserPackages = true;
+    extraSpecialArgs = { inherit nur helix-flake; }; # Pass flakes to home-manager modules
   };
 
   ## Users
@@ -185,9 +188,8 @@
     ];
     shell = pkgs.fish;
   };
-  home-manager.users.henriquelay = import henriquelay/home.nix {
-    inherit config;
-    inherit pkgs;
+  home-manager.users.henriquelay = {
+    imports = [ ./henriquelay/home.nix ];
   };
 
   security.sudo.extraRules = [

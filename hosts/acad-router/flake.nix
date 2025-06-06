@@ -4,20 +4,21 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # hyprland.url = "github:hyprwm/Hyprland";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    # stylix.url = "github:danth/stylix/release-24.05";
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      # url = "github:nix-community/home-manager/release-24.05";
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # ucodenix.url = "github:e-tho/ucodenix";
     nur = {
       url = "github:nix-community/NUR";
+    };
+    helix = {
+      url = "github:helix-editor/helix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -27,6 +28,7 @@
       stylix,
       home-manager,
       nur,
+      helix,
       # ucodenix,
       # hyprland,
       ...
@@ -40,6 +42,9 @@
       nixosConfigurations."acad-router" = nixpkgs.lib.nixosSystem {
         # specialArgs = { inherit inputs; }; # this is the important part (hyprland)
         inherit system;
+        specialArgs = { 
+          helix-flake = helix;
+        };
         modules = [
           nur.modules.nixos.default
 

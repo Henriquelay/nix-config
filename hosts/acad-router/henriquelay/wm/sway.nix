@@ -102,7 +102,7 @@ in
         hideEdgeBorders = "both";
         commands = [
           {
-            command = "focus";
+            command = "focus, border pixel 15";
             criteria = {
               app_id = "^launcher$";
             };

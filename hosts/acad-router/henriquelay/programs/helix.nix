@@ -1,8 +1,14 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  helix-flake,
+  ...
+}:
 {
   stylix.targets.kitty.enable = false;
   programs.helix = {
     enable = true;
+    package = helix-flake.packages.${pkgs.system}.default;
     defaultEditor = true;
     settings = {
       theme = "gruvbox";
