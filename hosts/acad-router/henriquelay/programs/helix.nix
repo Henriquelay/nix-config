@@ -32,19 +32,35 @@
           display-messages = true;
         };
       };
-      keys.normal = {
-        "F2" = "command_palette";
-        "home" = "goto_first_nonwhitespace";
-        "C-l" = [
-          "search_selection"
-          "select_all"
-          "select_regex"
-        ];
-      };
-      keys.insert = {
-        "F2" = "command_palette";
-        "home" = "goto_first_nonwhitespace";
-      };
+      keys =
+        let
+          search_all_occurences_macro = [
+            "search_selection"
+            "select_all"
+            "select_regex"
+          ];
+        in
+        {
+          normal = {
+            "F2" = "command_palette";
+            # TODO for some reason this ignores CTRL key so we can't quit the program and the terminal is locked
+            # "F3" = [
+            #   ":write-all"
+            #   ":insert-output ${pkgs.serpl}/bin/serpl >/dev/tty"
+            #   ":redraw"
+            #   ":reload-all"
+            # ];
+            "home" = "goto_first_nonwhitespace";
+            "C-l" = search_all_occurences_macro;
+          };
+          select = {
+            "C-l" = search_all_occurences_macro;
+          };
+          insert = {
+            "F2" = "command_palette";
+            "home" = "goto_first_nonwhitespace";
+          };
+        };
     };
     languages = {
       language-server = {
