@@ -68,7 +68,7 @@ in
       defaultWorkspace = "workspace number 1";
       startup = [
         { command = "telegram-desktop -- %u"; }
-        { command = "spotify %U"; }
+        { command = "${pkgs.youtube-music}/bin/youtube-music"; }
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
           # always = true;

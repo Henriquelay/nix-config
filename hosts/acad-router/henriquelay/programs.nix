@@ -41,6 +41,7 @@
     grc
     mpv
     nur.repos.nltch.spotify-adblock
+    youtube-music
     obsidian
     presenterm # markdown slides. Support for typst and latex formulas
     qbittorrent
