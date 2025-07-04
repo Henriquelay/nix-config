@@ -8,7 +8,7 @@
     font = {
       package = pkgs.nerd-fonts.hack;
       name = "Hack Nerd Font";
-      size = 18;
+      size = 22;
     };
     actionAliases = {
       "launch_tab" = "launch --cwd=current --type=tab";
@@ -18,4 +18,4 @@
       "f1" = "launch --cwd=current --type=os-window";
     };
   };
-} 
+}

@@ -5,7 +5,6 @@
   ...
 }:
 {
-  stylix.targets.kitty.enable = false;
   programs.helix = {
     enable = true;
     package = helix-flake.packages.${pkgs.system}.default;
@@ -117,7 +116,7 @@
           language-servers = [
             "tinymist"
             "typst-lsp"
-            "ltex"
+            # "ltex"
             "helix-gpt"
             "harper-ls"
           ];
