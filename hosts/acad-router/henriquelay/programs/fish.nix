@@ -15,6 +15,13 @@
       cat = "bat";
     };
 
+    shellAbbrs = {
+      "nt" = {
+        command = "cargo";
+        expansion = "nextest run";
+      };
+    };
+
     functions =
       let
         terminal = "${pkgs.kitty}/bin/kitty";

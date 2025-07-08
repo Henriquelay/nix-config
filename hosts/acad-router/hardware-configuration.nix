@@ -8,12 +8,12 @@
   modulesPath,
   ...
 }:
-let
-  amdgpu-kernel-module = pkgs.callPackage ./amdgpu-kernel-module.nix {
-    # Make sure the module targets the same kernel as your system is using.
-    kernel = config.boot.kernelPackages.kernel;
-  };
-in
+# let
+#   amdgpu-kernel-module = pkgs.callPackage ./amdgpu-kernel-module.nix {
+#     # Make sure the module targets the same kernel as your system is using.
+#     kernel = config.boot.kernelPackages.kernel;
+#   };
+# in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -21,11 +21,11 @@ in
 
   boot = {
     # Workaround https://gitlab.freedesktop.org/drm/amd/-/issues?show=eyJpaWQiOiI0MjM4IiwiZnVsbF9wYXRoIjoiZHJtL2FtZCIsImlkIjoxMzMwODl9
-    extraModulePackages = [
-      (amdgpu-kernel-module.overrideAttrs (_: {
-        patches = [ ./amdgpu-revert.patch ];
-      }))
-    ];
+    # extraModulePackages = [
+    #   (amdgpu-kernel-module.overrideAttrs (_: {
+    #     patches = [ ./amdgpu-revert.patch ];
+    #   }))
+    # ];
     kernelModules = [
       "kvm-amd"
       "amdgpu"
