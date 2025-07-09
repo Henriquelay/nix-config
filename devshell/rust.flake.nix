@@ -36,10 +36,15 @@
             gdb
             rust-analyzer
             cargo-flamegraph
+            taplo # TOML toolkit
+            sqlx-cli # sqlx CLI client
+            cargo-nextest # cool test runner
           ];
 
-          cargoTomlCore = builtins.fromTOML (builtins.readFile ./bitfy-agent-core/Cargo.toml);
-          cargoTomlGUI = builtins.fromTOML (builtins.readFile ./bitfy-agent-desktop/Cargo.toml);
+          core = ./vestacp-core;
+          server = ./vestacp-server;
+          cargoTomlCore = builtins.fromTOML (builtins.readFile core + /Cargo.toml);
+          cargoTomlGUI = builtins.fromTOML (builtins.readFile server + /Cargo.toml);
           msrvCore = cargoTomlCore.package.rust-version;
           msrvGui = cargoTomlGUI.package.rust-version;
 
@@ -51,8 +56,8 @@
             }).buildRustPackage
               {
                 inherit (cargoTomlCore.package) name version;
-                src = ./bitfy-agent-core;
-                cargoLock.lockFile = ./bitfy-agent-core/Cargo.lock;
+                src = core;
+                cargoLock.lockFile = core + /Cargo.lock;
                 buildFeatures = features;
                 buildInputs = runtimeDepsCore;
                 nativeBuildInputs = buildDepsCore;
@@ -69,8 +74,8 @@
             }).buildRustPackage
               {
                 inherit (cargoTomlGUI.package) name version;
-                src = ./bitfy-agent-desktop;
-                cargoLock.lockFile = ./bitfy-agent-desktop/Cargo.lock;
+                src = server;
+                cargoLock.lockFile = server + /Cargo.lock;
                 buildFeatures = features;
                 buildInputs = runtimeDepsGUI;
                 nativeBuildInputs = buildDepsGUI;
