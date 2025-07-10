@@ -34,7 +34,23 @@
       keys =
         let
           search_all_ocurrences_macro = ''@*%s<ret>'';
-          search_next_macro = ''@*vnv'';
+          # search_next_macro = ''@*vnv'';
+          search_n = command: [
+            "search_selection_detect_word_boundaries"
+            "select_mode"
+            command
+            "exit_select_mode"
+          ];
+          run_external_command = command: [
+            ":write-all"
+            ":new"
+            ":insert-output ${pkgs.${command}}/bin/${command}"
+            ":set mouse false" # First disable mouse to hint helix into activating it
+            ":set mouse true"
+            ":buffer-close!"
+            ":redraw"
+            ":reload-all"
+          ];
         in
         {
           normal = {
@@ -47,12 +63,26 @@
             #   ":reload-all"
             # ];
             "home" = "goto_first_nonwhitespace";
+            "S-h" = "goto_previous_buffer";
+            "S-l" = "goto_next_buffer";
             "C-l" = search_all_ocurrences_macro;
-            "C-d" = search_next_macro;
+            "C-d" = search_n "extend_search_next";
+            "C-S-d" = search_n "extend_search_prev";
+            # move/copy line below/above
+            # "A-j" = [ "extend_to_line_bounds", "delete_selection", "paste_after" ]
+            # "A-k" = [ "extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before" ]
+            # "A-J" = [ "extend_to_line_bounds", "yank", "paste_after" ]
+            # "A-K" = [ "extend_to_line_bounds", "yank", "paste_before" ]
+            # New minor modes
+            # "C-t" = {
+            #   g = run_external_command "lazygit";
+            #   s = run_external_command "scooter";
+            # };
           };
           select = {
             "C-l" = search_all_ocurrences_macro;
-            "C-d" = search_next_macro;
+            "C-d" = search_n "extend_search_next";
+            "C-S-d" = search_n "extend_search_prev";
           };
           insert = {
             "F2" = "command_palette";
@@ -80,136 +110,6 @@
             "copilot"
           ];
         };
-        lsp-ai = {
-          command = "${pkgs.lsp-ai}/bin/lsp-ai";
-          config = {
-            memory.file_store = { };
-            # chat = {
-            #   trigger = "!AI";
-            #   action_display_name = "Chat";
-            #   model = "copilot";
-            #   parameters = {
-            #     max_context = 4096;
-            #     max_tokens = 1024;
-            #     messages = [
-            #       {
-            #         role = "system";
-            #         content = ''
-            #           You are a code assistant chatbot. The user will ask you for assistance coding and you will do you best to answer succinctly and accurately
-            #         '';
-            #       }
-            #     ];
-            #   };
-            # };
-            # completion = {
-            #   model = "copilot";
-            #   parameters = {
-            #     max_tokens = 64;
-            #     max_context = 1024;
-            #     messages = [
-            #       {
-            #         role = "system";
-            #         content = ''
-            #           Instructions:
-            #             - You are an AI programming assistant.
-            #             - Given a piece of code with the cursor location marked by "<CURSOR>", replace "<CURSOR>" with the correct code or comment.
-            #             - First, think step-by-step.
-            #             - Describe your plan for what to build in pseudocode, written out in great detail.
-            #             - Then output the code replacing the "<CURSOR>"
-            #             - Ensure that your completion fits within the language context of the provided code snippet (e.g., Python, JavaScript, Rust).
-            #             Rules:
-            #             - Only respond with code or comments.
-            #             - Only replace "<CURSOR>"; do not include any previously written code.
-            #             - Never include "<CURSOR>" in your response
-            #             - If the cursor is within a comment, complete the comment meaningfully.
-            #             - Handle ambiguous cases by providing the most contextually appropriate completion.
-            #             - Be consistent with your responses.'';
-            #       }
-
-            #       {
-            #         role = "user";
-            #         content = ''
-            #           def greet(name):
-            #             print(f"Hello, {<CURSOR>}")'';
-            #       }
-
-            #       {
-            #         role = "assistant";
-            #         content = "name";
-            #       }
-
-            #       {
-            #         role = "user";
-            #         content = ''
-            #           function sum(a, b) {
-            #             return a + <CURSOR>;'';
-            #       }
-
-            #       {
-            #         role = "assistant";
-            #         content = "b";
-            #       }
-
-            #       {
-            #         role = "user";
-            #         content = ''
-            #           fn multiply(a: i32, b: i32) -> i32 {
-            #             a * <CURSOR>
-            #           }'';
-            #       }
-
-            #       {
-            #         role = "assistant";
-            #         content = "b";
-            #       }
-
-            #       {
-            #         role = "user";
-            #         content = ''
-            #           # <CURSOR>
-            #           def add(a, b):
-            #             return a + b'';
-            #       }
-
-            #       {
-            #         role = "assistant";
-            #         content = "Adds two numbers";
-            #       }
-
-            #       {
-            #         role = "user";
-            #         content = ''
-            #           # This function checks if a number is even
-            #           <CURSOR>'';
-
-            #       }
-
-            #       {
-            #         role = "assistant";
-            #         content = ''
-            #           def is_even(n):
-            #             return n % 2 == 0'';
-            #       }
-
-            #       {
-            #         role = "user";
-            #         content = "{CODE}";
-            #       }
-
-            #     ];
-            #   };
-            # };
-            models = {
-              copilot = {
-                type = "open_ai";
-                chat_endpoint = "https://api.githubcopilot.com/chat/completions";
-                completions_endpoint = "https://api.githubcopilot.com/chat/completions";
-                model = "";
-                auth_token_env_var_name = "COPILOT_API_KEY";
-              };
-            };
-          };
-        };
       };
       language = [
         {
@@ -217,7 +117,6 @@
           language-servers = [
             "rust-analyzer"
             "helix-gpt"
-            # "lsp-ai"
             "harper-ls"
           ];
         }
@@ -228,7 +127,6 @@
           language-servers = [
             "nil"
             "helix-gpt"
-            # "lsp-ai"
             "harper-ls"
           ];
         }
@@ -238,7 +136,6 @@
             "ruff"
             "pyright"
             "helix-gpt"
-            # "lsp-ai"
             "harper-ls"
           ];
           auto-format = true;
@@ -250,7 +147,6 @@
             "typst-lsp"
             # "ltex"
             "helix-gpt"
-            # "lsp-ai"
             "harper-ls"
           ];
           formatter.command = "${pkgs.typstyle}/bin/typstyle";
@@ -262,7 +158,6 @@
             "ltex"
             "texlab"
             "helix-gpt"
-            # "lsp-ai"
             "harper-ls"
           ];
           auto-format = true;

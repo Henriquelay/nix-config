@@ -17,5 +17,8 @@
     keybindings = {
       "f1" = "launch --cwd=current --type=os-window";
     };
+    # settings = {
+    #   allow_remote_control = true;
+    # };
   };
 }
