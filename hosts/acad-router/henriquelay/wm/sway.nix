@@ -78,7 +78,7 @@ in
         {
           fonts = {
             names = [
-              "Hack Nerd Font"
+              "Jetbrains Mono Nerd Font"
               "Font Awesome 6 Free-Regular"
             ];
             style = "Regular";

@@ -194,7 +194,6 @@
           horizontal_padding = 10;
           frame_width = 1;
           gap_size = 3;
-          # font = "Hack 14";
 
           enable_recursive_icon_lookup = true;
           corner_radius = 2;

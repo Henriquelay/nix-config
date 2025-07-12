@@ -6,8 +6,8 @@
     shellIntegration.enableFishIntegration = true;
     themeFile = "gruvbox-dark";
     font = {
-      package = pkgs.nerd-fonts.hack;
-      name = "Hack Nerd Font";
+      package = pkgs.nerd-fonts.jetbrains-mono;
+      name = "Jetbrains Mono Nerd Font";
       size = 20;
     };
     actionAliases = {

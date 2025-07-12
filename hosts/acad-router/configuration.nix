@@ -251,7 +251,7 @@
     liberation_ttf
     font-awesome
     nerd-fonts.fira-code
-    nerd-fonts.hack
+    nerd-fonts.jetbrains-mono
   ];
 
   services.sunshine = {

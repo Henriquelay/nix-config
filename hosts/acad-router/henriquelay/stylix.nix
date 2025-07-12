@@ -18,8 +18,8 @@
     };
     fonts = {
       monospace = {
-        package = pkgs.nerd-fonts.hack;
-        name = "Hack";
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "Jetbrains Mono Nerd Fonts";
       };
       emoji = {
         package = pkgs.font-awesome;
@@ -27,4 +27,4 @@
       };
     };
   };
-} 
+}
