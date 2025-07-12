@@ -34,7 +34,6 @@
       keys =
         let
           search_all_ocurrences_macro = ''@*%s<ret>'';
-          # search_next_macro = ''@*vnv'';
           search_n = command: [
             "search_selection_detect_word_boundaries"
             "select_mode"
@@ -69,10 +68,27 @@
             "C-d" = search_n "extend_search_next";
             "C-S-d" = search_n "extend_search_prev";
             # move/copy line below/above
-            # "A-j" = [ "extend_to_line_bounds", "delete_selection", "paste_after" ]
-            # "A-k" = [ "extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before" ]
-            # "A-J" = [ "extend_to_line_bounds", "yank", "paste_after" ]
-            # "A-K" = [ "extend_to_line_bounds", "yank", "paste_before" ]
+            "A-j" = [
+              "extend_to_line_bounds"
+              "delete_selection"
+              "paste_after"
+            ];
+            "A-k" = [
+              "extend_to_line_bounds"
+              "delete_selection"
+              "move_line_up"
+              "paste_before"
+            ];
+            "A-J" = [
+              "extend_to_line_bounds"
+              "yank"
+              "paste_after"
+            ];
+            "A-K" = [
+              "extend_to_line_bounds"
+              "yank"
+              "paste_before"
+            ];
             # New minor modes
             # "C-t" = {
             #   g = run_external_command "lazygit";
@@ -91,15 +107,17 @@
         };
     };
     languages = {
+      # Keep as regular calls the commands you want to only be accessible when the Nix environment makes it available
+      # Use ${pkgs.program}/bin/program to call program you want to be available everywhere
       language-server = {
         rust-analyzer.config = {
           check.command = "clippy";
           features = "all";
         };
-        ruff.command = "ruff-lsp";
+        ruff.command = "ruff";
         tinymist.command = "tinymist";
-        harper-ls = {
-          command = "harper-ls";
+        harper = {
+          command = "${pkgs.harper}/bin/harper-ls";
           args = [ "--stdio" ];
         };
         ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
@@ -117,7 +135,7 @@
           language-servers = [
             "rust-analyzer"
             "helix-gpt"
-            "harper-ls"
+            "harper"
           ];
         }
         {
@@ -127,7 +145,7 @@
           language-servers = [
             "nil"
             "helix-gpt"
-            "harper-ls"
+            "harper"
           ];
         }
         {
@@ -136,7 +154,7 @@
             "ruff"
             "pyright"
             "helix-gpt"
-            "harper-ls"
+            "harper"
           ];
           auto-format = true;
         }
@@ -147,7 +165,7 @@
             "typst-lsp"
             # "ltex"
             "helix-gpt"
-            "harper-ls"
+            "harper"
           ];
           formatter.command = "${pkgs.typstyle}/bin/typstyle";
           auto-format = true;
@@ -158,7 +176,7 @@
             "ltex"
             "texlab"
             "helix-gpt"
-            "harper-ls"
+            "harper"
           ];
           auto-format = true;
         }
@@ -172,7 +190,7 @@
           ];
           language-servers = [
             "taplo"
-            "harper-ls"
+            "harper"
           ];
         }
         {
@@ -182,7 +200,7 @@
             "markdown-oxide"
             "helix-gpt"
             # "lsp-ai"
-            "harper-ls"
+            "harper"
           ];
         }
       ];
