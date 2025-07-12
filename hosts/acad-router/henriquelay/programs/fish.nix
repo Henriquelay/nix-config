@@ -16,6 +16,11 @@
     };
 
     shellAbbrs = {
+      "nrs" = {
+        position = "anywhere";
+        expansion = "nixos-rebuild switch";
+      };
+
       "nt" = {
         command = "cargo";
         expansion = "nextest run";
@@ -29,13 +34,13 @@
       {
         work = # fish
           ''
-            # cd into ~/Gits/Outroll/vestacp-private
-            if not test -d ~/Gits/Outroll/vestacp-private
-              echo "Directory ~/Gits/Outroll/vestacp-private does not exist."
+            set --local dir ~/Gits/Outroll/$argv[1]
+            if not test -d $dir
+              echo "Directory $dir does not exist."
               return 1
             end
 
-            cd ~/Gits/Outroll/vestacp-private
+            cd $dir
 
             if not command --query ${terminal}
               echo "terminal is not available."
@@ -43,10 +48,10 @@
             end
 
             # spawn a second terminal, completely detached from this one
-            ${terminal} --detach --single-instance --directory ~/Gits/Outroll/vestacp-private --hold  --title "bacon" nix develop --command bacon clippy-all
+            ${terminal} --detach --single-instance --directory . --hold  --title "bacon" nix develop --command bacon clippy-all
 
             # spawn a third terminal, for general usage
-            ${terminal} --detach --single-instance --directory ~/Gits/Outroll/vestacp-private --hold ${pkgs.fish}/bin/fish --command "nix develop"
+            ${terminal} --detach --single-instance --directory . --hold ${pkgs.fish}/bin/fish --command "nix develop"
 
             nix develop --command hx .
           '';
