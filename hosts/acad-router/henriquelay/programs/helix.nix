@@ -22,7 +22,6 @@
         popup-border = "all";
         soft-wrap.enable = true;
         undercurl = true;
-        mouse = false;
         inline-diagnostics = {
           cursor-line = "hint";
           other-lines = "hint";
