@@ -5,24 +5,25 @@
   ...
 }:
 let
-  enable = true;
 
   modifier = "Mod4";
   terminal = "${pkgs.kitty}/bin/kitty";
 in
 {
-  programs.fish.loginShellInit = lib.mkIf enable ''
+  programs.fish.loginShellInit = lib.mkIf config.wayland.windowManager.sway.enable ''
     if [ (tty) = "/dev/tty1" ]
       exec dbus-run-session sway &> ~/sway_output.log
     end
   '';
 
-  home.packages = with pkgs; [
-    sway-contrib.grimshot # Sway specific features
-  ];
+  home.packages =
+    with pkgs;
+    lib.mkIf config.wayland.windowManager.sway.enable [
+      sway-contrib.grimshot # Sway specific features
+    ];
 
   wayland.windowManager.sway = {
-    enable = enable;
+    enable = true;
     wrapperFeatures.gtk = true;
     systemd = {
       enable = true;

@@ -13,6 +13,7 @@
       br = "branch";
       co = "checkout";
       st = "status";
+      hs = "log --pretty='%C(yellow)%h %Cblue%aN %C(cyan)%cd%C(auto)%d %Creset%s' --graph --date=relative --date-order";
     };
     extraConfig = {
       init.defaultBranch = "main";

@@ -87,6 +87,49 @@
   virtualisation = {
     libvirtd.enable = true;
     docker.enable = true;
+    incus = {
+      enable = true;
+      preseed = {
+        networks = [
+          {
+            config = {
+              "ipv4.address" = "10.0.100.1/24";
+              "ipv4.nat" = "true";
+            };
+            name = "incusbr0";
+            type = "bridge";
+          }
+        ];
+        profiles = [
+          {
+            devices = {
+              eth0 = {
+                name = "eth0";
+                network = "incusbr0";
+                type = "nic";
+              };
+              root = {
+                path = "/";
+                pool = "default";
+                size = "35GiB";
+                type = "disk";
+              };
+            };
+            name = "default";
+          }
+        ];
+        storage_pools = [
+          {
+            config = {
+              source = "/var/lib/incus/storage-pools/default";
+            };
+            driver = "dir";
+            name = "default";
+          }
+        ];
+      };
+
+    };
   };
 
   ## Networking
@@ -96,6 +139,7 @@
 
   # Enable networking
   networking = {
+    nftables.enable = config.virtualisation.incus.enable; # Only for Incus
     hostName = "acad-router";
     nameservers = [
       "192.168.3.100"
@@ -184,6 +228,7 @@
       "libvirtd"
       "gamemode"
       "docker"
+      "incus-admin"
       # config.services.kubo.group
     ];
     shell = pkgs.fish;

@@ -22,6 +22,7 @@
         popup-border = "all";
         soft-wrap.enable = true;
         undercurl = true;
+        mouse = false;
         inline-diagnostics = {
           cursor-line = "hint";
           other-lines = "hint";
@@ -44,8 +45,8 @@
             ":write-all"
             ":new"
             ":insert-output ${pkgs.${command}}/bin/${command}"
-            ":set mouse false" # First disable mouse to hint helix into activating it
-            ":set mouse true"
+            # ":set mouse false" # First disable mouse to hint helix into activating it
+            # ":set mouse true"
             ":buffer-close!"
             ":redraw"
             ":reload-all"
@@ -65,6 +66,9 @@
             "S-h" = "goto_previous_buffer";
             "S-l" = "goto_next_buffer";
             "C-l" = search_all_ocurrences_macro;
+            "C-j" = "save_selection";
+            "C-s" = ":write";
+            "C-S-s" = ":write-all";
             "C-d" = search_n "extend_search_next";
             "C-S-d" = search_n "extend_search_prev";
             # move/copy line below/above
@@ -89,10 +93,29 @@
               "yank"
               "paste_before"
             ];
+
+            "C-y" = [
+              ":sh rm -f /tmp/unique-file"
+              ":insert-output ${pkgs.yazi}/bin/yazi %{buffer_name} --chooser-file=/tmp/unique-file"
+              '':insert-output echo "\x1b[?1049h\x1b[?2004h" > /dev/tty''
+              ":open %sh{cat /tmp/unique-file}"
+              # ":set mouse false" # First disable mouse to hint helix into activating it
+              # ":set mouse true"
+              ":redraw"
+            ];
+
+            "space" = {
+              "x" = ":buffer-close";
+              "S-x" = ":buffer-close-others";
+              # Add ";" to the end of the line and return to the same position
+              ";" = "@A;<esc>";
+            };
+
             # New minor modes
             # "C-t" = {
-            #   g = run_external_command "lazygit";
-            #   s = run_external_command "scooter";
+
+            # g = run_external_command "lazygit";
+            # s = run_external_command "scooter";
             # };
           };
           select = {

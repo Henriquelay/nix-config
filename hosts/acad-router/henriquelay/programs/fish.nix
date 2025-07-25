@@ -34,7 +34,17 @@
       {
         work = # fish
           ''
-            set --local dir ~/Gits/Outroll/$argv[1]
+            set --local BASE ~/Gits/Outroll
+
+            # if not argv[1] is provided, quit
+            if test (count $argv) -lt 1
+              echo "Provide a directory to work in."
+              ls $BASE
+              return 1
+            end
+
+
+            set --local dir $BASE/$argv[1]
             if not test -d $dir
               echo "Directory $dir does not exist."
               return 1
