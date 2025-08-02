@@ -7,7 +7,9 @@
       userEmail = "37563861+Henriquelay@users.noreply.github.com";
       delta = {
         enable = true;
-        hyperlinks = true;
+        options = {
+          hyperlinks = true;
+        };
       };
       signing = {
         key = "B3903EAC57AD1331995CD96202843DDA217C9D81";

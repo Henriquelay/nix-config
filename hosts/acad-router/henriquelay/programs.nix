@@ -31,6 +31,7 @@
     playerctl
     poppler
     xdg-utils
+    xcb-util-cursor # for Nextcloud-client
 
     # General programs
     # gogdl # GOG downloading module for heroic
@@ -174,7 +175,11 @@
 
     syncthing.enable = true;
 
-    # nextcloud-client.enable = true;
+    nextcloud-client = {
+      enable = true;
+      startInBackground = true;
+    };
+
     dunst = {
       enable = true;
       iconTheme = {

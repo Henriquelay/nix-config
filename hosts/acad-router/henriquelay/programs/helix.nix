@@ -12,6 +12,7 @@
     settings = {
       theme = "gruvbox";
       editor = {
+        rainbow-brackets = true;
         auto-format = true;
         bufferline = "multiple";
         color-modes = true;
@@ -44,8 +45,8 @@
             ":write-all"
             ":new"
             ":insert-output ${pkgs.${command}}/bin/${command}"
-            # ":set mouse false" # First disable mouse to hint helix into activating it
-            # ":set mouse true"
+            ":set mouse false" # First disable mouse to hint helix into activating it
+            ":set mouse true"
             ":buffer-close!"
             ":redraw"
             ":reload-all"
@@ -98,8 +99,8 @@
               ":insert-output ${pkgs.yazi}/bin/yazi %{buffer_name} --chooser-file=/tmp/unique-file"
               '':insert-output echo "\x1b[?1049h\x1b[?2004h" > /dev/tty''
               ":open %sh{cat /tmp/unique-file}"
-              # ":set mouse false" # First disable mouse to hint helix into activating it
-              # ":set mouse true"
+              ":set mouse false" # First disable mouse to hint helix into activating it
+              ":set mouse true"
               ":redraw"
             ];
 

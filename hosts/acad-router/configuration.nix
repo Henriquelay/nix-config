@@ -23,25 +23,31 @@
     enable = true;
     enable32Bit = true;
 
-    # extraPackages = with pkgs; [
-    #   rocmPackages.clr.icd # OpenCL
+    extraPackages = with pkgs; [
+      rocmPackages.clr.icd # OpenCL
+      # amdvlk # AMD proprietary drivers. The program may choose which driver to use.
+    ];
+    # For 32 bit applications
+    # hardware.graphics.extraPackages32 = with pkgs; [
+    #   driversi686Linux.amdvlk
     # ];
+
   };
-  # Workaround for HIP libraries
-  # systemd.tmpfiles.rules =
-  #   let
-  #     rocmEnv = pkgs.symlinkJoin {
-  #       name = "rocm-combined";
-  #       paths = with pkgs.rocmPackages; [
-  #         rocblas
-  #         hipblas
-  #         clr
-  #       ];
-  #     };
-  #   in
-  #   [
-  #     "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
-  #   ];
+  # Work around for HIP libraries
+  systemd.tmpfiles.rules =
+    let
+      rocmEnv = pkgs.symlinkJoin {
+        name = "rocm-combined";
+        paths = with pkgs.rocmPackages; [
+          rocblas
+          hipblas
+          clr
+        ];
+      };
+    in
+    [
+      "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
+    ];
 
   ## System/nix options
   # Reducing disk usage
@@ -140,6 +146,15 @@
   # Enable networking
   networking = {
     nftables.enable = config.virtualisation.incus.enable; # Only for Incus
+    firewall.interfaces.incusbr0.allowedTCPPorts = [
+      53
+      67
+    ];
+    firewall.interfaces.incusbr0.allowedUDPPorts = [
+      53
+      67
+    ];
+
     hostName = "acad-router";
     nameservers = [
       "192.168.3.100"
@@ -167,7 +182,7 @@
   # VPN
 
   services.zerotierone = {
-    enable = false;
+    enable = true;
     joinNetworks = [
       # Not highly-sensitive information
       "ebe7fbd445ee2222"
