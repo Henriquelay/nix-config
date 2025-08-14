@@ -32,6 +32,8 @@
     poppler
     xdg-utils
     xcb-util-cursor # for Nextcloud-client
+    qpwgraph
+    unzip
 
     # General programs
     # gogdl # GOG downloading module for heroic
@@ -54,7 +56,7 @@
     # I'll keep only the scripting and ones I want quick access to.
     # quarto
 
-    slack
+    # slack
 
     # Local packages
     # (callPackage ../../packages/notekit.nix {})
@@ -174,6 +176,18 @@
     };
 
     syncthing.enable = true;
+
+    udiskie = {
+      enable = true;
+      settings = {
+        # workaround for
+        # https://github.com/nix-community/home-manager/issues/632
+        program_options = {
+          # replace with your favorite file manager
+          file_manager = "${pkgs.kitty}/bin/kitty ${pkgs.yazi}/bin/yazi";
+        };
+      };
+    };
 
     nextcloud-client = {
       enable = true;

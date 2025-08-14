@@ -189,6 +189,9 @@
     ];
   };
 
+  ## udisks2 auto-mounting service
+  services.udisks2.enable = true;
+
   ## TZ and Locale
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -244,6 +247,8 @@
       "gamemode"
       "docker"
       "incus-admin"
+      "audio"
+      "rtkit"
       # config.services.kubo.group
     ];
     shell = pkgs.fish;
@@ -267,6 +272,28 @@
 
   ## Requirement for some home-manager programs, mostly security related
   # security.pam.services.hyprlock = { };
+
+  # domain = "@audio": This specifies that the limits apply to users in the @audio group.
+  # item = "memlock": Controls the amount of memory that can be locked into RAM.
+  # value (`unlimited`) allows members of the @audio group to lock as much memory as needed. This is crucial for audio processing to avoid swapping and ensure low latency.
+  #
+  # item = "rtprio": Controls the real-time priority that can be assigned to processes.
+  # value (`99`) is the highest real-time priority level. This setting allows audio applications to run with real-time scheduling, reducing latency and ensuring smoother performance.
+  #
+  security.pam.loginLimits = [
+    {
+      domain = "@audio";
+      item = "memlock";
+      type = "-";
+      value = "unlimited";
+    }
+    {
+      domain = "@audio";
+      item = "rtprio";
+      type = "-";
+      value = "99";
+    }
+  ];
   security.polkit.enable = true; # For Sway
   # needed for storing VS Code auth token
   services.gnome.gnome-keyring.enable = true;
@@ -281,6 +308,7 @@
   environment.systemPackages = with pkgs; [
     helix
     wget
+    rtaudio
   ];
   programs = {
     fish.enable = true;
@@ -292,9 +320,16 @@
       enable = true;
       remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
       dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+      package = pkgs.steam.override {
+        extraLibraries = pkgs: [ pkgs.pkgsi686Linux.pipewire.jack ]; # Adds pipewire jack (32-bit)
+        extraPkgs = pkgs: [ pkgs.wineasio ]; # Adds wineasio
+      };
     };
 
-    appimage.binfmt = true;
+    appimage = {
+      enable = true;
+      binfmt = true;
+    };
   };
 
   environment.variables = {
@@ -338,7 +373,7 @@
     pulse.enable = true;
     wireplumber.enable = true;
     # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
+    jack.enable = true;
   };
 
   ## Extra
@@ -369,8 +404,12 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [
+    23253 # bg3
+  ];
+  networking.firewall.allowedUDPPorts = [
+    23253 # bg3
+  ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 

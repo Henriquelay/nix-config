@@ -34,8 +34,11 @@ in
       modifier = modifier;
       terminal = terminal;
       input = {
-        "*" = {
-          xkb_layout = "br";
+        "type:keyboard" = {
+          xkb_model = "abnt2";
+          xkb_layout = "br,us";
+          xkb_variant = ",colemak";
+          xkb_options = "grp:ctrls_toggle,mod_led:compose,compose:ralt";
           xkb_numlock = "enabled";
         };
       };
@@ -122,80 +125,79 @@ in
             };
         }
       ];
-      keybindings =
-        {
-          "${modifier}+Return" = "exec ${terminal}";
-          "${modifier}+Shift+q" = "kill";
-          "${modifier}+d" =
-            "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
-          "${modifier}+r" = "mode \"resize\"";
-          "alt+tab" = "workspace back_and_forth";
-          "${modifier}+b" = "splith";
-          "${modifier}+v" = "splitv";
-          "${modifier}+s" = "layout stacking";
-          "${modifier}+t" = "layout tabbed";
-          "${modifier}+e" = "layout toggle split";
-          "${modifier}+F" = "fullscreen";
-          "${modifier}+Shift+space" = "floating toggle";
-          "${modifier}+A" = "focus parent";
-          "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
-          "${modifier}+Shift+I" =
-            "exec ${terminal} hx /etc/nixos/henriquelay/home.nix --working-dir /etc/nixos/henriquelay";
-          "${modifier}+Ctrl+Shift+I" =
-            "exec ${terminal} hx /etc/nixos/configuration.nix --working-dir /etc/nixos";
-          "${modifier}+Shift+O" = "exec ${terminal} hx ~/Notes";
-          "XF86AudioPlay" = "exec playerctl play-pause";
-          "XF86AudioNext" = "exec playerctl next";
-          "XF86AudioPrev" = "exec playerctl previous";
-        }
-        // builtins.foldl' (acc: elem: acc // elem) { } (
-          builtins.attrValues (
-            builtins.mapAttrs
-              (
-                direction: key_names:
-                builtins.foldl' (acc: elem: acc // elem) { } (
-                  builtins.map (key: {
-                    "${modifier}+${key}" = "focus ${direction}";
-                    "${modifier}+Shift+${key}" = "move ${direction}";
-                  }) key_names
-                )
+      keybindings = {
+        "${modifier}+Return" = "exec ${terminal}";
+        "${modifier}+Shift+q" = "kill";
+        "${modifier}+d" =
+          "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
+        "${modifier}+r" = "mode \"resize\"";
+        "alt+tab" = "workspace back_and_forth";
+        "${modifier}+b" = "splith";
+        "${modifier}+v" = "splitv";
+        "${modifier}+s" = "layout stacking";
+        "${modifier}+t" = "layout tabbed";
+        "${modifier}+e" = "layout toggle split";
+        "${modifier}+F" = "fullscreen";
+        "${modifier}+Shift+space" = "floating toggle";
+        "${modifier}+A" = "focus parent";
+        "Print" = "exec ${pkgs.sway-contrib.grimshot}/bin/grimshot copy anything --notify";
+        "${modifier}+Shift+I" =
+          "exec ${terminal} hx /etc/nixos/henriquelay --working-dir /etc/nixos/henriquelay";
+        "${modifier}+Ctrl+Shift+I" =
+          "exec ${terminal} hx /etc/nixos/configuration.nix --working-dir /etc/nixos";
+        "${modifier}+Shift+O" = "exec ${terminal} hx ~/Notes";
+        "XF86AudioPlay" = "exec playerctl play-pause";
+        "XF86AudioNext" = "exec playerctl next";
+        "XF86AudioPrev" = "exec playerctl previous";
+      }
+      // builtins.foldl' (acc: elem: acc // elem) { } (
+        builtins.attrValues (
+          builtins.mapAttrs
+            (
+              direction: key_names:
+              builtins.foldl' (acc: elem: acc // elem) { } (
+                builtins.map (key: {
+                  "${modifier}+${key}" = "focus ${direction}";
+                  "${modifier}+Shift+${key}" = "move ${direction}";
+                }) key_names
               )
-              {
-                left = [
-                  "h"
-                  "Left"
-                ];
-                right = [
-                  "l"
-                  "Right"
-                ];
-                up = [
-                  "k"
-                  "Up"
-                ];
-                down = [
-                  "j"
-                  "Down"
-                ];
-              }
-          )
-        )
-        // builtins.foldl' (acc: elem: acc // elem) { } (
-          builtins.genList (
-            x:
-            let
-              ws =
-                let
-                  c = (x + 1) / 10;
-                in
-                builtins.toString (x + 1 - (c * 10));
-            in
+            )
             {
-              "${modifier}+${ws}" = "workspace number " + toString (x + 1);
-              "${modifier}+Shift+${ws}" = "move container to workspace number " + toString (x + 1);
+              left = [
+                "h"
+                "Left"
+              ];
+              right = [
+                "l"
+                "Right"
+              ];
+              up = [
+                "k"
+                "Up"
+              ];
+              down = [
+                "j"
+                "Down"
+              ];
             }
-          ) 10
-        );
+        )
+      )
+      // builtins.foldl' (acc: elem: acc // elem) { } (
+        builtins.genList (
+          x:
+          let
+            ws =
+              let
+                c = (x + 1) / 10;
+              in
+              builtins.toString (x + 1 - (c * 10));
+          in
+          {
+            "${modifier}+${ws}" = "workspace number " + toString (x + 1);
+            "${modifier}+Shift+${ws}" = "move container to workspace number " + toString (x + 1);
+          }
+        ) 10
+      );
     };
   };
 }
