@@ -5,17 +5,47 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
+  nix = {
+    optimise.automatic = true;
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 2w";
+    };
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      trusted-users = [
+        "root"
+        "henriquelay"
+      ];
+    };
+  };
+
   networking = {
+    nftables.enable = config.virtualisation.incus.enable; # Only for Incus
+    firewall.interfaces.incusbr0.allowedTCPPorts = [
+      53
+      67
+    ];
+    firewall.interfaces.incusbr0.allowedUDPPorts = [
+      53
+      67
+    ];
+
     wireless.enable = false;
     hostName = "netbook";
     # Configure network proxy if necessary
@@ -25,7 +55,10 @@
     # Enable networkmanager
     #networkmanager.enable = true;
     nameservers = [
-      "9.9.9.9" "8.8.8.8" "8.8.4.4" "1.1.1.1"
+      "9.9.9.9"
+      "8.8.8.8"
+      "8.8.4.4"
+      "1.1.1.1"
     ];
     defaultGateway = {
       address = "192.168.3.1";
@@ -47,7 +80,6 @@
       "ebe7fbd445ee2222"
     ];
   };
-
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
@@ -80,17 +112,14 @@
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henrique";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
-    packages = with pkgs; [
-      exa bat 
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
     ];
-  };
-  users.users.Thales = {
-    isNormalUser = true;
-    description = "Thales";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
     packages = with pkgs; [
-      exa bat 
+      eza
+      bat
     ];
   };
   # Set default user shell
@@ -102,7 +131,12 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    wget helix fish trash-cli man-pages bottom qbittorrent-nox monero-cli
+    wget
+    helix
+    fish
+    trash-cli
+    man-pages
+    bottom
   ];
 
   # Custom services for pkgs that don't declare them
@@ -120,25 +154,11 @@
     services = {
       duckdns = {
         script = ''
-           bash -c 'echo url="https://www.duckdns.org/update?domains=damnorangecat&token=23c93e96-9e49-4706-bf7d-dec50098ac4e&ip=" | curl -k -o ~/duckdns/duck.log -K -'
-          '';
+          bash -c 'echo url="https://www.duckdns.org/update?domains=damnorangecat&token=23c93e96-9e49-4706-bf7d-dec50098ac4e&ip=" | curl -k -o ~/duckdns/duck.log -K -'
+        '';
         serviceConfig = {
           Type = "oneshot";
           User = "root";
-        };
-      };
-      qbittorrent-nox = {
-        enable = false;
-        description = "qBittorrent-nox service for user henriquelay";
-        documentation = ["man:qbittorent-nox(1)"];
-        wants = ["network-online.target"];
-        after = ["local-fs.target" "network-online.target" "nss-lookup.target"];
-        wantedBy = ["multi-user.target"];
-        serviceConfig = {
-          Type = "simple";
-          PrivateTmp = false;
-          User = "henriquelay";
-          ExecStart = "/nix/store/62pzilri2vzq82ggkm47zr7801q356v4-qbittorrent-nox-4.5.2/bin/qbittorrent-nox";
         };
       };
     };
@@ -180,7 +200,53 @@
   system.stateVersion = "23.05"; # Did you read the comment?
 
   # Enable Docker support
-  virtualisation.docker.enable = true;
+  virtualisation = {
+    docker.enable = true;
+
+    incus = {
+      enable = true;
+      preseed = {
+        networks = [
+          {
+            config = {
+              "ipv4.address" = "10.0.100.1/24";
+              "ipv4.nat" = "true";
+            };
+            name = "incusbr0";
+            type = "bridge";
+          }
+        ];
+        profiles = [
+          {
+            devices = {
+              eth0 = {
+                name = "eth0";
+                network = "incusbr0";
+                type = "nic";
+              };
+              root = {
+                path = "/";
+                pool = "default";
+                size = "35GiB";
+                type = "disk";
+              };
+            };
+            name = "default";
+          }
+        ];
+        storage_pools = [
+          {
+            config = {
+              source = "/var/lib/incus/storage-pools/default";
+            };
+            driver = "dir";
+            name = "default";
+          }
+        ];
+      };
+
+    };
+  };
 
   # Disable sleep on lid close
   services.logind.lidSwitchExternalPower = "ignore";

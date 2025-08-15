@@ -38,7 +38,7 @@ in
           xkb_model = "abnt2";
           xkb_layout = "br,us";
           xkb_variant = ",colemak";
-          xkb_options = "grp:ctrls_toggle,mod_led:compose,compose:ralt";
+          xkb_options = "grp:ctrls_toggle,mod_led:compose,compose:rctrl";
           xkb_numlock = "enabled";
         };
       };
@@ -144,7 +144,7 @@ in
         "${modifier}+Shift+I" =
           "exec ${terminal} hx /etc/nixos/henriquelay --working-dir /etc/nixos/henriquelay";
         "${modifier}+Ctrl+Shift+I" =
-          "exec ${terminal} hx /etc/nixos/configuration.nix --working-dir /etc/nixos";
+          "exec ${terminal} hx ~/nix-config/hosts/acad-router configuration.nix --working-dir ~/nix-config/hosts";
         "${modifier}+Shift+O" = "exec ${terminal} hx ~/Notes";
         "XF86AudioPlay" = "exec playerctl play-pause";
         "XF86AudioNext" = "exec playerctl next";
