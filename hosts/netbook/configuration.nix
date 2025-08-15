@@ -8,19 +8,14 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./disk-config.nix
   ];
-
-  # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
 
   nix = {
     optimise.automatic = true;
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 2w";
     };
     settings = {
       auto-optimise-store = true;
@@ -45,6 +40,7 @@
       53
       67
     ];
+    firewall.enable = false;
 
     wireless.enable = false;
     hostName = "netbook";
@@ -74,57 +70,58 @@
     };
   };
 
-  services.zerotierone = {
-    enable = true;
-    joinNetworks = [
-      "ebe7fbd445ee2222"
-    ];
+  services = {
+    zerotierone = {
+      enable = true;
+      joinNetworks = [
+        "ebe7fbd445ee2222"
+      ];
+    };
+    # Disable sleep on lid close
+    logind.lidSwitchExternalPower = "ignore";
   };
 
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
 
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "pt_BR.UTF-8";
-    LC_IDENTIFICATION = "pt_BR.UTF-8";
-    LC_MEASUREMENT = "pt_BR.UTF-8";
-    LC_MONETARY = "pt_BR.UTF-8";
-    LC_NAME = "pt_BR.UTF-8";
-    LC_NUMERIC = "pt_BR.UTF-8";
-    LC_PAPER = "pt_BR.UTF-8";
-    LC_TELEPHONE = "pt_BR.UTF-8";
-    LC_TIME = "pt_BR.UTF-8";
-  };
-
-  # Configure keymap in X11
-  services.xserver = {
-    layout = "br";
-    xkbVariant = "";
+    extraLocaleSettings = {
+      LC_ADDRESS = "pt_BR.UTF-8";
+      LC_IDENTIFICATION = "pt_BR.UTF-8";
+      LC_MEASUREMENT = "pt_BR.UTF-8";
+      LC_MONETARY = "pt_BR.UTF-8";
+      LC_NAME = "pt_BR.UTF-8";
+      LC_NUMERIC = "pt_BR.UTF-8";
+      LC_PAPER = "pt_BR.UTF-8";
+      LC_TELEPHONE = "pt_BR.UTF-8";
+      LC_TIME = "pt_BR.UTF-8";
+    };
   };
 
   # Configure console keymap
   console.keyMap = "br-abnt2";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.henriquelay = {
-    isNormalUser = true;
-    description = "henrique";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "docker"
-    ];
-    packages = with pkgs; [
-      eza
-      bat
-    ];
+  users = {
+    defaultUserShell = pkgs.fish;
+    users.henriquelay = {
+      isNormalUser = true;
+      description = "henrique";
+      initialPassword = "install";
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "docker"
+      ];
+      packages = with pkgs; [
+        eza
+        bat
+      ];
+    };
   };
-  # Set default user shell
-  users.defaultUserShell = pkgs.fish;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -133,11 +130,24 @@
   environment.systemPackages = with pkgs; [
     wget
     helix
-    fish
     trash-cli
     man-pages
     bottom
+    git
   ];
+
+  boot = {
+    loader = {
+      systemd-boot = {
+        enable = true;
+        memtest86.enable = true;
+      };
+      efi.canTouchEfiVariables = true;
+      # Limit the number of generations to keep
+      systemd-boot.configurationLimit = 10;
+    };
+    # kernelPackages = pkgs.linuxPackages_latest;
+  };
 
   # Custom services for pkgs that don't declare them
   systemd = {
@@ -167,11 +177,13 @@
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
+  programs = {
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
+    fish.enable = true;
   };
-  programs.fish.enable = true;
 
   # List services that you want to enable:
 
@@ -184,12 +196,6 @@
       #settings.PermitRootLogin = "yes";
     };
   };
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -248,6 +254,4 @@
     };
   };
 
-  # Disable sleep on lid close
-  services.logind.lidSwitchExternalPower = "ignore";
 }
