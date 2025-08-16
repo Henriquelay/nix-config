@@ -222,6 +222,11 @@
   services.xserver.xkb = {
     layout = "br";
     variant = "";
+    extraLayouts."abnt2colemak" = {
+      description = "Brazilian ABNT2 Colemak";
+      languages = [ "por" ];
+      symbolsFile = ./abnt2colemak.xkb;
+    };
   };
 
   # Configure console keymap
