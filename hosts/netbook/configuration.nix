@@ -136,17 +136,21 @@
     git
   ];
 
-  boot = {
-    loader = {
-      systemd-boot = {
-        enable = true;
-        memtest86.enable = true;
-      };
-      efi.canTouchEfiVariables = true;
-      # Limit the number of generations to keep
-      systemd-boot.configurationLimit = 10;
+  boot.loader = {
+    # systemd-boot = {
+    #   # It is so old and weak it uses legacy boot
+    #   enable = false;
+    #   memtest86.enable = true;
+    #   configurationLimit = 0;
+    #   editor = false;
+    # };
+    timeout = 5;
+    grub = {
+      enable = true;
+      device = "nodev"; # Let disko handle the device specification
+      efiSupport = false;
     };
-    # kernelPackages = pkgs.linuxPackages_latest;
+    # efi.canTouchEfiVariables = false;
   };
 
   # Custom services for pkgs that don't declare them

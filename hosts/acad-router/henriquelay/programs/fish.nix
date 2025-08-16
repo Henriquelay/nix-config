@@ -58,12 +58,12 @@
             end
 
             # spawn a second terminal, completely detached from this one
-            ${terminal} --detach --single-instance --directory . --hold  --title "bacon" nix develop --command bacon clippy-all
+            ${terminal} --detach --single-instance --directory . --hold  --title "bacon" nix develop --command fish -c "bacon clippy-all; exec fish"
 
             # spawn a third terminal, for general usage
-            ${terminal} --detach --single-instance --directory . --hold ${pkgs.fish}/bin/fish --command "nix develop"
+            ${terminal} --detach --single-instance --directory . --hold fish --command "nix develop"
 
-            nix develop --command hx .
+            nix develop --command fish -c "hx .; exec fish"
           '';
       };
 
