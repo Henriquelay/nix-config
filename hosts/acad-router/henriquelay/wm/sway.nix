@@ -4,11 +4,6 @@
   lib,
   ...
 }:
-let
-
-  modifier = "Mod4";
-  terminal = "${pkgs.kitty}/bin/kitty";
-in
 {
   programs.fish.loginShellInit = lib.mkIf config.wayland.windowManager.sway.enable ''
     if [ (tty) = "/dev/tty1" ]
@@ -30,23 +25,22 @@ in
       variables = [ "--all" ];
       xdgAutostart = true;
     };
-    config = {
-      modifier = modifier;
-      terminal = terminal;
+    checkConfig = false;
+    config = rec {
+      modifier = "Mod4";
+      terminal = "${pkgs.kitty}/bin/kitty";
+      menu = "${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
       input = {
         "type:keyboard" = {
           xkb_model = "abnt2";
-          xkb_layout = "br,us";
-          xkb_variant = ",colemak";
+          # xkb_layout = "br,us";
+          # xkb_variant = ",colemak";
+          xkb_layout = "br,abnt2colemak";
           xkb_options = "grp:ctrls_toggle,mod_led:compose,compose:rctrl";
           xkb_numlock = "enabled";
         };
       };
-      output = {
-        DP-1 = {
-          adaptive_sync = "on";
-        };
-      };
+      output.DP-1.adaptive_sync = "on";
       floating.criteria = [
         { app_id = "launcher"; }
         { window_role = "pop-up"; }
@@ -128,8 +122,7 @@ in
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+Shift+q" = "kill";
-        "${modifier}+d" =
-          "exec ${terminal} --app-id=launcher ${pkgs.sway-launcher-desktop}/bin/sway-launcher-desktop";
+        "${modifier}+d" = "exec ${terminal} --app-id=launcher ${menu}";
         "${modifier}+r" = "mode \"resize\"";
         "alt+tab" = "workspace back_and_forth";
         "${modifier}+b" = "splith";

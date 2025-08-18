@@ -1,4 +1,5 @@
 {
+  lib,
   inputs,
   config,
   pkgs,
@@ -13,26 +14,25 @@
     ./hardware-configuration.nix
   ];
 
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true; # Turn on with computer
+  hardware = {
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true; # Turn on with computer
+    };
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        rocmPackages.clr.icd # OpenCL
+        # amdvlk # AMD proprietary drivers. The program may choose which driver to use.
+      ];
+      # For 32 bit applications
+      extraPackages32 = with pkgs; [
+        driversi686Linux.amdvlk
+      ];
+    };
   };
 
-  ## Graphics
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-
-    extraPackages = with pkgs; [
-      rocmPackages.clr.icd # OpenCL
-      # amdvlk # AMD proprietary drivers. The program may choose which driver to use.
-    ];
-    # For 32 bit applications
-    # hardware.graphics.extraPackages32 = with pkgs; [
-    #   driversi686Linux.amdvlk
-    # ];
-
-  };
   # Work around for HIP libraries
   systemd.tmpfiles.rules =
     let
@@ -74,7 +74,9 @@
     };
   };
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+  };
 
   # Bootloader.
   boot = {
@@ -146,14 +148,16 @@
   # Enable networking
   networking = {
     nftables.enable = config.virtualisation.incus.enable; # Only for Incus
-    firewall.interfaces.incusbr0.allowedTCPPorts = [
-      53
-      67
-    ];
-    firewall.interfaces.incusbr0.allowedUDPPorts = [
-      53
-      67
-    ];
+    firewall.interfaces.incusbr0 = {
+      allowedTCPPorts = [
+        53
+        67
+      ];
+      allowedUDPPorts = [
+        53
+        67
+      ];
+    };
 
     hostName = "acad-router";
     nameservers = [
@@ -180,6 +184,54 @@
   };
 
   # VPN
+
+  services.xserver = {
+    enable = false;
+    xkb.extraLayouts.abnt2colemak = {
+      description = "Brazilian ABNT2 Colemak";
+      languages = [ "por" ];
+      symbolsFile = pkgs.writeText "abnt2colemak" ''
+        default partial alphanumeric_keys
+        xkb_symbols "basic" {
+            include "br(abnt2)"
+            name[Group1] = "Brazilian ABNT2 Colemak";
+
+            // Colemak remapping - top row
+            key <AD01> { [ q, Q ] };
+            key <AD02> { [ w, W ] };
+            key <AD03> { [ f, F ] };
+            key <AD04> { [ p, P ] };
+            key <AD05> { [ g, G ] };
+            key <AD06> { [ j, J ] };
+            key <AD07> { [ l, L ] };
+            key <AD08> { [ u, U ] };
+            key <AD09> { [ y, Y ] };
+            key <AD10> { [ ccedilla, Ccedilla ] };
+
+            // Colemak remapping - home row
+            key <AC01> { [ a, A ] };
+            key <AC02> { [ r, R ] };
+            key <AC03> { [ s, S ] };
+            key <AC04> { [ t, T ] };
+            key <AC05> { [ d, D ] };
+            key <AC06> { [ h, H ] };
+            key <AC07> { [ n, N ] };
+            key <AC08> { [ e, E ] };
+            key <AC09> { [ i, I ] };
+            key <AC10> { [ o, O ] };
+
+            // Colemak remapping - bottom row
+            key <AB01> { [ z, Z ] };
+            key <AB02> { [ x, X ] };
+            key <AB03> { [ c, C ] };
+            key <AB04> { [ v, V ] };
+            key <AB05> { [ b, B ] };
+            key <AB06> { [ k, K ] };
+            key <AB07> { [ m, M ] };
+        };
+      '';
+    };
+  };
 
   services.zerotierone = {
     enable = true;
@@ -218,30 +270,9 @@
 
   services.dbus.implementation = "broker";
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "br";
-    variant = "";
-    extraLayouts."abnt2colemak" = {
-      description = "Brazilian ABNT2 Colemak";
-      languages = [ "por" ];
-      symbolsFile = ./abnt2colemak.xkb;
-    };
-  };
-
   # Configure console keymap
   console.keyMap = "br-abnt2";
 
-  # Home manager
-  home-manager = {
-    backupFileExtension = "hmbackup";
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = { inherit nur helix-flake; }; # Pass flakes to home-manager modules
-  };
-
-  ## Users
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.henriquelay = {
     isNormalUser = true;
     description = "henriquelay";
@@ -258,63 +289,77 @@
     ];
     shell = pkgs.fish;
   };
-  home-manager.users.henriquelay = {
-    imports = [ ./henriquelay/home.nix ];
+  # Home manager
+  home-manager = {
+    backupFileExtension = "hmbackup";
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = { inherit nur helix-flake; }; # Pass flakes to home-manager modules
+    users.henriquelay = {
+      imports = [ ./henriquelay/home.nix ];
+    };
   };
 
-  security.sudo.extraRules = [
-    {
-      users = [ "henriquelay" ];
-      commands = [
-        {
-          # Allow me to sudo without passwd
-          command = "ALL";
-          options = [ "NOPASSWD" ];
-        }
-      ];
-    }
-  ];
+  ## Users
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  security = {
+    sudo.extraRules = [
+      {
+        users = [ "henriquelay" ];
+        commands = [
+          {
+            # Allow me to sudo without passwd
+            command = "ALL";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
 
-  ## Requirement for some home-manager programs, mostly security related
-  # security.pam.services.hyprlock = { };
+    ## Requirement for some home-manager programs, mostly security related
+    # security.pam.services.hyprlock = { };
 
-  # domain = "@audio": This specifies that the limits apply to users in the @audio group.
-  # item = "memlock": Controls the amount of memory that can be locked into RAM.
-  # value (`unlimited`) allows members of the @audio group to lock as much memory as needed. This is crucial for audio processing to avoid swapping and ensure low latency.
-  #
-  # item = "rtprio": Controls the real-time priority that can be assigned to processes.
-  # value (`99`) is the highest real-time priority level. This setting allows audio applications to run with real-time scheduling, reducing latency and ensuring smoother performance.
-  #
-  security.pam.loginLimits = [
-    {
-      domain = "@audio";
-      item = "memlock";
-      type = "-";
-      value = "unlimited";
-    }
-    {
-      domain = "@audio";
-      item = "rtprio";
-      type = "-";
-      value = "99";
-    }
-  ];
-  security.polkit.enable = true; # For Sway
-  # needed for storing VS Code auth token
+    # domain = "@audio": This specifies that the limits apply to users in the @audio group.
+    # item = "memlock": Controls the amount of memory that can be locked into RAM.
+    # value (`unlimited`) allows members of the @audio group to lock as much memory as needed. This is crucial for audio processing to avoid swapping and ensure low latency.
+    #
+    # item = "rtprio": Controls the real-time priority that can be assigned to processes.
+    # value (`99`) is the highest real-time priority level. This setting allows audio applications to run with real-time scheduling, reducing latency and ensuring smoother performance.
+    #
+    pam.loginLimits = [
+      {
+        domain = "@audio";
+        item = "memlock";
+        type = "-";
+        value = "unlimited";
+      }
+      {
+        domain = "@audio";
+        item = "rtprio";
+        type = "-";
+        value = "99";
+      }
+    ];
+    polkit.enable = true; # For Sway
+  };
+
+  # for storing VS Code auth token
   services.gnome.gnome-keyring.enable = true;
 
-  # Enable automatic login for a user.
-  # services.getty.autologinUser = "henriquelay";
+  environment = {
+    systemPackages = with pkgs; [
+      helix
+      wget
+      rtaudio # for Rocksmith
+    ];
+    variables = {
+      NIX_BUILD_CORES = 12;
+      EDITOR = "hx";
+      # Force usage of RADV (Mesa) Vulkan implementation
+      AMD_VULKAN_ICD = "RADV";
+    };
+  };
 
-  ## Some system-level programs
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-
-  environment.systemPackages = with pkgs; [
-    helix
-    wget
-    rtaudio
-  ];
   programs = {
     fish.enable = true;
     hyprland.enable = true;
@@ -335,13 +380,6 @@
       enable = true;
       binfmt = true;
     };
-  };
-
-  environment.variables = {
-    NIX_BUILD_CORES = 12;
-    EDITOR = "hx";
-    # Force usage of RADV (Mesa) Vulkan implementation
-    AMD_VULKAN_ICD = "RADV";
   };
 
   fonts.packages = with pkgs; [

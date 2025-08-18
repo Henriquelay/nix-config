@@ -151,6 +151,7 @@
             "copilot"
           ];
         };
+        nil.command = "${pkgs.nil}/bin/nil";
       };
       language = [
         {
