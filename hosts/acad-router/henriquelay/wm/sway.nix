@@ -137,7 +137,7 @@
         "${modifier}+Shift+I" =
           "exec ${terminal} hx /etc/nixos/henriquelay --working-dir /etc/nixos/henriquelay";
         "${modifier}+Ctrl+Shift+I" =
-          "exec ${terminal} hx ~/nix-config/hosts/acad-router configuration.nix --working-dir ~/nix-config/hosts";
+          "exec ${terminal} hx ~/nix-config/hosts/acad-router/ --working-dir ~/nix-config/hosts";
         "${modifier}+Shift+O" = "exec ${terminal} hx ~/Notes";
         "XF86AudioPlay" = "exec playerctl play-pause";
         "XF86AudioNext" = "exec playerctl next";

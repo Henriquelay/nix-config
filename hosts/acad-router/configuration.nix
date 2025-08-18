@@ -1,6 +1,6 @@
 {
-  lib,
-  inputs,
+  #lib,
+  #inputs,
   config,
   pkgs,
   nur,
@@ -148,14 +148,22 @@
   # Enable networking
   networking = {
     nftables.enable = config.virtualisation.incus.enable; # Only for Incus
-    firewall.interfaces.incusbr0 = {
+    firewall = {
+      interfaces.incusbr0 = {
+        allowedTCPPorts = [
+          53
+          67
+        ];
+        allowedUDPPorts = [
+          53
+          67
+        ];
+      };
       allowedTCPPorts = [
-        53
-        67
+        23253 # bg3
       ];
       allowedUDPPorts = [
-        53
-        67
+        23253 # bg3
       ];
     };
 
@@ -233,22 +241,8 @@
     };
   };
 
-  services.zerotierone = {
-    enable = true;
-    joinNetworks = [
-      # Not highly-sensitive information
-      "ebe7fbd445ee2222"
-    ];
-  };
-
-  ## udisks2 auto-mounting service
-  services.udisks2.enable = true;
-
-  ## TZ and Locale
-  # Set your time zone.
   time.timeZone = "America/Sao_Paulo";
 
-  # Select internationalisation properties.
   i18n = {
     defaultLocale = "en_US.UTF-8";
     extraLocaleSettings =
@@ -268,9 +262,6 @@
       };
   };
 
-  services.dbus.implementation = "broker";
-
-  # Configure console keymap
   console.keyMap = "br-abnt2";
 
   users.users.henriquelay = {
@@ -343,9 +334,6 @@
     polkit.enable = true; # For Sway
   };
 
-  # for storing VS Code auth token
-  services.gnome.gnome-keyring.enable = true;
-
   environment = {
     systemPackages = with pkgs; [
       helix
@@ -361,6 +349,10 @@
   };
 
   programs = {
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
     fish.enable = true;
     hyprland.enable = true;
     virt-manager.enable = true;
@@ -375,11 +367,52 @@
         extraPkgs = pkgs: [ pkgs.wineasio ]; # Adds wineasio
       };
     };
-
     appimage = {
       enable = true;
       binfmt = true;
     };
+    #droidcam.enable = true;
+  };
+
+  services = {
+    dbus.implementation = "broker";
+    zerotierone = {
+      enable = true;
+      joinNetworks = [
+        # Not highly-sensitive information
+        "ebe7fbd445ee2222"
+      ];
+    };
+
+    # auto-mounting service
+    udisks2.enable = true;
+    # for storing VS Code auth token
+    gnome.gnome-keyring.enable = true;
+    sunshine = {
+      enable = false;
+      autoStart = true;
+      capSysAdmin = true;
+      openFirewall = true;
+    };
+
+    # ipfs server
+    kubo = {
+      enable = false;
+      dataDir = "/vault/ipfs";
+      enableGC = true;
+    };
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      wireplumber.enable = true;
+      jack.enable = true;
+    };
+    # ucodenix = {
+    #   enable = true;
+    #    cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
+    # };
   };
 
   fonts.packages = with pkgs; [
@@ -392,69 +425,14 @@
     nerd-fonts.jetbrains-mono
   ];
 
-  services.sunshine = {
-    enable = false;
-    autoStart = true;
-    capSysAdmin = true;
-    openFirewall = true;
-  };
-
-  services.kubo = {
-    enable = false;
-    dataDir = "/vault/ipfs";
-    enableGC = true;
-  };
-
-  ## Sound
-  # Remove sound.enable or set it to false if you had it set previously, as sound.enable is only meant for ALSA-based configurations
-  # rtkit is optional but recommended
+  # For realtime audio
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-    # If you want to use JACK applications, uncomment this
-    jack.enable = true;
-  };
-
   ## Extra
   stylix = {
     enable = true;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark.yaml";
   };
-
-  # services.ucodenix = {
-  #   enable = true;
-  #   # cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
-  # };
-
-  # programs.droidcam.enable = true;
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [
-    23253 # bg3
-  ];
-  networking.firewall.allowedUDPPorts = [
-    23253 # bg3
-  ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
