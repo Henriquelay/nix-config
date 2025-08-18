@@ -164,6 +164,7 @@
         "networkmanager"
         "wheel"
         "docker"
+        "incus-admin"
       ];
       packages = with pkgs; [
         eza
