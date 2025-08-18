@@ -79,6 +79,56 @@
     };
     # Disable sleep on lid close
     logind.lidSwitchExternalPower = "ignore";
+
+    copyparty = {
+      enable = true;
+      settings = {
+        i = "0.0.0.0";
+        p = [
+          80
+          443
+        ];
+      };
+      accounts = {
+        # provide the path to a file containing the password, keeping it out of /nix/store
+        # must be readable by the copyparty service user
+        henriquelay.passwordFile = "/run/keys/copyparty/henriquelay";
+      };
+      # or do both in one go
+      bruna.passwordFile = "/run/keys/copyparty/k_password";
+    };
+
+    # create a volume
+    volumes = {
+      # create a volume at "/" (the webroot), which will
+      "/" = {
+        # share the contents of "/srv/copyparty"
+        path = "/srv/copyparty";
+        # see `copyparty --help-accounts` for available options
+        access = {
+          r = "*";
+          rw = [
+            "henriquelay"
+            "bruna"
+          ];
+        };
+        # see `copyparty --help-flags` for available options
+        flags = {
+          # "fk" enables filekeys (necessary for upget permission) (4 chars long)
+          fk = 4;
+          # scan for new files every 60sec
+          scan = 60;
+          # volflag "e2d" enables the uploads database
+          e2d = true;
+          # "d2t" disables multimedia parsers (in case the uploads are malicious)
+          d2t = false;
+          # skips hashing file contents if path matches *.iso
+          nohash = "\.iso$";
+        };
+      };
+    };
+    # you may increase the open file limit for the process
+    openFilesLimit = 8192;
   };
 
   # Set your time zone.
