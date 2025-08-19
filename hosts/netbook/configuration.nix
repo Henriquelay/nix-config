@@ -32,20 +32,17 @@
 
   networking = {
     nftables.enable = config.virtualisation.incus.enable; # Only for Incus
-    firewall.interfaces.incusbr0.allowedTCPPorts = [
-      53
-      67
-      80 # copyparty: http
-      443 # copyparty: https
-      3945 # copyparty: smb
-    ];
-    firewall.interfaces.incusbr0.allowedUDPPorts = [
-      53
-      67
-      80 # copyparty: http
-      443 # copyparty: https
-      3945 # copyparty: smb
-    ];
+    #DHCP
+    firewall.interfaces.incusbr0 = {
+      allowedTCPPorts = [
+        53
+        67
+      ];
+      allowedUDPPorts = [
+        53
+        67
+      ];
+    };
     firewall.enable = false;
 
     wireless.enable = false;
@@ -91,9 +88,9 @@
       settings = {
         i = "0.0.0.0";
         p = [
-          80
-          443
+          3923
         ];
+        xff-hdr = "cf-connecting-ip";
       };
       accounts = {
         # provide the path to a file containing the password, keeping it out of /nix/store
