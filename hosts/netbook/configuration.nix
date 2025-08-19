@@ -35,12 +35,16 @@
     firewall.interfaces.incusbr0.allowedTCPPorts = [
       53
       67
-      80
+      80 # copyparty: http
+      443 # copyparty: https
+      3945 # copyparty: smb
     ];
     firewall.interfaces.incusbr0.allowedUDPPorts = [
       53
       67
-      443
+      80 # copyparty: http
+      443 # copyparty: https
+      3945 # copyparty: smb
     ];
     firewall.enable = false;
 
