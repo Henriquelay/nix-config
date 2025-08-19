@@ -35,10 +35,12 @@
     firewall.interfaces.incusbr0.allowedTCPPorts = [
       53
       67
+      80
     ];
     firewall.interfaces.incusbr0.allowedUDPPorts = [
       53
       67
+      443
     ];
     firewall.enable = false;
 
