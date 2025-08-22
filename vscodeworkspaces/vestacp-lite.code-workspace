@@ -4,5 +4,7 @@
 			"path": "../../Gits/Outroll/vestacp-lite"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
 }

@@ -11,6 +11,7 @@
     ./programs/kitty.nix
     ./programs/vscode.nix
     ./programs/librewolf.nix
+    ./programs/rclone.nix
     ./wm/hyprland.nix
     ./wm/sway.nix
     ./wm/i3status-rust.nix
@@ -55,6 +56,7 @@
     # Should most of these be here? Should be handled by a dev shell.
     # I'll keep only the scripting and ones I want quick access to.
     # quarto
+    scooter # interactive find-and-replace. Pretty useful.
 
     # slack
 

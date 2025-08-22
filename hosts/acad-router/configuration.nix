@@ -15,6 +15,7 @@
   ];
 
   hardware = {
+    keyboard.qmk.enable = true;
     bluetooth = {
       enable = true;
       powerOnBoot = true; # Turn on with computer
@@ -339,6 +340,7 @@
       helix
       wget
       rtaudio # for Rocksmith
+      vial
     ];
     variables = {
       NIX_BUILD_CORES = 12;
@@ -348,6 +350,8 @@
     };
   };
 
+  qt.enable = true;
+
   programs = {
     gnupg.agent = {
       enable = true;
@@ -356,6 +360,15 @@
     fish.enable = true;
     hyprland.enable = false;
     virt-manager.enable = true;
+
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        libsForQt5.quazip
+        libsForQt5.qt5.qtbase
+        libsForQt5.qt5.qtwayland
+      ];
+    };
 
     gamemode.enable = true;
     steam = {
@@ -375,6 +388,7 @@
   };
 
   services = {
+    udev.packages = with pkgs; [ vial ];
     dbus.implementation = "broker";
     zerotierone = {
       enable = true;

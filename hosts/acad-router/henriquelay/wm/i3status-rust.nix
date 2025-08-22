@@ -7,7 +7,10 @@
         theme = "gruvbox-dark";
         icons = "material-nf";
         blocks = [
-          { block = "focused_window"; }
+          {
+            block = "focused_window";
+
+          }
           {
             block = "docker";
             interval = 10;

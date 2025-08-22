@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   helix-flake,
   ...
@@ -93,6 +92,8 @@
               "yank"
               "paste_before"
             ];
+            "C-r" = ":reflow";
+            "C-S-r" = ":reload-all";
 
             "C-y" = [
               ":sh rm -f /tmp/unique-file"
@@ -109,19 +110,20 @@
               "S-x" = ":buffer-close-others";
               # Add ";" to the end of the line and return to the same position
               ";" = "@A;<esc>";
+
+              # New minor modes
+              "t" = {
+                "g" = run_external_command "lazygit";
+                "s" = run_external_command "scooter";
+              };
             };
 
-            # New minor modes
-            # "C-t" = {
-
-            # g = run_external_command "lazygit";
-            # s = run_external_command "scooter";
-            # };
           };
           select = {
             "C-l" = search_all_ocurrences_macro;
             "C-d" = search_n "extend_search_next";
             "C-S-d" = search_n "extend_search_prev";
+            "C-r" = ":reflow";
           };
           insert = {
             "F2" = "command_palette";
@@ -135,7 +137,7 @@
       language-server = {
         rust-analyzer.config = {
           check.command = "clippy";
-          features = "all";
+          cargo.features = "all";
         };
         ruff.command = "ruff";
         tinymist.command = "tinymist";
@@ -152,6 +154,7 @@
           ];
         };
         nil.command = "${pkgs.nil}/bin/nil";
+        taplo.command = "${pkgs.taplo}/bin/taplo";
       };
       language = [
         {
@@ -161,6 +164,11 @@
             "helix-gpt"
             "harper"
           ];
+        }
+        {
+          name = "fish";
+          formatter.command = "fish_indent";
+          auto-format = true;
         }
         {
           name = "nix";
@@ -207,9 +215,9 @@
         {
           name = "toml";
           auto-format = true;
-          formatter.command = "taplo";
+          formatter.command = "${pkgs.taplo}/bin/taplo";
           formatter.args = [
-            "fmt"
+            "format"
             "-"
           ];
           language-servers = [
