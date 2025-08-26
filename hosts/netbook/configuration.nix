@@ -187,6 +187,8 @@
     man-pages
     bottom
     git
+    linkredirbot
+    mediaarchivistbot
   ];
 
   boot.loader = {
@@ -226,6 +228,38 @@
         serviceConfig = {
           Type = "oneshot";
           User = "root";
+        };
+      };
+      
+      linkredirbot = {
+        description = "Linkredirbot - automatically redirect links";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        serviceConfig = {
+          ExecStart = "${pkgs.linkredirbot}/bin/linkredirbot";
+          Restart = "always";
+          RestartSec = "10";
+          User = "henriquelay";
+          Environment = [
+            "TELOXIDE_TOKEN=your_token_here"
+          ];
+        };
+      };
+      
+      mediaarchivistbot = {
+        description = "Media Archivist Bot - archive media from messages";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        serviceConfig = {
+          ExecStart = "${pkgs.mediaarchivistbot}/bin/mediaarchivistbot";
+          Restart = "always";
+          RestartSec = "10";
+          User = "henriquelay";
+          Environment = [
+            "TELOXIDE_TOKEN=your_token_here"
+          ];
         };
       };
     };

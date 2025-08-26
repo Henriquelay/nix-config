@@ -39,7 +39,14 @@
             { pkgs, ... }:
             {
               # add the copyparty overlay to expose the package to the module
-              nixpkgs.overlays = [ copyparty.overlays.default ];
+              nixpkgs.overlays = [ 
+                copyparty.overlays.default 
+                # Custom packages overlay
+                (final: prev: {
+                  linkredirbot = final.callPackage ../../packages/linkredirbot.nix { };
+                  mediaarchivistbot = final.callPackage ../../packages/mediaarchivistbot.nix { };
+                })
+              ];
             }
           )
 

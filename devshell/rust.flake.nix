@@ -22,63 +22,34 @@
         }:
         let
           # Package dependencies
-          runtimeDepsCore = with pkgs; [ ];
-          buildDepsCore = with pkgs; [
-            # pkg-config # used with -sys crates
-            rustPlatform.bindgenHook
-          ];
-          runtimeDepsGUI = with pkgs; [ ];
-          buildDepsGUI = with pkgs; [
+          runtimeDeps = with pkgs; [ ];
+          buildDeps = with pkgs; [
             # pkg-config # used with -sys crates
             rustPlatform.bindgenHook
           ];
           devDeps = with pkgs; [
             gdb
             rust-analyzer
-            cargo-flamegraph
             taplo # TOML toolkit
-            sqlx-cli # sqlx CLI client
             cargo-nextest # cool test runner
           ];
 
-          core = ./vestacp-core;
-          server = ./vestacp-server;
-          cargoTomlCore = builtins.fromTOML (builtins.readFile core + /Cargo.toml);
-          cargoTomlGUI = builtins.fromTOML (builtins.readFile server + /Cargo.toml);
-          msrvCore = cargoTomlCore.package.rust-version;
-          msrvGui = cargoTomlGUI.package.rust-version;
+          cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+          msrv = cargoToml.package.rust-version;
 
-          rustPackageCore =
+          rustPackage =
             features:
             (pkgs.makeRustPlatform {
               cargo = pkgs.rust-bin.stable.latest.minimal;
               rustc = pkgs.rust-bin.stable.latest.minimal;
             }).buildRustPackage
               {
-                inherit (cargoTomlCore.package) name version;
-                src = core;
-                cargoLock.lockFile = core + /Cargo.lock;
+                inherit (cargoToml.package) name version;
+                src = ./.;
+                cargoLock.lockFile = ./Cargo.lock;
                 buildFeatures = features;
-                buildInputs = runtimeDepsCore;
-                nativeBuildInputs = buildDepsCore;
-                # Uncomment if cargo tests require networking or otherwise
-                # don't play nicely with the Nix build sandbox:
-                # doCheck = false;
-              };
-
-          rustPackageGUI =
-            features:
-            (pkgs.makeRustPlatform {
-              cargo = pkgs.rust-bin.stable.latest.minimal;
-              rustc = pkgs.rust-bin.stable.latest.minimal;
-            }).buildRustPackage
-              {
-                inherit (cargoTomlGUI.package) name version;
-                src = server;
-                cargoLock.lockFile = server + /Cargo.lock;
-                buildFeatures = features;
-                buildInputs = runtimeDepsGUI;
-                nativeBuildInputs = buildDepsGUI;
+                buildInputs = runtimeDeps;
+                nativeBuildInputs = buildDeps;
                 # Uncomment if cargo tests require networking or otherwise
                 # don't play nicely with the Nix build sandbox:
                 # doCheck = false;
@@ -90,8 +61,8 @@
               shellHook = ''
                 export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
               '';
-              buildInputs = runtimeDepsCore ++ runtimeDepsGUI;
-              nativeBuildInputs = buildDepsCore ++ buildDepsGUI ++ devDeps ++ [ rustc ];
+              buildInputs = runtimeDeps;
+              nativeBuildInputs = buildDeps ++ devDeps ++ [ rustc ];
             };
         in
         {
@@ -100,18 +71,17 @@
             overlays = [ (import inputs.rust-overlay) ];
           };
 
-          packages.default = self'.packages.core;
+          packages.default = self'.packages.vestacp-lite;
           devShells.default = self'.devShells.stable;
 
           # No features used so far
-          packages.core = (rustPackageCore "");
-          packages.gui = (rustPackageGUI "");
+          packages.vestacp-lite = (rustPackage "");
 
           devShells.nightly = (
             mkDevShell (pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
           );
           devShells.stable = (mkDevShell pkgs.rust-bin.stable.latest.default);
-          devShells.msrv = (mkDevShell pkgs.rust-bin.stable.${msrvCore}.default);
+          devShells.msrv = (mkDevShell pkgs.rust-bin.stable.${msrv}.default);
         };
     };
 }
