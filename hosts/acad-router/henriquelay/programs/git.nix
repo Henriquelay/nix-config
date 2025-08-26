@@ -32,7 +32,7 @@
     lazygit.enable = false;
 
     gitui = {
-      enable = true;
+      enable = false;
     };
   };
 }
