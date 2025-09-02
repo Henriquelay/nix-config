@@ -9,6 +9,9 @@
 
   outputs =
     inputs:
+    let
+      packageName = "thispackage";
+    in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
       perSystem =
@@ -71,11 +74,11 @@
             overlays = [ (import inputs.rust-overlay) ];
           };
 
-          packages.default = self'.packages.vestacp-lite;
+          packages.default = self'.packages.${packageName};
           devShells.default = self'.devShells.stable;
 
           # No features used so far
-          packages.vestacp-lite = (rustPackage "");
+          packages.${packageName} = (rustPackage "");
 
           devShells.nightly = (
             mkDevShell (pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))

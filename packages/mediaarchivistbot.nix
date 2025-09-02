@@ -30,6 +30,13 @@ rustPlatform.buildRustPackage rec {
   #   openssl
   # ];
 
+  postInstall = ''
+    mkdir -p $out/bin
+    cp target/release/mediaarchivistbot $out/bin/
+
+    # Copy 
+  '';
+
   # Uncomment if you need to set environment variables during build
   # OPENSSL_NO_VENDOR = 1;
 
