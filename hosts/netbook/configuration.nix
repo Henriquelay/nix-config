@@ -80,6 +80,11 @@
         "ebe7fbd445ee2222"
       ];
     };
+    adguardhome = {
+      enable = true;
+      mutableSettings = true;
+      openFirewall = true;
+    };
     # Disable sleep on lid close
     logind.lidSwitchExternalPower = "ignore";
 
@@ -221,6 +226,7 @@
       };
     };
     services = {
+
       duckdns = {
         script = ''
           bash -c 'echo url="https://www.duckdns.org/update?domains=damnorangecat&token=23c93e96-9e49-4706-bf7d-dec50098ac4e&ip=" | curl -k -o ~/duckdns/duck.log -K -'
@@ -230,7 +236,7 @@
           User = "root";
         };
       };
-      
+
       linkredirbot = {
         description = "Linkredirbot - automatically redirect links";
         wantedBy = [ "multi-user.target" ];
@@ -246,7 +252,7 @@
           ];
         };
       };
-      
+
       mediaarchivistbot = {
         description = "Media Archivist Bot - archive media from messages";
         wantedBy = [ "multi-user.target" ];
@@ -262,6 +268,7 @@
           ];
         };
       };
+
     };
   };
 

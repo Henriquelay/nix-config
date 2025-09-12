@@ -8,7 +8,7 @@
     font = {
       package = pkgs.nerd-fonts.jetbrains-mono;
       name = "Jetbrains Mono Nerd Font";
-      size = 20;
+      size = 18;
     };
     actionAliases = {
       "launch_tab" = "launch --cwd=current --type=tab";

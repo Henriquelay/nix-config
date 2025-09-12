@@ -23,7 +23,7 @@
 
       "nt" = {
         command = "cargo";
-        expansion = "nextest run";
+        expansion = "nextest run --all-targets";
       };
     };
 

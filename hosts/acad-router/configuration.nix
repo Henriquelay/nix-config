@@ -35,20 +35,20 @@
   };
 
   # Work around for HIP libraries
-  systemd.tmpfiles.rules =
-    let
-      rocmEnv = pkgs.symlinkJoin {
-        name = "rocm-combined";
-        paths = with pkgs.rocmPackages; [
-          rocblas
-          hipblas
-          clr
-        ];
-      };
-    in
-    [
-      "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
-    ];
+  # systemd.tmpfiles.rules =
+  #   let
+  #     rocmEnv = pkgs.symlinkJoin {
+  #       name = "rocm-combined";
+  #       paths = with pkgs.rocmPackages; [
+  #         rocblas
+  #         hipblas
+  #         clr
+  #       ];
+  #     };
+  #   in
+  #   [
+  #     "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
+  #   ];
 
   ## System/nix options
   # Reducing disk usage
@@ -276,7 +276,7 @@
       "docker"
       "incus-admin"
       "audio"
-      "rtkit"
+      # "rtkit"
       # config.services.kubo.group
     ];
     shell = pkgs.fish;
@@ -318,20 +318,20 @@
     # item = "rtprio": Controls the real-time priority that can be assigned to processes.
     # value (`99`) is the highest real-time priority level. This setting allows audio applications to run with real-time scheduling, reducing latency and ensuring smoother performance.
     #
-    pam.loginLimits = [
-      {
-        domain = "@audio";
-        item = "memlock";
-        type = "-";
-        value = "unlimited";
-      }
-      {
-        domain = "@audio";
-        item = "rtprio";
-        type = "-";
-        value = "99";
-      }
-    ];
+    # pam.loginLimits = [
+    #   {
+    #     domain = "@audio";
+    #     item = "memlock";
+    #     type = "-";
+    #     value = "unlimited";
+    #   }
+    #   {
+    #     domain = "@audio";
+    #     item = "rtprio";
+    #     type = "-";
+    #     value = "99";
+    #   }
+    # ];
     polkit.enable = true; # For Sway
   };
 
@@ -339,7 +339,7 @@
     systemPackages = with pkgs; [
       helix
       wget
-      rtaudio # for Rocksmith
+      # rtaudio # for Rocksmith
       vial
     ];
     variables = {
@@ -359,8 +359,7 @@
     };
     fish.enable = true;
     hyprland.enable = false;
-    virt-manager.enable = true;
-
+    virt-manager.enable = false;
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
@@ -369,7 +368,6 @@
         libsForQt5.qt5.qtwayland
       ];
     };
-
     gamemode.enable = true;
     steam = {
       enable = true;
