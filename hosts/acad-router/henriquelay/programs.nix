@@ -21,7 +21,7 @@
     # Desktop/WM stuff
     sway-launcher-desktop
     wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
-    # slurp # For screencapture. Needed from xdg-desktop-portal-wlr
+    slurp # For screencapture. Needed from xdg-desktop-portal-wlr
     # wf-recorder
 
     # System utilities
@@ -35,12 +35,14 @@
     xcb-util-cursor # for Nextcloud-client
     qpwgraph
     unzip
+    dust # Better `du`
+    dua # `du` TUI
+    _7zz
 
     # General programs
     # gogdl # GOG downloading module for heroic
     # heroic # Games launcher
     # jackett
-    dua # ncdu-like
     feh
     grc
     mpv
@@ -52,6 +54,8 @@
     telegram-desktop
     webcord
 
+    fae_linux
+
     # Langs and lang servers. Dev stuff
     # Should most of these be here? Should be handled by a dev shell.
     # I'll keep only the scripting and ones I want quick access to.
@@ -59,6 +63,7 @@
     scooter # interactive find-and-replace. Pretty useful.
 
     # slack
+    postman # surt
 
     # Local packages
     # (callPackage ../../packages/notekit.nix {})

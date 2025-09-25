@@ -54,6 +54,18 @@
 
             home-manager.nixosModules.home-manager
 
+            (
+              { pkgs, ... }:
+              {
+                nixpkgs.overlays = [
+                  # Custom packages overlay
+                  (final: prev: {
+                    fae_linux = final.callPackage ../../packages/factorio_achievements_enabler.nix { };
+                  })
+                ];
+              }
+            )
+
             # ucodenix.nixosModules.default
 
             stylix.nixosModules.stylix

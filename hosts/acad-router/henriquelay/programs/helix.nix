@@ -35,6 +35,7 @@
         let
           search_all_ocurrences_macro = ''@*%s<ret>'';
           search_n = command: [
+            "expand_selection"
             "search_selection_detect_word_boundaries"
             "select_mode"
             command
