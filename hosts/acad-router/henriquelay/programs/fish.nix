@@ -17,6 +17,11 @@
     };
 
     shellAbbrs = {
+      "cd.." = {
+        position = "command";
+        expansion = "cd ..";
+      };
+
       "nrs" = {
         position = "anywhere";
         expansion = "nixos-rebuild switch";

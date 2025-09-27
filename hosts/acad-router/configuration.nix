@@ -181,7 +181,7 @@
 
     # WIFI
     wireless = {
-      enable = false;
+      enable = true;
       networks = {
         # Not highly-sensitive information
         "SEM INTERNET_5G".pskRaw = "6e460263308866cef1a01596c15630978dbae65cdae0baac75c339899dfea2c9";
