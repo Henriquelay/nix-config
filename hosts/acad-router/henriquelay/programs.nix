@@ -12,6 +12,7 @@
     ./programs/vscode.nix
     ./programs/librewolf.nix
     ./programs/rclone.nix
+    ./programs/aider.nix
     ./wm/hyprland.nix
     ./wm/sway.nix
     ./wm/i3status-rust.nix
@@ -46,7 +47,7 @@
     feh
     grc
     mpv
-    nur.repos.nltch.spotify-adblock
+    # nur.repos.nltch.spotify-adblock
     youtube-music
     obsidian
     presenterm # markdown slides. Support for typst and latex formulas

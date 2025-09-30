@@ -90,7 +90,7 @@
       # Limit the number of generations to keep
       systemd-boot.configurationLimit = 10;
     };
-    # kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
   virtualisation = {

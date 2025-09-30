@@ -63,7 +63,7 @@
           }
           {
             block = "music";
-            player = "spotify";
+            player = "playerctld";
             format = " $icon {$combo.str(max_w:25,rot_interval:0.5) $play $next |}";
           }
           {
