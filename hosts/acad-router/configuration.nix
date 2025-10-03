@@ -24,17 +24,24 @@
       enable = true;
       enable32Bit = true;
       extraPackages = with pkgs; [
-        rocmPackages.clr.icd # OpenCL
-        # amdvlk # AMD proprietary drivers. The program may choose which driver to use.
-      ];
-      # For 32 bit applications
-      extraPackages32 = with pkgs; [
-        driversi686Linux.amdvlk
+        # rocmPackages.clr.icd # OpenCL
       ];
     };
+    amdgpu = {
+      initrd.enable = true;
+      overdrive.enable = true;
+    };
+  };
+  # GPU Controller
+  services.lact.enable = true;
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
   };
 
-  # Work around for HIP libraries
+  # Workaround for HIP libraries
+  # https://wiki.nixos.org/wiki/AMD_GPU#HIP
   # systemd.tmpfiles.rules =
   #   let
   #     rocmEnv = pkgs.symlinkJoin {
@@ -191,8 +198,6 @@
     };
 
   };
-
-  # VPN
 
   services.xserver = {
     enable = false;

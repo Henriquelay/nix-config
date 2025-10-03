@@ -5,11 +5,14 @@
   ...
 }:
 {
-  programs.fish.loginShellInit = lib.mkIf config.wayland.windowManager.sway.enable ''
-    if [ (tty) = "/dev/tty1" ]
-      exec dbus-run-session sway &> ~/sway_output.log
-    end
-  '';
+  programs.fish.loginShellInit =
+    lib.mkIf config.wayland.windowManager.sway.enable
+      #fish
+      ''
+        if [ (tty) = "/dev/tty1" ]
+          exec dbus-run-session sway &> ~/sway_output.log
+        end
+      '';
 
   home.packages =
     with pkgs;
@@ -20,11 +23,11 @@
   wayland.windowManager.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
-    systemd = {
-      enable = true;
-      variables = [ "--all" ];
-      xdgAutostart = true;
-    };
+    # systemd = {
+    #   enable = true;
+    #   variables = [ "--all" ];
+    #   xdgAutostart = true;
+    # };
     checkConfig = false;
     config = rec {
       modifier = "Mod4";
