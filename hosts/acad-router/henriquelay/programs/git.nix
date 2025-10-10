@@ -29,7 +29,7 @@
       };
     };
 
-    lazygit.enable = false;
+    lazygit.enable = true;
 
     gitui = {
       enable = false;

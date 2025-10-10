@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.fish = {
     enable = true;
@@ -81,23 +86,18 @@
           '';
       };
 
-    plugins = with pkgs.fishPlugins; [
-      {
-        name = "sponge";
-        src = sponge.src;
-      }
-      {
-        name = "grc";
-        src = grc.src;
-      }
-      {
-        name = "done";
-        src = done.src;
-      }
-      {
-        name = "gruvbox";
-        src = gruvbox.src;
-      }
-    ];
+    plugins =
+      let
+        pluginSources = with pkgs.fishPlugins; {
+          autopair = autopair.src;
+          colored-man-pages = colored-man-pages.src;
+          done = done.src;
+          fish-you-should-use = fish-you-should-use.src;
+          grc = grc.src;
+          gruvbox = gruvbox.src;
+          sponge = sponge.src;
+        };
+      in
+      lib.mapAttrsToList (name: src: { inherit name src; }) pluginSources;
   };
 }
