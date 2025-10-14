@@ -81,16 +81,16 @@
             format = " $icon ↓$speed_down ↑$speed_up";
             format_alt = "$icon ↓$graph_down ↑$graph_up";
           }
-          {
-            block = "weather";
-            format = " $icon $weather $temp";
-            service = {
-              name = "openweathermap";
-              api_key = "4d8b9e3c0cd2b311891fc18f52493a6e";
-              city_id = "3445026";
-              units = "metric";
-            };
-          }
+          # {
+          #   block = "weather";
+          #   format = " $icon $weather $temp";
+          #   service = {
+          #     name = "openweathermap";
+          #     api_key = "4d8b9e3c0cd2b311891fc18f52493a6e";
+          #     city_id = "3445026";
+          #     units = "metric";
+          #   };
+          # }
           {
             block = "time";
             interval = 1;
