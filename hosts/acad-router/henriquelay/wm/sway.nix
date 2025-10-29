@@ -127,7 +127,7 @@
         "${modifier}+Shift+q" = "kill";
         "${modifier}+d" = "exec ${terminal} --app-id=launcher ${menu}";
         "${modifier}+r" = "mode \"resize\"";
-        "alt+tab" = "workspace back_and_forth";
+        "${modifier}+tab" = "workspace back_and_forth";
         "${modifier}+b" = "splith";
         "${modifier}+v" = "splitv";
         "${modifier}+s" = "layout stacking";

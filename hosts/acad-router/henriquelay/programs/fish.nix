@@ -77,7 +77,7 @@
             end
 
             # spawn a second terminal, completely detached from this one
-            ${terminal} --detach --single-instance --directory . --hold  --title "bacon" nix develop $dir --command fish -c "bacon clippy-all; exec fish"
+            # ${terminal} --detach --single-instance --directory . --hold  --title "bacon" nix develop $dir --command fish -c "bacon clippy-all; exec fish"
 
             # spawn a third terminal, for general usage
             ${terminal} --detach --single-instance --directory . --hold fish --command "nix develop $dir"

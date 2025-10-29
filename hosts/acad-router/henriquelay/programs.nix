@@ -13,6 +13,7 @@
     ./programs/librewolf.nix
     ./programs/rclone.nix
     ./programs/aider.nix
+    ./programs/claude-code.nix
     ./wm/hyprland.nix
     ./wm/sway.nix
     ./wm/i3status-rust.nix
@@ -63,8 +64,9 @@
     # quarto
     scooter # interactive find-and-replace. Pretty useful.
 
-    # slack
+    slack
     postman # surt
+    claude-code
 
     # Local packages
     # (callPackage ../../packages/notekit.nix {})

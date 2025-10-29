@@ -346,6 +346,7 @@
       wget
       # rtaudio # for Rocksmith
       vial
+      jmtpfs # Android fs mounting
     ];
     variables = {
       NIX_BUILD_CORES = 12;
@@ -364,7 +365,7 @@
     };
     fish.enable = true;
     hyprland.enable = false;
-    virt-manager.enable = false;
+    virt-manager.enable = true;
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
