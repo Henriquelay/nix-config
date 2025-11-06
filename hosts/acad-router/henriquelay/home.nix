@@ -111,7 +111,7 @@
     enable = true;
     iconTheme = {
       package = pkgs.gruvbox-dark-icons-gtk;
-      name = "gruvbox-dark-gtl";
+      name = "gruvbox-dark-gtk";
     };
   };
 

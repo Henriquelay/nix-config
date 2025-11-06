@@ -39,7 +39,7 @@
     unzip
     dust # Better `du`
     dua # `du` TUI
-    _7zz
+    ouch # [de]compression helper
 
     # General programs
     # gogdl # GOG downloading module for heroic
@@ -66,8 +66,6 @@
 
     slack
     postman # surt
-    claude-code
-
     # Local packages
     # (callPackage ../../packages/notekit.nix {})
   ];
@@ -112,7 +110,38 @@
           sort_by = "mtime";
           sort_dir_first = true;
           sort_reverse = true;
+          prepend_keymap = {
+            on = [ "C" ];
+            run = "plugin ouch";
+            desc = "compress with ouch";
+          };
         };
+        plugin = {
+          prepend_previewers =
+            let
+              archiveMimes = [
+                "application/*zip"
+                "application/x-tar"
+                "application/x-bzip2"
+                "application/x-7z-compressed"
+                "application/x-rar"
+                "application/vnd.rar"
+                "application/x-xz"
+                "application/xz"
+                "application/x-zstd"
+                "application/zstd"
+                "application/java-archive"
+              ];
+            in
+            map (mime: {
+              mime = mime;
+              run = "ouch";
+            }) archiveMimes;
+
+        };
+      };
+      plugins = with pkgs.yaziPlugins; {
+        ouch = ouch;
       };
     };
 
