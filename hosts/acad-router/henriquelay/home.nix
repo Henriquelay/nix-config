@@ -24,6 +24,7 @@
     # release notes.
     stateVersion = "25.05"; # Please read the comment before changing.
     sessionVariables = {
+      TZ = "America/Sao_Paulo";
       # Hint electron apps to use Wayland
       NIXOS_OZONE_WL = "1";
       MOZ_ENABLE_WAYLAND = "1";

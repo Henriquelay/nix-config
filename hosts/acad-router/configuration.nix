@@ -177,8 +177,8 @@
 
     hostName = "acad-router";
     nameservers = [
-      "192.168.3.100"
-      # "9.9.9.9"
+      # "192.168.3.100"
+      "9.9.9.9"
     ];
     #networkmanager.enable = true;
     hosts = {
@@ -274,14 +274,19 @@
     isNormalUser = true;
     description = "henriquelay";
     extraGroups = [
-      "networkmanager"
       "wheel"
-      "libvirtd"
+      "networkmanager"
       "gamemode"
-      "docker"
-      "incus-admin"
+      # Audio setup
       "audio"
       # "rtkit"
+      # Virtualization stuff
+      "docker"
+      "incus-admin"
+      "kvm"
+      "libvirt"
+      "libvirtd"
+      # IPFS
       # config.services.kubo.group
     ];
     shell = pkgs.fish;
