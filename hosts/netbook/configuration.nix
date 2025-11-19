@@ -22,6 +22,14 @@
       mediaarchivistbot_token = {
         owner = "henriquelay";
       };
+      copyparty_henriquelay_password = {
+        owner = "copyparty";
+        mode = "0400";
+      };
+      copyparty_bruna_password = {
+        owner = "copyparty";
+        mode = "0400";
+      };
     };
   };
 
@@ -112,10 +120,9 @@
         xff-hdr = "cf-connecting-ip";
       };
       accounts = {
-        # provide the path to a file containing the password, keeping it out of /nix/store
-        # must be readable by the copyparty service user
-        henriquelay.passwordFile = "/run/keys/copyparty/henriquelay_password";
-        bruna.passwordFile = "/run/keys/copyparty/bruna_password";
+        # Passwords managed via sops-nix
+        henriquelay.passwordFile = config.sops.secrets.copyparty_henriquelay_password.path;
+        bruna.passwordFile = config.sops.secrets.copyparty_bruna_password.path;
       };
 
       # create a volume
