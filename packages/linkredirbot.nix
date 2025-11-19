@@ -14,7 +14,7 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "henriquelay";
     repo = "linkredirbot";
-    rev = "48bb8287a6083d770e277471860f736fadc4eb61";
+    rev = "aff34e08c39c0583f0332fadb63a2d627c51d3fc";
     hash = "sha256-+RCMyKremehyF6hZ0Quw3l6/3NyqOwU0eX4VLLcrI2E=";
   };
 

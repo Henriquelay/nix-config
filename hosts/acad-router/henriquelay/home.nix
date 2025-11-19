@@ -32,7 +32,10 @@
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     };
 
-    file.".XCompose".text =
+    file = {
+      ".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/hosts/acad-router/henriquelay/CLAUDE.md";
+
+      ".XCompose".text =
       # xor
       ''
         include "%S/pt_BR.UTF-8/Compose"
@@ -106,6 +109,7 @@
         <Multi_key> <G> <C> : "Χ"
         <Multi_key> <G> <W> : "Ω"
       '';
+    };
   };
 
   gtk = {

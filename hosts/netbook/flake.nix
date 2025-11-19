@@ -10,7 +10,15 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    copyparty.url = "github:9001/copyparty";
+    copyparty = {
+      url = "github:9001/copyparty";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
   };
 
@@ -20,6 +28,7 @@
       # nur,
       disko,
       copyparty,
+      agenix,
       ...
     }
     # @inputs
@@ -34,13 +43,15 @@
         modules = [
           disko.nixosModules.disko
 
+          agenix.nixosModules.default
+
           copyparty.nixosModules.default
           (
             { pkgs, ... }:
             {
               # add the copyparty overlay to expose the package to the module
-              nixpkgs.overlays = [ 
-                copyparty.overlays.default 
+              nixpkgs.overlays = [
+                copyparty.overlays.default
                 # Custom packages overlay
                 (final: prev: {
                   linkredirbot = final.callPackage ../../packages/linkredirbot.nix { };

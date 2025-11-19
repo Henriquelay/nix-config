@@ -86,7 +86,7 @@
       openFirewall = true;
     };
     # Disable sleep on lid close
-    logind.lidSwitchExternalPower = "ignore";
+    logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
 
     copyparty = {
       enable = true;

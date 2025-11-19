@@ -180,23 +180,17 @@
       # "192.168.3.100"
       "9.9.9.9"
     ];
-    #networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      wifi.backend = "iwd";
+    };
+    wireless.iwd.enable = true;
+
     hosts = {
       "192.168.3.100" = [ "netbook" ];
     };
+
     stevenblack.enable = true;
-
-    # WIFI
-    wireless = {
-      enable = true;
-      networks = {
-        # Not highly-sensitive information
-        "SEM INTERNET_5G".pskRaw = "6e460263308866cef1a01596c15630978dbae65cdae0baac75c339899dfea2c9";
-        "SEM INTERNET".pskRaw = "2186a3307702e4946184ea36295cf2f55a11343f7fd0c9f214356f4bb4489d6b";
-        "henrique hotspot".psk = "henrique";
-      };
-    };
-
   };
 
   services.xserver = {
