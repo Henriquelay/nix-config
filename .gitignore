@@ -2,3 +2,10 @@
 **result
 .aider*
 packages/result
+
+# sops-nix: prevent unencrypted secrets from being committed
+# Encrypted secrets.yaml files are safe and SHOULD be committed
+*_unencrypted.yaml
+*.key
+key.txt
+.decrypted~*

@@ -1,0 +1,34 @@
+# sops-nix secrets management configuration
+#
+# Private key location: ~/.config/sops/age/keys.txt (age format, converted from netbook's SSH host key)
+# SOPS automatically finds keys at ~/.config/sops/age/keys.txt
+#
+# How to manage secrets:
+#
+# 1. Edit existing secrets (opens in $EDITOR):
+#    nix run nixpkgs#sops -- hosts/netbook/secrets.yaml
+#
+# 2. View decrypted secrets (without editing):
+#    nix run nixpkgs#sops -- -d hosts/netbook/secrets.yaml
+#
+# 3. Add new secrets:
+#    - Edit the file (step 1), add new key-value pairs
+#    - Add corresponding entry in configuration.nix under sops.secrets
+#
+# 4. Add new machine/key:
+#    - Copy SSH private key: ssh <host> 'sudo cat /etc/ssh/ssh_host_ed25519_key' > /tmp/host-key
+#    - Convert to age: nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i /tmp/host-key >> ~/.config/sops/age/keys.txt"
+#    - Get public key: ssh <host> 'cat /etc/ssh/ssh_host_ed25519_key.pub' | nix-shell -p ssh-to-age --run "ssh-to-age"
+#    - Add public key to keys list below with a unique anchor name
+#    - Add to appropriate creation_rules
+#    - Update existing secrets: nix run nixpkgs#sops -- updatekeys hosts/netbook/secrets.yaml
+#    - Clean up: rm /tmp/host-key
+
+keys:
+  - &netbook age1vk6zpcuquyd2wtdp0f9z3644n63vqgp6zf9dae533tcp85qcpuwquz9tt0
+
+creation_rules:
+  - path_regex: hosts/netbook/secrets\.yaml$
+    key_groups:
+      - age:
+          - *netbook

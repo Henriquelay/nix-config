@@ -11,6 +11,20 @@
     ./disk-config.nix
   ];
 
+  # sops-nix configuration
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets = {
+      linkredirbot_token = {
+        owner = "henriquelay";
+      };
+      mediaarchivistbot_token = {
+        owner = "henriquelay";
+      };
+    };
+  };
+
   nix = {
     optimise.automatic = true;
     gc = {
@@ -247,9 +261,7 @@
           Restart = "always";
           RestartSec = "10";
           User = "henriquelay";
-          Environment = [
-            "TELOXIDE_TOKEN=your_token_here"
-          ];
+          EnvironmentFile = config.sops.secrets.linkredirbot_token.path;
         };
       };
 
@@ -263,9 +275,7 @@
           Restart = "always";
           RestartSec = "10";
           User = "henriquelay";
-          Environment = [
-            "TELOXIDE_TOKEN=your_token_here"
-          ];
+          EnvironmentFile = config.sops.secrets.mediaarchivistbot_token.path;
         };
       };
 

@@ -1,6 +1,11 @@
 {
   description = "henriquelay's nixos configuration";
 
+  # Secrets management with sops-nix:
+  # - Edit secrets: nix run nixpkgs#sops -- hosts/netbook/secrets.yaml
+  # - View decrypted: nix run nixpkgs#sops -- -d hosts/netbook/secrets.yaml
+  # - Update keys after adding machines: nix run nixpkgs#sops -- updatekeys hosts/netbook/secrets.yaml
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nur = {
@@ -14,9 +19,8 @@
       url = "github:9001/copyparty";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    agenix = {
-      url = "github:ryantm/agenix";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -28,7 +32,7 @@
       # nur,
       disko,
       copyparty,
-      agenix,
+      sops-nix,
       ...
     }
     # @inputs
@@ -43,7 +47,7 @@
         modules = [
           disko.nixosModules.disko
 
-          agenix.nixosModules.default
+          sops-nix.nixosModules.sops
 
           copyparty.nixosModules.default
           (
