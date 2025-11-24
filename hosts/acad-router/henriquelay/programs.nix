@@ -54,7 +54,8 @@
     presenterm # markdown slides. Support for typst and latex formulas
     qbittorrent
     telegram-desktop
-    webcord
+    # webcord
+    webcord-vencord
 
     fae_linux
 
@@ -169,12 +170,12 @@
     };
 
     fzf = {
-      enable = false; # Replaced by skim
+      enable = true;
       enableFishIntegration = true;
     };
 
     skim = {
-      enable = true;
+      enable = false; # Using fzf
       enableFishIntegration = true;
     };
 

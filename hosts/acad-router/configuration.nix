@@ -156,18 +156,24 @@
   # Enable networking
   networking = {
     nftables.enable = config.virtualisation.incus.enable; # Only for Incus
-    firewall = {
-      interfaces.incusbr0 = {
-        allowedTCPPorts = [
-          53
-          67
-        ];
-        allowedUDPPorts = [
-          53
-          67
-        ];
+    bridges = {
+      "br0".interfaces = [ "enp14s0" ];
+    };
+    interfaces = {
+      "enp14s0" = {
+        useDHCP = false;
+        ipv4.addresses = [ ];
       };
+      "br0".useDHCP = true;
+    };
+    useNetworkd = false; # disable systemd-networkd if enabled
+    firewall = {
+      trustedInterfaces = [
+        "incusbr0"
+        "br0"
+      ];
       allowedTCPPorts = [
+        22 # SSH
         23253 # bg3
       ];
       allowedUDPPorts = [
@@ -192,6 +198,7 @@
 
     stevenblack.enable = true;
   };
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   services.xserver = {
     enable = false;
@@ -435,7 +442,7 @@
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     liberation_ttf
     font-awesome
     nerd-fonts.fira-code
