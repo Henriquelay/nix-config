@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "../../Gits/Surt/urgent2"
+		}
+	],
+	"settings": {
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
+}

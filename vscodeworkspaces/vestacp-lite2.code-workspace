@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "../../Gits/Outroll/vestacp-lite2"
+		}
+	],
+	"settings": {
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "../../Gits/Surt/worktree3"
+		}
+	],
+	"settings": {
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
+}

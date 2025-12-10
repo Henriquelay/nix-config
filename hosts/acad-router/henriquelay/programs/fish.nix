@@ -82,7 +82,7 @@
             # spawn a third terminal, for general usage
             ${terminal} --detach --single-instance --directory . --hold fish --command "nix develop $dir"
 
-            nix develop $dir --command fish -c "hx .; exec fish"
+            nix develop $dir --command fish -c "claude --allow-dangerously-skip-permissions; exec fish"
           '';
       };
 
