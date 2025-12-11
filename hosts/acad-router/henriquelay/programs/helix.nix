@@ -163,7 +163,7 @@
           language-servers = [
             "rust-analyzer"
             "helix-gpt"
-            "harper"
+            # "harper"
           ];
           auto-pairs = {
             "(" = ")";
@@ -186,7 +186,7 @@
           language-servers = [
             "nil"
             "helix-gpt"
-            "harper"
+            # "harper"
           ];
         }
         {
@@ -195,7 +195,7 @@
             "ruff"
             "pyright"
             "helix-gpt"
-            "harper"
+            # "harper"
           ];
           auto-format = true;
         }
