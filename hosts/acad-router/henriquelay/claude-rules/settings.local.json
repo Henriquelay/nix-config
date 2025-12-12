@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//etc/ssh/**)",
+      "WebFetch(domain:github.com)",
+      "Read(//home/henriquelay/.config/sops/age/**)",
+      "Read(//tmp/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
