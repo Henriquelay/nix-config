@@ -6,7 +6,19 @@
 }:
 {
   imports = [
+    # Shared cross-platform profiles
+    ../../../home/profiles/base.nix
+    ../../../home/profiles/shell.nix
+    ../../../home/profiles/development.nix
+
+    # Linux-specific configs
     ./stylix.nix
+    ./linux/wayland.nix
+    ./linux/wm/sway.nix
+    ./linux/wm/hyprland.nix
+    ./linux/wm/i3status-rust.nix
+
+    # Linux-specific programs
     ./programs.nix
   ];
 
@@ -25,11 +37,7 @@
     stateVersion = "25.05"; # Please read the comment before changing.
     sessionVariables = {
       TZ = "America/Sao_Paulo";
-      # Hint electron apps to use Wayland
-      NIXOS_OZONE_WL = "1";
-      MOZ_ENABLE_WAYLAND = "1";
-      # Disable window decorator on QT applications
-      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+      # Wayland-specific variables moved to linux/wayland.nix
     };
 
     file = {
@@ -111,6 +119,31 @@
           <Multi_key> <G> <W> : "Ω"
         '';
     };
+  };
+
+  # Stylix targets (Linux-only, from shared program configs)
+  stylix.targets = {
+    kitty.enable = false;
+    vscode.enable = false;
+  };
+
+  # Linux-specific overrides and settings
+  programs = {
+    # Override kitty font size for Linux
+    kitty.font.size = pkgs.lib.mkForce 20;
+
+    # Linux-specific fish abbreviations
+    fish.shellAbbrs = {
+      "nrs" = {
+        position = "anywhere";
+        expansion = "nixos-rebuild switch";
+      };
+    };
+  };
+
+  services = {
+    # Linux-specific pinentry for gpg-agent
+    gpg-agent.pinentry.package = pkgs.pinentry-gtk2;
   };
 
   gtk = {

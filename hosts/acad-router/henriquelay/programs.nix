@@ -4,19 +4,10 @@
   ...
 }:
 {
+  # Linux-specific programs and packages only
+  # Cross-platform programs are in shared home/profiles/
   imports = [
-    ./programs/fish.nix
-    ./programs/git.nix
-    ./programs/helix.nix
-    ./programs/kitty.nix
-    ./programs/vscode.nix
     ./programs/librewolf.nix
-    ./programs/rclone.nix
-    ./programs/aider.nix
-    ./programs/claude-code.nix
-    ./wm/hyprland.nix
-    ./wm/sway.nix
-    ./wm/i3status-rust.nix
   ];
 
   home.packages = with pkgs; [
@@ -71,27 +62,11 @@
     # (callPackage ../../packages/notekit.nix {})
   ];
 
+  # Linux-specific programs
   programs = {
-    home-manager.enable = true;
-
-    bat.enable = true;
-    ripgrep.enable = true;
-    jq.enable = true;
-    fd.enable = true;
     zathura = {
       enable = true;
       extraConfig = ''set selection-clipboard clipboard'';
-    };
-    bottom.enable = true;
-    bacon.enable = true;
-
-    starship = {
-      enable = true;
-      enableFishIntegration = true;
-      settings = {
-        add_newline = true;
-        line_break.disabled = false;
-      };
     };
 
     mangohud = {
@@ -106,96 +81,12 @@
       };
     };
 
-    yazi = {
-      enable = true;
-      enableFishIntegration = true;
-      settings = {
-        mgr = {
-          show_hidden = true;
-          sort_by = "mtime";
-          sort_dir_first = true;
-          sort_reverse = true;
-          prepend_keymap = {
-            on = [ "C" ];
-            run = "plugin ouch";
-            desc = "compress with ouch";
-          };
-        };
-        plugin = {
-          prepend_previewers =
-            let
-              archiveMimes = [
-                "application/*zip"
-                "application/x-tar"
-                "application/x-bzip2"
-                "application/x-7z-compressed"
-                "application/x-rar"
-                "application/vnd.rar"
-                "application/x-xz"
-                "application/xz"
-                "application/x-zstd"
-                "application/zstd"
-                "application/java-archive"
-              ];
-            in
-            map (mime: {
-              mime = mime;
-              run = "ouch";
-            }) archiveMimes;
-
-        };
-      };
-      plugins = with pkgs.yaziPlugins; {
-        ouch = ouch;
-      };
-    };
-
     i3bar-river = {
       enable = true;
       settings = {
         command = "${pkgs.i3status-rust}/bin/i3status-rs config-default";
         tags_padding = 12.0;
       };
-    };
-
-    gpg = {
-      enable = true;
-      mutableTrust = true;
-      mutableKeys = true;
-    };
-
-    pyenv = {
-      enable = false; # Should be handled by devShell, or use user package.
-      enableFishIntegration = true;
-    };
-
-    fzf = {
-      enable = true;
-      enableFishIntegration = true;
-    };
-
-    skim = {
-      enable = false; # Using fzf
-      enableFishIntegration = true;
-    };
-
-    zoxide = {
-      enable = true;
-      enableFishIntegration = true;
-      options = [
-        "--cmd"
-        "cd"
-      ];
-    };
-
-    eza = {
-      enable = true;
-      enableFishIntegration = true;
-      icons = "auto";
-      extraOptions = [
-        "--group-directories-first"
-        "--header"
-      ];
     };
 
     obs-studio = {
@@ -207,18 +98,8 @@
     };
   };
 
+  # Linux-specific services
   services = {
-    gpg-agent = {
-      enable = true;
-      enableFishIntegration = true;
-      defaultCacheTtl = 604800; # 1 week
-      enableSshSupport = true;
-      pinentry.package = pkgs.pinentry-gtk2;
-      extraConfig = ''
-        debug-pinentry
-      '';
-    };
-
     syncthing.enable = true;
 
     udiskie = {
