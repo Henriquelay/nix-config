@@ -156,17 +156,6 @@
   # Enable networking
   networking = {
     nftables.enable = config.virtualisation.incus.enable; # Only for Incus
-    bridges = {
-      "br0".interfaces = [ "enp14s0" ];
-    };
-    interfaces = {
-      "enp14s0" = {
-        useDHCP = false;
-        ipv4.addresses = [ ];
-      };
-      "br0".useDHCP = true;
-    };
-    useNetworkd = false; # disable systemd-networkd if enabled
     firewall = {
       trustedInterfaces = [
         "incusbr0"
@@ -189,6 +178,33 @@
     networkmanager = {
       enable = true;
       wifi.backend = "iwd";
+      ensureProfiles = {
+        profiles = {
+          br0 = {
+            connection = {
+              id = "br0";
+              type = "bridge";
+              interface-name = "br0";
+              autoconnect = "true";
+            };
+            bridge = {
+              stp = "false";
+            };
+            ipv4.method = "auto";
+            ipv6.method = "auto";
+          };
+          br0-slave = {
+            connection = {
+              id = "br0-slave";
+              type = "ethernet";
+              interface-name = "enp14s0";
+              master = "br0";
+              slave-type = "bridge";
+              autoconnect = "true";
+            };
+          };
+        };
+      };
     };
     wireless.iwd.enable = true;
 
