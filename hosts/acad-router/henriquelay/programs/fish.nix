@@ -5,6 +5,7 @@
   ...
 }:
 {
+  home.shell.enableFishIntegration = config.programs.fish.enable;
   programs.fish = {
     enable = true;
     shellInit =
@@ -99,5 +100,14 @@
         };
       in
       lib.mapAttrsToList (name: src: { inherit name src; }) pluginSources;
+  };
+
+  programs.starship = {
+    enable = true;
+    settings = {
+      aws = {
+        disabled = true;
+      };
+    };
   };
 }

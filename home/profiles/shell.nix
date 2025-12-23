@@ -1,18 +1,25 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   # Cross-platform shell configuration
   imports = [
     ../programs/fish.nix
   ];
 
+  home.shell.enableFishIntegration = config.programs.fish.enable;
+
   programs = {
     # Starship prompt
     starship = {
       enable = true;
-      enableFishIntegration = true;
       settings = {
         add_newline = true;
         line_break.disabled = false;
+        aws.disabled = true;
       };
     };
 
@@ -35,7 +42,6 @@
     # Modern ls replacement
     eza = {
       enable = true;
-      enableFishIntegration = true;
       icons = "auto";
       extraOptions = [
         "--group-directories-first"
@@ -46,7 +52,6 @@
     # File manager
     yazi = {
       enable = true;
-      enableFishIntegration = true;
       settings = {
         mgr = {
           show_hidden = true;

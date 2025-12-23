@@ -14,6 +14,7 @@
       fish.enable = false;
       kitty.enable = false;
       helix.enable = false;
+      starship.enable = false;
       librewolf.profileNames = [ "default" ];
     };
     fonts = {
