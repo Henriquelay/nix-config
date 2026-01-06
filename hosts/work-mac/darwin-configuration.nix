@@ -1,7 +1,7 @@
 {
-  config,
   pkgs,
   lib,
+  helix-flake,
   ...
 }:
 let
@@ -11,9 +11,9 @@ in
   # System-level macOS configuration
 
   # Basic Nix settings
-  nix.settings = {
-    experimental-features = "nix-command flakes";
-    auto-optimise-store = true;
+  nix = {
+    enable = false;
+    settings.experimental-features = "nix-command flakes";
   };
 
   # Allow unfree packages
@@ -33,7 +33,7 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     extraSpecialArgs = {
-      inherit (config.specialArgs) helix-flake;
+      inherit helix-flake;
     };
     users.${username} = {
       imports = [ ./henriquelay/home.nix ];
@@ -58,6 +58,7 @@ in
       };
     };
     stateVersion = 5;
+    primaryUser = username;
   };
 
   users.users.${username} = {
@@ -65,7 +66,4 @@ in
     home = "/Users/${username}";
     shell = pkgs.fish;
   };
-
-  # Auto upgrade nix package and the daemon service
-  services.nix-daemon.enable = true;
 }

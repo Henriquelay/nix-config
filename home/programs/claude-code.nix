@@ -13,4 +13,10 @@
   home.packages = lib.mkIf config.programs.claude-code.enable [
     pkgs.nodejs_22
   ];
+
+  # Claude Code memory rules (shared across hosts)
+  home.file.".claude/rules" = lib.mkIf config.programs.claude-code.enable {
+    source = ./claude-code/rules;
+    recursive = true;
+  };
 }

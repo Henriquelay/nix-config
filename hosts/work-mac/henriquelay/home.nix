@@ -34,7 +34,7 @@
     fish.shellAbbrs = {
       "drs" = {
         position = "anywhere";
-        expansion = "darwin-rebuild switch --flake .";
+        expansion = "darwin-rebuild switch --flake ~/nix-config/hosts/work-mac";
       };
     };
   };

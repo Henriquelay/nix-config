@@ -11,7 +11,7 @@
     settings = {
       theme = "gruvbox";
       editor = {
-        rainbow-brackets = true;
+        # rainbow-brackets = true;
         auto-format = true;
         bufferline = "multiple";
         color-modes = true;

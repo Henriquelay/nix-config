@@ -37,7 +37,7 @@
       username = "henriquelay";
     in
     {
-      darwinConfigurations."work-mac" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."PLAT-LT-085" = nix-darwin.lib.darwinSystem {
         inherit system;
         specialArgs = {
           helix-flake = helix;
