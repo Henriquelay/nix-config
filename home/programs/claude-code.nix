@@ -14,9 +14,8 @@
     pkgs.nodejs_22
   ];
 
-  # Claude Code memory rules (shared across hosts)
+  # Claude Code memory rules (symlink to git repo for live updates)
   home.file.".claude/rules" = lib.mkIf config.programs.claude-code.enable {
-    source = ./claude-code/rules;
-    recursive = true;
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/programs/claude-code/rules";
   };
 }

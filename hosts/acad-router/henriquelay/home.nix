@@ -41,9 +41,6 @@
     };
 
     file = {
-      ".claude/rules".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/hosts/acad-router/henriquelay/claude-rules";
-
       ".XCompose".text =
         # xor
         ''
