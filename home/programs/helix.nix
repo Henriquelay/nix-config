@@ -129,6 +129,7 @@
           insert = {
             "F2" = "command_palette";
             "home" = "goto_first_nonwhitespace";
+            "C-backspace" = "delete_word_backward";
           };
         };
     };
