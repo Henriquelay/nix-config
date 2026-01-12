@@ -21,7 +21,8 @@ in
 
   # macOS system packages (if any)
   environment.systemPackages = with pkgs; [
-    # Add system-level packages if needed
+    terraform
+    awscli2
   ];
 
   # Enable fish shell system-wide
@@ -39,6 +40,14 @@ in
       imports = [ ./henriquelay/home.nix ];
     };
   };
+
+  # Enable sudo with Touch ID
+  security.pam.services.sudo_local.touchIdAuth = true;
+
+  # Enable SSH (Remote Login)
+  system.activationScripts.postActivation.text = ''
+    launchctl load -w /System/Library/LaunchDaemons/ssh.plist 2>/dev/null || true
+  '';
 
   # macOS system settings (examples - adjust to your preferences)
   system = {
@@ -61,9 +70,11 @@ in
     primaryUser = username;
   };
 
+  users.knownUsers = [ username ];
   users.users.${username} = {
     name = username;
     home = "/Users/${username}";
     shell = pkgs.fish;
+    uid = 503;
   };
 }

@@ -32,7 +32,7 @@
 
     # macOS-specific fish abbreviations (e.g., for darwin-rebuild)
     fish.shellAbbrs = {
-      "drs" = {
+      "nrs" = {
         position = "anywhere";
         expansion = "darwin-rebuild switch --flake ~/nix-config/hosts/work-mac";
       };
