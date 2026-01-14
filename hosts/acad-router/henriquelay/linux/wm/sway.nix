@@ -5,6 +5,27 @@
   ...
 }:
 {
+  services.swayidle = {
+    enable = config.wayland.windowManager.sway.enable;
+    events = [
+      {
+        event = "before-sleep";
+        command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
+      }
+      {
+        event = "after-resume";
+        command = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
+      }
+    ];
+    timeouts = [
+      {
+        timeout = 600; # 10 minutes
+        command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
+        resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
+      }
+    ];
+  };
+
   programs.fish.loginShellInit =
     lib.mkIf config.wayland.windowManager.sway.enable
       #fish
