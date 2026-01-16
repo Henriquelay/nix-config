@@ -31,6 +31,8 @@
       enableGitIntegration = true;
       options = {
         hyperlinks = true;
+        side-by-side = true;
+        navigate = true;
       };
     };
 

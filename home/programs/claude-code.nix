@@ -7,15 +7,22 @@
 {
   programs.claude-code = {
     enable = true;
+    rulesDir = ./claude-code/rules;
+    settings = {
+      includeCoAuthoredBy = false;
+      alwaysThinkingEnabled = true;
+      model = "opus";
+      permissions.allow = builtins.concatLists [
+        (builtins.map (command: "Bash(${command})") [
+          "ip a:*"
+          "cat:*"
+        ])
+      ];
+    };
   };
 
   # Dependency for vscode extension for claude code
   home.packages = lib.mkIf config.programs.claude-code.enable [
     pkgs.nodejs_22
   ];
-
-  # Claude Code memory rules (symlink to git repo for live updates)
-  home.file.".claude/rules" = lib.mkIf config.programs.claude-code.enable {
-    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/programs/claude-code/rules";
-  };
 }

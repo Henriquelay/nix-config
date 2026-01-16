@@ -104,10 +104,10 @@
 
   programs.starship = {
     enable = true;
+    enableFishIntegration = config.programs.fish.enable;
     settings = {
-      aws = {
-        disabled = true;
-      };
+      aws.disabled = true;
+      time.disabled = false;
     };
   };
 }

@@ -7,16 +7,11 @@
 {
   services.swayidle = {
     enable = config.wayland.windowManager.sway.enable;
-    events = [
-      {
-        event = "before-sleep";
-        command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
-      }
-      {
-        event = "after-resume";
-        command = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
-      }
-    ];
+    events = {
+      "before-sleep" = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
+      "after-resume" = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
+
+    };
     timeouts = [
       {
         timeout = 600; # 10 minutes
@@ -90,7 +85,7 @@
       defaultWorkspace = "workspace number 1";
       startup = [
         { command = "${pkgs.telegram-desktop}/bin/Telegram"; }
-        { command = "${pkgs.youtube-music}/bin/youtube-music"; }
+        { command = "${pkgs.pear-desktop}/bin/pear-desktop"; }
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
           # always = true;

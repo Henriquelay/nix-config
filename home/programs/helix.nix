@@ -6,7 +6,7 @@
 {
   programs.helix = {
     enable = true;
-    package = helix-flake.packages.${pkgs.system}.default;
+    package = helix-flake.packages.${pkgs.stdenv.hostPlatform.system}.default;
     defaultEditor = true;
     settings = {
       theme = "gruvbox";
@@ -182,7 +182,7 @@
         }
         {
           name = "nix";
-          formatter.command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
+          formatter.command = "${pkgs.pkgs.nixfmt}/bin/nixfmt";
           auto-format = true;
           language-servers = [
             "nil"
