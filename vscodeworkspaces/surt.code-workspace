@@ -1,7 +1,36 @@
 {
 	"folders": [
 		{
+			"name": "core-dd",
 			"path": "../../Gits/Surt/core-dd"
+		},
+		{
+			"name": "worktree1",
+			"path": "../../Gits/Surt/worktree1"
+		},
+		{
+			"name": "worktree2",
+			"path": "../../Gits/Surt/worktree2"
+		},
+		{
+			"name": "worktree3",
+			"path": "../../Gits/Surt/worktree3"
+		},
+		{
+			"name": "worktree4",
+			"path": "../../Gits/Surt/worktree4"
+		},
+		{
+			"name": "worktree5",
+			"path": "../../Gits/Surt/worktree5"
+		},
+		{
+			"name": "urgent1",
+			"path": "../../Gits/Surt/urgent1"
+		},
+		{
+			"name": "urgent2",
+			"path": "../../Gits/Surt/urgent2"
 		}
 	],
 	"settings": {

@@ -1,5 +1,1 @@
-# Project-Specific Overrides
-
-- Check for project-level CLAUDE.md files that override these defaults
-- Project conventions take precedence over these global guidelines
-- Note inconsistencies but maintain project consistency
+/nix/store/pmf6ljnkk91dnmc4nyyhj7rj9zlybcxk-home-manager-files/.claude/rules/project-overrides.md

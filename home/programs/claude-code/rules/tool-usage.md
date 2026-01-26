@@ -1,6 +1,1 @@
-# Tool Usage
-
-- Use specialized tools (Read, Edit, Write) instead of bash for file operations
-- When exploring unfamiliar code, search broadly first, then narrow down
-- Use parallel tool calls for independent operations
-- Verify assumptions by reading code, not guessing
+/nix/store/pmf6ljnkk91dnmc4nyyhj7rj9zlybcxk-home-manager-files/.claude/rules/tool-usage.md

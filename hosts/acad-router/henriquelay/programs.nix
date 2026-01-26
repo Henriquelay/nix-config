@@ -31,6 +31,7 @@
     dust # Better `du`
     dua # `du` TUI
     ouch # [de]compression helper
+    calibre
 
     # General programs
     # gogdl # GOG downloading module for heroic
@@ -47,6 +48,7 @@
     telegram-desktop
     # webcord
     webcord-vencord
+    bambu-studio
 
     fae_linux
 
@@ -66,7 +68,7 @@
   programs = {
     zathura = {
       enable = true;
-      extraConfig = ''set selection-clipboard clipboard'';
+      extraConfig = "set selection-clipboard clipboard";
     };
 
     mangohud = {
