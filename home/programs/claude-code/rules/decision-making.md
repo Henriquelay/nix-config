@@ -1,1 +1,1 @@
-/nix/store/pmf6ljnkk91dnmc4nyyhj7rj9zlybcxk-home-manager-files/.claude/rules/decision-making.md
+/nix/store/mbx085lblgf50dxwxyrm1s9jnx2pcqjj-home-manager-files/.claude/rules/decision-making.md
