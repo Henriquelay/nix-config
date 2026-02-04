@@ -95,6 +95,7 @@
 
   # Cross-platform shell utilities
   home.packages = with pkgs; [
+    bash # Modern bash (macOS ships with 3.2)
     dust # Better du
     dua # du TUI
     ouch # [de]compression helper
