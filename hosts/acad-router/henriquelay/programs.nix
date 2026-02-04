@@ -31,7 +31,6 @@
     dust # Better `du`
     dua # `du` TUI
     ouch # [de]compression helper
-    calibre
 
     # General programs
     # gogdl # GOG downloading module for heroic
@@ -70,6 +69,8 @@
       enable = true;
       extraConfig = "set selection-clipboard clipboard";
     };
+
+    calibre.enable = true;
 
     mangohud = {
       enable = true;

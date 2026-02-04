@@ -151,16 +151,37 @@
     };
   };
 
-  xdg.desktopEntries = {
-    virt-manager = {
-      # Fix for virt-manager on wlr
-      name = "Virtual Machine Manager";
-      exec = "virt-manager";
-      terminal = false;
-      categories = [
-        "Utility"
-        "Emulator"
-      ];
+  xdg = {
+    mime.enable = true;
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "x-scheme-handler/http" = [ "librewolf.desktop" ];
+        "x-scheme-handler/https" = [ "librewolf.desktop" ];
+        "x-scheme-handler/about" = [ "librewolf.desktop" ];
+        "x-scheme-handler/unknown" = [ "librewolf.desktop" ];
+        "text/html" = [ "librewolf.desktop" ];
+        "application/pdf" = [ "zathura.desktop" ];
+        "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop" ];
+        "x-scheme-handler/tonsite" = [ "org.telegram.desktop.desktop" ];
+        "x-scheme-handler/postman" = [ "Postman.desktop" ];
+      };
+      associations.added = {
+        "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop" ];
+        "x-scheme-handler/tonsite" = [ "org.telegram.desktop.desktop" ];
+      };
+    };
+    desktopEntries = {
+      virt-manager = {
+        # Fix for virt-manager on wlr
+        name = "Virtual Machine Manager";
+        exec = "virt-manager";
+        terminal = false;
+        categories = [
+          "Utility"
+          "Emulator"
+        ];
+      };
     };
   };
 }

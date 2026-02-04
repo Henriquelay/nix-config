@@ -23,9 +23,9 @@
     graphics = {
       enable = true;
       enable32Bit = true;
-      extraPackages = with pkgs; [
-        # rocmPackages.clr.icd # OpenCL
-      ];
+      # extraPackages = with pkgs; [
+      #   rocmPackages.clr.icd # OpenCL
+      # ];
     };
     amdgpu = {
       initrd.enable = true;
@@ -38,6 +38,12 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gnome
+    ];
+    config.common.default = "gtk";
   };
 
   # Workaround for HIP libraries
@@ -64,7 +70,7 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 2w";
+      options = "--delete-older-than 14d";
     };
     settings = {
       auto-optimise-store = true;
@@ -215,6 +221,8 @@
     stevenblack.enable = true;
   };
   systemd.services.NetworkManager-wait-online.enable = false;
+
+  services.flatpak.enable = true;
 
   services.xserver = {
     enable = false;
