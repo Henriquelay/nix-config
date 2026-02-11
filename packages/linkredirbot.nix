@@ -3,8 +3,8 @@
   rustPlatform,
   fetchFromGitHub,
   pkg-config,
-# Add any additional dependencies here
-# For example: openssl, sqlite, etc.
+  # Add any additional dependencies here
+  # For example: openssl, sqlite, etc.
 }:
 
 rustPlatform.buildRustPackage rec {
@@ -15,7 +15,7 @@ rustPlatform.buildRustPackage rec {
     owner = "henriquelay";
     repo = "linkredirbot";
     rev = "aff34e08c39c0583f0332fadb63a2d627c51d3fc";
-    hash = "sha256-+RCMyKremehyF6hZ0Quw3l6/3NyqOwU0eX4VLLcrI2E=";
+    hash = "sha256-OLe/mSofTtoJEzl0S2moIugZyM3hdVP3otSCa60Xcb8=";
   };
 
   cargoHash = "sha256-DNZZXW9VnyDS/JBKu0pXh/A8BrWS3EC6toYO/W1fQ84=";

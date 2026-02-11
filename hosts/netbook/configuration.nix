@@ -30,6 +30,9 @@
         owner = "copyparty";
         mode = "0400";
       };
+      cloudflared = {
+        # No owner/group needed!
+      };
     };
   };
 
@@ -109,6 +112,15 @@
     };
     # Disable sleep on lid close
     logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
+
+    cloudflared.tunnels."netbook" = {
+      credentialsFile = config.sops.secrets."cloudflared/netbook".path;
+      ingress = {
+        "app.example.com" = "http://localhost:8080"; # Your local service/domain
+        # Add more rules as needed
+      };
+      default = "http_status:404";
+    };
 
     copyparty = {
       enable = true;
