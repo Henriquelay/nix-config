@@ -2,7 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -30,9 +35,10 @@
         owner = "copyparty";
         mode = "0400";
       };
-      cloudflared = {
-        # No owner/group needed!
-      };
+      cloudflared = { };
+      cloudflared_cert = { };
+      cloudflared_tunnel_cert = { };
+      noip_password = { };
     };
   };
 
@@ -113,13 +119,31 @@
     # Disable sleep on lid close
     logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
 
-    cloudflared.tunnels."netbook" = {
-      credentialsFile = config.sops.secrets."cloudflared/netbook".path;
-      ingress = {
-        "app.example.com" = "http://localhost:8080"; # Your local service/domain
-        # Add more rules as needed
+    ddclient = {
+      enable = true;
+      protocol = "noip";
+      server = "dynupdate.no-ip.com";
+      quiet = true;
+      ssl = true;
+      usev4 = "webv4, webv4=ifconfig.me";
+      username = "henriquelay";
+      passwordFile = config.sops.secrets.noip_password.path;
+      domains = [
+        "damnorangecat.ddns.net"
+        "henriquelay.ddns.net"
+      ];
+    };
+    cloudflared = {
+      enable = true;
+      certificateFile = config.sops.secrets.cloudflared_cert.path;
+      tunnels."netbook" = {
+        certificateFile = config.sops.secrets.cloudflared_tunnel_cert.path;
+        credentialsFile = config.sops.secrets.cloudflared.path;
+        ingress = {
+          "adguard" = "http://localhost:80"; # AdGuard
+        };
+        default = "http_status:404";
       };
-      default = "http_status:404";
     };
 
     copyparty = {
