@@ -18,75 +18,15 @@
       "kvm-amd"
       "amdgpu"
     ];
-    initrd = {
-      availableKernelModules = [
-        "nvme"
-        "ahci"
-        "xhci_pci"
-        "usbhid"
-        "usb_storage"
-        "sd_mod"
-      ];
-      luks.devices = {
-        "luks-192aa104-aa43-4da2-9423-c08704d987aa".device =
-          "/dev/disk/by-uuid/192aa104-aa43-4da2-9423-c08704d987aa";
-        "luks-c258bf9d-345e-4140-a345-58465ed6370f".device =
-          "/dev/disk/by-uuid/c258bf9d-345e-4140-a345-58465ed6370f";
-        "luks-4b17c8d8-8cc5-4c4b-aa51-263933cdb956".device =
-          "/dev/disk/by-uuid/4b17c8d8-8cc5-4c4b-aa51-263933cdb956";
-        "luks-1df67eee-4d68-47c3-bd32-a160c68752f6".device =
-          "/dev/disk/by-uuid/1df67eee-4d68-47c3-bd32-a160c68752f6";
-      };
-    };
-  };
-
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/9a48ced3-f303-4abc-b66d-49b3884df906";
-    fsType = "ext4";
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/3AC8-26D0";
-    fsType = "vfat";
-    options = [
-      "fmask=0077"
-      "dmask=0077"
+    initrd.availableKernelModules = [
+      "nvme"
+      "ahci"
+      "xhci_pci"
+      "usbhid"
+      "usb_storage"
+      "sd_mod"
     ];
   };
-
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/4c6d7881-7815-4ecc-bb2d-106ae2de468c";
-    fsType = "ext4";
-  };
-
-  fileSystems."/vault" = {
-    device = "/dev/disk/by-uuid/85ef5bf5-e468-4727-912d-440e09c7b2fa";
-    fsType = "ext4";
-    options = [
-      "defaults"
-      "nofail"
-      "users"
-      "rw"
-      "exec"
-    ];
-  };
-
-  swapDevices = [
-    {
-      device = "/var/lib/swapfile";
-      # in MB
-      size = 1024 * 128;
-    }
-    { device = "/dev/disk/by-uuid/52e0c3a7-aca3-4660-a73c-a38797dff6d2"; }
-  ];
-
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp14s0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp15s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = "x86_64-linux";
   hardware.enableRedistributableFirmware = true;

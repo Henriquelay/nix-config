@@ -52,6 +52,9 @@
           modules = [
             nur.modules.nixos.default
 
+            disko.nixosModules.disko
+            ./disk-config.nix
+
             home-manager.nixosModules.home-manager
 
             (
