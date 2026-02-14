@@ -61,6 +61,8 @@
                   # Custom packages overlay
                   (final: prev: {
                     fae_linux = final.callPackage ../../packages/factorio_achievements_enabler.nix { };
+                    helix-assist = final.callPackage ../../packages/helix-assist.nix { };
+                    monochrome = final.callPackage ../../packages/monochrome.nix { };
                     bambu-studio = prev.appimageTools.wrapType2 rec {
                       name = "BambuStudio";
                       pname = "bambu-studio";

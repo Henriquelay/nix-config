@@ -33,7 +33,7 @@
       };
       keys =
         let
-          search_all_ocurrences_macro = ''@*%s<ret>'';
+          search_all_ocurrences_macro = "@*%s<ret>";
           search_n = command: [
             "expand_selection"
             "search_selection_detect_word_boundaries"
@@ -148,13 +148,15 @@
           args = [ "--stdio" ];
         };
         ltex.command = "${pkgs.ltex-ls}/bin/ltex-ls";
-        helix-gpt = {
-          command = "${pkgs.helix-gpt}/bin/helix-gpt";
-          args = [
-            "--handler"
-            "copilot"
-          ];
-        };
+        # helix-assist = {
+        #   command = "${pkgs.helix-assist}/bin/helix-assist";
+        #   environment = {
+        #     HANDLER = "anthropic";
+        #     ANTHROPIC_ENDPOINT = "http://localhost:4141/";
+        #     ANTHROPIC_API_KEY = "something";
+        #     ANTHROPIC_MODEL = "gpt-5-mini";
+        #   };
+        # };
         nil.command = "${pkgs.nil}/bin/nil";
         taplo.command = "${pkgs.taplo}/bin/taplo";
       };
@@ -163,7 +165,7 @@
           name = "rust";
           language-servers = [
             "rust-analyzer"
-            "helix-gpt"
+            # "helix-assist"
             # "harper"
           ];
           auto-pairs = {
@@ -186,7 +188,7 @@
           auto-format = true;
           language-servers = [
             "nil"
-            "helix-gpt"
+            # "helix-assist"
             # "harper"
           ];
         }
@@ -195,7 +197,7 @@
           language-servers = [
             "ruff"
             "pyright"
-            "helix-gpt"
+            # "helix-assist"
             # "harper"
           ];
           auto-format = true;
@@ -206,7 +208,7 @@
             "tinymist"
             "typst-lsp"
             # "ltex"
-            "helix-gpt"
+            # "helix-assist"
             "harper"
           ];
           formatter.command = "${pkgs.typstyle}/bin/typstyle";
@@ -217,7 +219,7 @@
           language-servers = [
             "ltex"
             "texlab"
-            "helix-gpt"
+            # "helix-assist"
             "harper"
           ];
           auto-format = true;
@@ -240,7 +242,7 @@
           auto-format = true;
           language-servers = [
             "markdown-oxide"
-            "helix-gpt"
+            # "helix-assist"
             # "lsp-ai"
             "harper"
           ];
