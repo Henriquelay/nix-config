@@ -1,5 +1,6 @@
 { config, pkgs, ... }:
 {
+  home.packages = with pkgs; [ wl-gammarelay-rs ];
   programs.i3status-rust = {
     enable = true;
     bars = {
@@ -62,6 +63,11 @@
             format = " $icon $average";
           }
           {
+            block = "amd_gpu";
+            format = " $icon $utilization ";
+            format_alt = " $icon MEM: $vram_used_percents ($vram_used/$vram_total) ";
+          }
+          {
             block = "music";
             player = "playerctld";
             format = " $icon {$combo.str(max_w:25,rot_interval:0.5) $play $next |}";
@@ -70,16 +76,27 @@
             block = "sound";
             show_volume_when_muted = true;
           }
-          {
-            block = "keyboard_layout";
-            driver = "sway";
-            format = "🖮 $layout ($variant)";
-          }
+          # {
+          #   block = "keyboard_layout";
+          #   driver = "sway";
+          #   format = "🖮 $layout ($variant)";
+          # }
           {
             block = "net";
             device = "enp14s0";
             format = " $icon ↓$speed_down ↑$speed_up";
             format_alt = "$icon ↓$graph_down ↑$graph_up";
+          }
+          {
+            block = "hueshift";
+            click_temp = 2500;
+          }
+          {
+            block = "privacy";
+            driver = [
+              { name = "pipewire"; }
+              { name = "v4l"; }
+            ];
           }
           # {
           #   block = "weather";

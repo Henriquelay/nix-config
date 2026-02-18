@@ -59,7 +59,11 @@
           xkb_numlock = "enabled";
         };
       };
-      output.DP-1.adaptive_sync = "on";
+      output.DP-1 = {
+        adaptive_sync = "on";
+        render_bit_depth = "10";
+        subpixel = "rgb";
+      };
       floating.criteria = [
         { app_id = "launcher"; }
         { window_role = "pop-up"; }
