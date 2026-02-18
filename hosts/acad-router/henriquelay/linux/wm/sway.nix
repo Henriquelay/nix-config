@@ -10,7 +10,6 @@
     events = {
       "before-sleep" = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
       "after-resume" = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
-
     };
     timeouts = [
       {
@@ -26,7 +25,7 @@
       #fish
       ''
         if [ (tty) = "/dev/tty1" ]
-          exec dbus-run-session sway &> ~/sway_output.log
+          exec sway &> ~/sway_output.log
         end
       '';
 
@@ -39,11 +38,11 @@
   wayland.windowManager.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
-    # systemd = {
-    #   enable = true;
-    #   variables = [ "--all" ];
-    #   xdgAutostart = true;
-    # };
+    systemd = {
+      enable = true;
+      variables = [ "--all" ];
+      xdgAutostart = true;
+    };
     checkConfig = false;
     config = rec {
       modifier = "Mod4";
