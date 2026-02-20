@@ -51,6 +51,8 @@
 
     fae_linux
 
+    ddcutil # Monitor control (brightness)
+
     # Langs and lang servers. Dev stuff
     # Should most of these be here? Should be handled by a dev shell.
     # I'll keep only the scripting and ones I want quick access to.
@@ -122,7 +124,7 @@
     };
 
     nextcloud-client = {
-      enable = true;
+      enable = false;
       startInBackground = true;
     };
 
@@ -130,7 +132,7 @@
       enable = true;
       iconTheme = {
         package = pkgs.gruvbox-dark-icons-gtk;
-        name = "gruvbox-dark-gtl";
+        name = "gruvbox-dark-gtk";
       };
       settings = {
         global = {

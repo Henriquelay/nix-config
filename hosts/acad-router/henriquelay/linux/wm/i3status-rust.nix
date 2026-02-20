@@ -7,10 +7,10 @@
       default = {
         theme = "gruvbox-dark";
         icons = "material-nf";
+
         blocks = [
           {
             block = "focused_window";
-
           }
           {
             block = "docker";
@@ -64,8 +64,10 @@
           }
           {
             block = "amd_gpu";
-            format = " $icon $utilization ";
             format_alt = " $icon MEM: $vram_used_percents ($vram_used/$vram_total) ";
+            icons_overrides = {
+              gpu = "󰾲";
+            };
           }
           {
             block = "music";
@@ -86,6 +88,24 @@
             device = "enp14s0";
             format = " $icon ↓$speed_down ↑$speed_up";
             format_alt = "$icon ↓$graph_down ↑$graph_up";
+          }
+          {
+            block = "custom";
+            format = " 󱎴 |$text.pango-str()";
+            # merge_with_next = true;
+            command = "ddcutil getvcp 10 | grep -oP 'current value =\s*\K\d+'";
+            click = [
+              {
+                button = "wheel_up";
+                cmd = "ddcutil setvcp + 10";
+                sync = true;
+              }
+              {
+                button = "wheel_down";
+                cmd = "ddcutil setvcp - 10";
+                sync = true;
+              }
+            ];
           }
           {
             block = "hueshift";

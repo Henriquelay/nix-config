@@ -20,6 +20,7 @@
       enable = true;
       powerOnBoot = true; # Turn on with computer
     };
+    i2c.enable = true;
     graphics = {
       enable = true;
       enable32Bit = true;
@@ -313,6 +314,7 @@
       "libvirtd"
       # IPFS
       # config.services.kubo.group
+      "i2c" # Monitor control
     ];
     shell = pkgs.fish;
   };
