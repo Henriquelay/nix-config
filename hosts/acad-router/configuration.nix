@@ -465,6 +465,10 @@
     # };
   };
 
+  systemd.tmpfiles.rules = [
+    "d /vault 0755 henriquelay users -"
+  ];
+
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
