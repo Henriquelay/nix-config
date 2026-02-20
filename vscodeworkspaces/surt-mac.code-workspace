@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"name": "worktree1",
+			"path": "../../Gits/core-dd/worktree1"
+		},
+		{
+			"name": "worktree2",
+			"path": "../../Gits/core-dd/worktree2"
+		},
+		{
+			"name": "worktree3",
+			"path": "../../Gits/core-dd/worktree3"
+		},
+		{
+			"name": "worktree4",
+			"path": "../../Gits/core-dd/worktree4"
+		},
+		{
+			"name": "worktree5",
+			"path": "../../Gits/core-dd/worktree5"
+		},
+		{
+			"name": "main",
+			"path": "../../Gits/core-dd/main"
+		},
+		{
+			"name": "preprod",
+			"path": "../../Gits/core-dd/preprod"
+		},
+		{
+			"name": "qa",
+			"path": "../../Gits/core-dd/qa"
+		},
+		{
+			"path": "../../Gits/surt-web-client"
+		}
+	],
+	"settings": {}
+}

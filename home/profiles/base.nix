@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   # Core cross-platform home-manager setup
   # NOTE: username and homeDirectory are set per-host in home.nix

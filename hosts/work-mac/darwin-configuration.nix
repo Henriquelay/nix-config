@@ -23,6 +23,16 @@ in
   environment.systemPackages = with pkgs; [
     terraform
     awscli2
+    (python313.withPackages (
+      pypkgs: with pypkgs; [
+        boto3
+        requests-aws4auth
+        opensearch-py
+        aioboto3
+        aiohttp
+        python-dateutil
+      ]
+    ))
   ];
 
   # Enable fish shell system-wide
