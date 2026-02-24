@@ -146,6 +146,34 @@
       };
     };
 
+    samba = {
+      enable = true;
+      openFirewall = true;
+
+      settings = {
+        global = {
+          "workgroup" = "WORKGROUP";
+          "server string" = "nas";
+          "map to guest" = "Bad User";
+          "security" = "user";
+        };
+
+        # Public share, no auth
+        nas = {
+          path = "/srv/samba";
+          "read only" = "no";
+          "guest ok" = "yes";
+          "force user" = "henriquelay";
+          "create mask" = "0664";
+          "directory mask" = "0775";
+        };
+      };
+    };
+    samba-wsdd = {
+      enable = true;
+      openFirewall = true;
+    };
+
     copyparty = {
       enable = true;
       settings = {
@@ -170,10 +198,7 @@
           # see `copyparty --help-accounts` for available options
           access = {
             r = "*";
-            rw = [
-              "henriquelay"
-              "bruna"
-            ];
+            rw = "*";
           };
           # see `copyparty --help-flags` for available options
           flags = {

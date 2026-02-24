@@ -14,6 +14,21 @@
     ./hardware-configuration.nix
   ];
 
+  # Mount netbook nas
+  fileSystems."/mnt/nas" = {
+    device = "//netbook/nas";
+    fsType = "cifs";
+    options = [
+      "guest"
+      "uid=1000"
+      "gid=1000"
+      "nofail" # don't fail boot if NAS is down
+      "x-systemd.automount" # mount on first access
+      "x-systemd.idle-timeout=60" # unmount after 60s idle
+      "x-systemd.device-timeout=5s" # give up fast if NAS is offline
+    ];
+  };
+
   hardware = {
     keyboard.qmk.enable = true;
     bluetooth = {
@@ -95,6 +110,7 @@
 
   # Bootloader.
   boot = {
+    supportedFilesystems = [ "cifs" ];
     loader = {
       systemd-boot = {
         enable = true;
@@ -379,6 +395,7 @@
       # rtaudio # for Rocksmith
       vial
       jmtpfs # Android fs mounting
+      cifs-utils # SMB NAS mount
     ];
     variables = {
       NIX_BUILD_CORES = 12;
