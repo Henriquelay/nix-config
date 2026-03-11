@@ -24,7 +24,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     seater = {
-      url = "sourcehut:~damnorangecat/seater-rs";
+      url = "git+ssh://git@git.sr.ht/~damnorangecat/seater-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
