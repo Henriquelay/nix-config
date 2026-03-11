@@ -5,10 +5,20 @@
   };
   programs.librewolf = {
     enable = true;
+    profiles.default = {
+      id = 0;
+      isDefault = true;
+      userChrome = ''
+        /* hides the native tabs */
+        #TabsToolbar {
+          visibility: collapse;
+        }
+      '';
+    };
     settings = {
       "webgl.disabled" = false;
       "identity.fxaccounts.enabled" = true;
-      "toolkit.legacyUserProfileCustomizations.stylesheetums" = true;
+      "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
       "privacy.clearOnShutdown.history" = false;
       "privacy.clearOnShutdown.cookies" = false;
       "network.cookie.lifetimePolicy" = 0;
