@@ -23,6 +23,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    seater = {
+      url = "sourcehut:~damnorangecat/seater-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
   };
 
@@ -33,6 +37,7 @@
       disko,
       copyparty,
       sops-nix,
+      seater,
       ...
     }
     # @inputs
@@ -60,6 +65,7 @@
                 (final: prev: {
                   linkredirbot = final.callPackage ../../packages/linkredirbot.nix { };
                   mediaarchivistbot = final.callPackage ../../packages/mediaarchivistbot.nix { };
+                  seater = seater.packages.${system}.default;
                 })
               ];
             }

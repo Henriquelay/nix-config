@@ -140,7 +140,8 @@
         certificateFile = config.sops.secrets.cloudflared_tunnel_cert.path;
         credentialsFile = config.sops.secrets.cloudflared.path;
         ingress = {
-          "adguard" = "http://localhost:80"; # AdGuard
+          "adguard.henriquelay.dev" = "http://localhost:80";
+          "seater.henriquelay.dev" = "http://localhost:3000";
         };
         default = "http_status:404";
       };
@@ -295,6 +296,10 @@
     # efi.canTouchEfiVariables = false;
   };
 
+  systemd.tmpfiles.rules = [
+    "d /srv/samba 0775 henriquelay users -"
+  ];
+
   # Custom services for pkgs that don't declare them
   systemd = {
     timers = {
@@ -344,6 +349,22 @@
           RestartSec = "10";
           User = "henriquelay";
           EnvironmentFile = config.sops.secrets.mediaarchivistbot_token.path;
+        };
+      };
+
+      seater = {
+        description = "Seater - seat arrangement web app";
+        wantedBy = [ "multi-user.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        serviceConfig = {
+          ExecStart = "${pkgs.seater}/bin/seater-backend";
+          Restart = "always";
+          RestartSec = "10";
+          DynamicUser = true;
+        };
+        environment = {
+          LEPTOS_SITE_ADDR = "127.0.0.1:3000";
         };
       };
 
