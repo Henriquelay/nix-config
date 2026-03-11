@@ -38,7 +38,6 @@
       cloudflared = { };
       cloudflared_cert = { };
       cloudflared_tunnel_cert = { };
-      noip_password = { };
     };
   };
 
@@ -119,20 +118,6 @@
     # Disable sleep on lid close
     logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
 
-    ddclient = {
-      enable = true;
-      protocol = "noip";
-      server = "dynupdate.no-ip.com";
-      quiet = true;
-      ssl = true;
-      usev4 = "webv4, webv4=ifconfig.me";
-      username = "henriquelay";
-      passwordFile = config.sops.secrets.noip_password.path;
-      domains = [
-        "damnorangecat.ddns.net"
-        "henriquelay.ddns.net"
-      ];
-    };
     cloudflared = {
       enable = true;
       certificateFile = config.sops.secrets.cloudflared_cert.path;
@@ -302,28 +287,7 @@
 
   # Custom services for pkgs that don't declare them
   systemd = {
-    timers = {
-      duckdns = {
-        wantedBy = [ "timers.target" ];
-        timerConfig = {
-          OnBootSec = "5m";
-          OnUnitActiveSec = "5m";
-          Unit = "hello-world.service";
-        };
-      };
-    };
     services = {
-
-      duckdns = {
-        script = ''
-          bash -c 'echo url="https://www.duckdns.org/update?domains=damnorangecat&token=23c93e96-9e49-4706-bf7d-dec50098ac4e&ip=" | curl -k -o ~/duckdns/duck.log -K -'
-        '';
-        serviceConfig = {
-          Type = "oneshot";
-          User = "root";
-        };
-      };
-
       linkredirbot = {
         description = "Linkredirbot - automatically redirect links";
         wantedBy = [ "multi-user.target" ];
