@@ -26,7 +26,14 @@
         position = "command";
         expansion = "cd ..";
       };
-
+      "ssh" = {
+        position = "command";
+        expansion = "kitten ssh";
+      };
+      "fulltest" = {
+        command = "cargo";
+        expansion = "clippy --all-targets --all-features --fix --allow-dirty --allow-staged --workspace && cargo fmt --all && cargo nextest run --all-targets --all-features --workspace && cargo test --doc --all-features --workspace";
+      };
       "nt" = {
         command = "cargo";
         expansion = "nextest run --all-targets";

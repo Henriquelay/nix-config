@@ -75,32 +75,9 @@
     };
     firewall.enable = false;
 
-    wireless.enable = false;
     hostName = "netbook";
-    # Configure network proxy if necessary
-    # networking.proxy.default = "http://user:password@proxy:port/";
-    # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-    # Enable networkmanager
-    #networkmanager.enable = true;
-    nameservers = [
-      "9.9.9.9"
-      "8.8.8.8"
-      "8.8.4.4"
-      "1.1.1.1"
-    ];
-    defaultGateway = {
-      address = "192.168.3.1";
-      interface = "enp1s0";
-    };
-    interfaces = {
-      enp1s0.ipv4.addresses = [
-        {
-          address = "192.168.3.100";
-          prefixLength = 24;
-        }
-      ];
-    };
+    networkmanager.enable = true;
   };
 
   services = {

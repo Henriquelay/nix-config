@@ -173,11 +173,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1773218139,
-        "narHash": "sha256-5BhgitaC4GXn2LpmJY7mE4y9g2tS06IYd3BG0O/Ncj8=",
+        "lastModified": 1773300564,
+        "narHash": "sha256-zKf6gMDkf9N1LV2peqsBo/VTIyUXtOqgpnx2UT/w6qY=",
         "ref": "refs/heads/main",
-        "rev": "e4431400820a2cc8ce3b274346b7bf7549a02a74",
-        "revCount": 3,
+        "rev": "f58bf3a4c0dbee8d4e6cfa726da3f0ec0980a6bd",
+        "revCount": 9,
         "type": "git",
         "url": "ssh://git@git.sr.ht/~damnorangecat/seater-rs"
       },
