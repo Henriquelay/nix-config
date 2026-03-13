@@ -195,8 +195,8 @@
 
     hostName = "acad-router";
     nameservers = [
-      # "192.168.3.100"
-      "9.9.9.9"
+      "192.168.3.100"
+      # "9.9.9.9"
     ];
     networkmanager = {
       enable = true;
@@ -476,10 +476,7 @@
       wireplumber.enable = true;
       # jack.enable = true;
     };
-    # ucodenix = {
-    #   enable = true;
-    #    cpuModelId = "00A60F12"; # Can be set to "auto", but then build won't be reproducible
-    # };
+    # ucodenix.enable = true;
   };
 
   systemd.tmpfiles.rules = [

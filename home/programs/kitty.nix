@@ -15,6 +15,7 @@
     };
     keybindings = {
       "f1" = "launch --cwd=current --type=os-window";
+      "ctrl+shift+enter" = "launch --cwd=current";
     };
   };
 }

@@ -81,6 +81,20 @@
   };
 
   services = {
+    nginx = {
+      enable = true;
+      virtualHosts."seater" = {
+        listen = [{ addr = "127.0.0.1"; port = 8081; }];
+        root = "${pkgs.seater}/share/seater/frontend";
+        locations."/" = {
+          tryFiles = "$uri $uri/ /index.html";
+        };
+        locations."/api/" = {
+          proxyPass = "http://127.0.0.1:3000";
+        };
+      };
+    };
+
     zerotierone = {
       enable = true;
       joinNetworks = [
@@ -99,11 +113,12 @@
       enable = true;
       certificateFile = config.sops.secrets.cloudflared_cert.path;
       tunnels."netbook" = {
+        edgeIPVersion = "auto";
         certificateFile = config.sops.secrets.cloudflared_tunnel_cert.path;
         credentialsFile = config.sops.secrets.cloudflared.path;
         ingress = {
           "adguard.henriquelay.dev" = "http://localhost:80";
-          "seater.henriquelay.dev" = "http://localhost:3000";
+          "seater.henriquelay.dev" = "http://localhost:8081";
         };
         default = "http_status:404";
       };
@@ -303,9 +318,6 @@
           Restart = "always";
           RestartSec = "10";
           DynamicUser = true;
-        };
-        environment = {
-          LEPTOS_SITE_ADDR = "127.0.0.1:3000";
         };
       };
 

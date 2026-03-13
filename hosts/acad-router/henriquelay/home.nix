@@ -170,6 +170,9 @@
         "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop" ];
         "x-scheme-handler/tonsite" = [ "org.telegram.desktop.desktop" ];
       };
+      associations.removed = {
+        "application/pdf" = [ "calibre-ebook-viewer.desktop" "calibre-gui.desktop" ];
+      };
     };
     desktopEntries = {
       virt-manager = {

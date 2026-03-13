@@ -19,7 +19,6 @@
       url = "github:helix-editor/helix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -50,6 +49,8 @@
             helix-flake = helix;
           };
           modules = [
+            # ucodenix.nixosModules.default
+
             nur.modules.nixos.default
 
             disko.nixosModules.disko
@@ -97,8 +98,6 @@
                 ];
               }
             )
-
-            # ucodenix.nixosModules.default
 
             stylix.nixosModules.stylix
 
