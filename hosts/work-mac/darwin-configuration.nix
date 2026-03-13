@@ -31,6 +31,7 @@ in
         aioboto3
         aiohttp
         python-dateutil
+        ffmpeg
       ]
     ))
   ];
