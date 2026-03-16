@@ -83,6 +83,13 @@
   services = {
     nginx = {
       enable = true;
+      virtualHosts."blog" = {
+        listen = [{ addr = "127.0.0.1"; port = 8082; }];
+        root = "${pkgs.blog}";
+        locations."/" = {
+          tryFiles = "$uri $uri/ /index.html";
+        };
+      };
       virtualHosts."seater" = {
         listen = [{ addr = "127.0.0.1"; port = 8081; }];
         root = "${pkgs.seater}/share/seater/frontend";

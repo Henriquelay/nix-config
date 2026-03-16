@@ -27,6 +27,10 @@
       url = "git+ssh://git@git.sr.ht/~damnorangecat/seater-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    blog = {
+      url = "git+ssh://git@git.sr.ht/~damnorangecat/blog.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
   };
 
@@ -38,6 +42,7 @@
       copyparty,
       sops-nix,
       seater,
+      blog,
       ...
     }
     # @inputs
@@ -66,6 +71,7 @@
                   linkredirbot = final.callPackage ../../packages/linkredirbot.nix { };
                   mediaarchivistbot = final.callPackage ../../packages/mediaarchivistbot.nix { };
                   seater = seater.packages.${system}.default;
+                  blog = blog.packages.${system}.default;
                 })
               ];
             }

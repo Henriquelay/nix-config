@@ -58,7 +58,7 @@
     # Langs and lang servers. Dev stuff
     # Should most of these be here? Should be handled by a dev shell.
     # I'll keep only the scripting and ones I want quick access to.
-    # quarto
+    quarto
     scooter # interactive find-and-replace. Pretty useful.
 
     slack
