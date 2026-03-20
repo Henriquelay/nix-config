@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773643281,
-        "narHash": "sha256-jAjaklKWA74PgmnLS4+EwwLbk9vnx7fVcicVvf5NiQA=",
+        "lastModified": 1773998961,
+        "narHash": "sha256-au7e9Bg0ePBZcqXr/FH/+Kppq79HqcSMdNMAOWYeKR4=",
         "ref": "refs/heads/main",
-        "rev": "7baf259fa4724b47906279fe4850084f7117ef2a",
-        "revCount": 3,
+        "rev": "5075f44f4512ca2d9c68b40ee63e91102e635d93",
+        "revCount": 11,
         "type": "git",
         "url": "ssh://git@git.sr.ht/~damnorangecat/blog.git"
       },
