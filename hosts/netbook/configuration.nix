@@ -150,7 +150,9 @@
           "guest ok" = "yes";
           "force user" = "henriquelay";
           "create mask" = "0664";
+          "force create mode" = "0664";
           "directory mask" = "0775";
+          "force directory mode" = "0775";
         };
       };
     };
@@ -282,6 +284,7 @@
 
   systemd.tmpfiles.rules = [
     "d /srv/samba 0775 henriquelay users -"
+    "Z /srv/samba 0775 henriquelay users -"
   ];
 
   # Custom services for pkgs that don't declare them
