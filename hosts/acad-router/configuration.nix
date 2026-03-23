@@ -14,6 +14,11 @@
     ./hardware-configuration.nix
   ];
 
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  };
+
   # Mount netbook nas
   fileSystems."/mnt/nas" = {
     device = "//netbook/nas";

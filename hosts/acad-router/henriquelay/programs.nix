@@ -8,6 +8,7 @@
   # Cross-platform programs are in shared home/profiles/
   imports = [
     ./programs/librewolf.nix
+    ./programs/thunderbird.nix
   ];
 
   home.packages = with pkgs; [

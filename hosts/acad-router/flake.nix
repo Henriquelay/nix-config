@@ -23,6 +23,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -33,6 +37,7 @@
       nur,
       helix,
       disko,
+      sops-nix,
       # ucodenix,
       ...
     }
@@ -55,6 +60,8 @@
 
             disko.nixosModules.disko
             ./disk-config.nix
+
+            sops-nix.nixosModules.sops
 
             home-manager.nixosModules.home-manager
 

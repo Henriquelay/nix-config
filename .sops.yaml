@@ -26,9 +26,13 @@
 
 keys:
   - &netbook age1vk6zpcuquyd2wtdp0f9z3644n63vqgp6zf9dae533tcp85qcpuwquz9tt0
-
+  - &acad-router age1s3pdrxzdlgllmahxhyr4txeukmfuld4x305svg543c8vng09ce3s5vatk3
 creation_rules:
   - path_regex: hosts/netbook/secrets\.yaml$
     key_groups:
       - age:
           - *netbook
+  - path_regex: hosts/acad-router/secrets\.yaml$
+    key_groups:
+      - age:
+          - *acad-router
