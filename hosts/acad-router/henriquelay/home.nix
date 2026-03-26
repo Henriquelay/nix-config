@@ -161,7 +161,7 @@
         "x-scheme-handler/about" = [ "librewolf.desktop" ];
         "x-scheme-handler/unknown" = [ "librewolf.desktop" ];
         "text/html" = [ "librewolf.desktop" ];
-        "application/pdf" = [ "zathura.desktop" ];
+        "application/pdf" = [ "org.pwmt.zathura.desktop" ];
         "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop" ];
         "x-scheme-handler/tonsite" = [ "org.telegram.desktop.desktop" ];
         "x-scheme-handler/postman" = [ "Postman.desktop" ];

@@ -83,7 +83,12 @@
       };
       assigns = {
         "5" = [ { app_id = "^WebCord$"; } ];
-        "10" = [ { app_id = "^org.qbittorrent.qBittorrent$"; } ];
+        "10" = [
+          { app_id = "^org.qbittorrent.qBittorrent$"; }
+          {
+            app_id = "^thunderbird$";
+          }
+        ];
       };
       defaultWorkspace = "workspace number 1";
       startup = [
@@ -92,6 +97,9 @@
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
           # always = true;
+        }
+        {
+          command = "${pkgs.thunderbird}/bin/thunderbird";
         }
       ];
       bars = [
