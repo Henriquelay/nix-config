@@ -11,11 +11,12 @@
     settings = {
       includeCoAuthoredBy = false;
       alwaysThinkingEnabled = true;
-      model = "opus";
+      model = "opusplan";
+      effortLevel = "high";
       permissions.allow =
         let
           cargo_cmds = [
-            "check"
+            "cargo check"
             "cargo clippy"
             "cargo fmt"
             "cargo nextext run"
@@ -26,6 +27,8 @@
             "cat"
             "grep"
             "git log"
+            "git status"
+            "find"
             "awk"
             "find"
             "gh pr diff"
@@ -36,6 +39,9 @@
         in
         builtins.concatLists [
           (builtins.map (command: "Bash(${command}:*)") (bash_cmds_all_subcommands ++ cargo_cmds))
+          [
+            "mcp__claude_ai__Context7__*"
+          ]
         ];
     };
   };

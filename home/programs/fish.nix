@@ -18,7 +18,6 @@
 
     shellAliases = {
       cat = "${pkgs.bat}/bin/bat";
-      cpx = "${pkgs.cpx}/bin/cpx";
       du = "${pkgs.dust}/bin/dust";
     };
 
@@ -26,10 +25,6 @@
       "cd.." = {
         position = "command";
         expansion = "cd ..";
-      };
-      "cp" = {
-        position = "command";
-        expansion = "cpx";
       };
       "ssh" = {
         position = "command";
